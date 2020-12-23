@@ -1,5 +1,8 @@
 package com.example.ohjeom.services;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
@@ -8,18 +11,26 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+
+import com.example.ohjeom.MainActivity;
+import com.example.ohjeom.R;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
 
 public class phoneService extends Service {
 
     private long phoneUsageToday=0;
     private long startTime, stopTime;
+    private int phoneTime;
     List<AppUsageInfo> appUsageList;
     List<ResolveInfo> appNames;
 
@@ -40,6 +51,30 @@ public class phoneService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Intent clsIntent = new Intent(phoneService.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(phoneService.this, 0, clsIntent, 0);
+
+        NotificationCompat.Builder clsBuilder;
+        if( Build.VERSION.SDK_INT >= 26 )
+        {
+            String CHANNEL_ID = "channel_id";
+            NotificationChannel clsChannel = new NotificationChannel(CHANNEL_ID, "서비스 앱", NotificationManager.IMPORTANCE_DEFAULT);
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(clsChannel);
+
+            clsBuilder = new NotificationCompat.Builder(this, CHANNEL_ID );
+        }
+        else
+        {
+            clsBuilder = new NotificationCompat.Builder(this);
+        }
+
+        // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
+        clsBuilder.setSmallIcon(R.drawable.icon_school)
+                .setContentTitle("서비스 앱" ).setContentText("서비스 앱")
+                .setContentIntent(pendingIntent);
+
+        // foreground 서비스로 실행한다.
+        startForeground(1, clsBuilder.build());
     }
 
     @Override
@@ -122,10 +157,36 @@ public class phoneService extends Service {
             for (AppUsageInfo appUsageInfo : appUsageList) {
                 if(appName.equals(appUsageInfo.packageName)) {
                     Log.d("앱 이름:", s.loadLabel(pm).toString() + ", 사용 시간:" + (appUsageInfo.timeInForeground) / (60 * 1000) + "분");
+                    phoneTime+=appUsageInfo.timeInForeground/(60*1000);
                 }
             }
         }
 
+        int Time = (int) ((stopTime - startTime)/(60*1000));
+        int phoneScore = ScoreCalculate(Time,phoneTime);
+        Log.d("핸드폰 사용 점수", String.valueOf(phoneScore));
+        /*
+        점수보내기
+         */
+        Log.d("핸드폰 측정","종료");
+
         stopSelf();
+    }
+
+    public int ScoreCalculate(long Time, long phoneTime){
+        int score = 0;
+        if(phoneTime<Time * (1/10))
+            score = 100;
+        else if(phoneTime < Time*(2/10))
+            score = 80;
+        else if(phoneTime < Time*(3/10))
+            score = 60;
+        else if(phoneTime < Time*(4/10))
+            score = 40;
+        else if(phoneTime < Time*(5/10))
+            score = 20;
+        else
+            score = 0;
+        return score;
     }
 }

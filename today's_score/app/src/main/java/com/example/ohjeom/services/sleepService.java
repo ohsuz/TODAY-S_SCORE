@@ -1,5 +1,8 @@
 package com.example.ohjeom.services;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -7,9 +10,15 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+
+import com.example.ohjeom.MainActivity;
+import com.example.ohjeom.R;
 
 import java.util.Calendar;
 
@@ -30,6 +39,30 @@ public class sleepService extends Service implements SensorEventListener {
     @Override
     public void onCreate() {
         super.onCreate();
+        Intent clsIntent = new Intent(sleepService.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(sleepService.this, 0, clsIntent, 0);
+
+        NotificationCompat.Builder clsBuilder;
+        if( Build.VERSION.SDK_INT >= 26 )
+        {
+            String CHANNEL_ID = "channel_id";
+            NotificationChannel clsChannel = new NotificationChannel(CHANNEL_ID, "서비스 앱", NotificationManager.IMPORTANCE_DEFAULT);
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(clsChannel);
+
+            clsBuilder = new NotificationCompat.Builder(this, CHANNEL_ID );
+        }
+        else
+        {
+            clsBuilder = new NotificationCompat.Builder(this);
+        }
+
+        // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
+        clsBuilder.setSmallIcon(R.drawable.icon_school)
+                .setContentTitle("서비스 앱" ).setContentText("서비스 앱")
+                .setContentIntent(pendingIntent);
+
+        // foreground 서비스로 실행한다.
+        startForeground(1, clsBuilder.build());
     }
 
     @Override
@@ -116,6 +149,10 @@ public class sleepService extends Service implements SensorEventListener {
         Log.d("빛 감지 시간:", String.valueOf(lightTime));
         Log.d("수면 점수", String.valueOf(sleepScore));
 
+        /*
+        점수보내기
+         */
+
         Log.d("수면 측정","종료");
         super.onDestroy();
     }
@@ -154,17 +191,17 @@ public class sleepService extends Service implements SensorEventListener {
     }
 
     //점수 계산
-    public int ScoreCalculate(long phone_Time, long lightTime){
+    public int ScoreCalculate(long phoneTime, long lightTime){
         int score = 0;
-        if(phone_Time <20)
+        if(phoneTime <20)
             score += 50;
-        else if(20<= phone_Time && phone_Time <40)
+        else if(20<= phoneTime && phoneTime <40)
             score += 40;
-        else if(40<= phone_Time && phone_Time <60)
+        else if(40<= phoneTime && phoneTime <60)
             score += 30;
-        else if(60<= phone_Time && phone_Time <80)
+        else if(60<= phoneTime && phoneTime <80)
             score += 20;
-        else if(80<= phone_Time && phone_Time <120)
+        else if(80<= phoneTime && phoneTime <120)
             score += 10;
         else
             score += 0;
@@ -184,4 +221,5 @@ public class sleepService extends Service implements SensorEventListener {
 
         return score;
     }
+
 }

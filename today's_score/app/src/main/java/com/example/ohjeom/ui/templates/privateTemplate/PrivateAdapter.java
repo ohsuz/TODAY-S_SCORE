@@ -70,7 +70,7 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
         holder.templateName.setText(item.getTemplateName());
 
         if (item.isSelected()) {
-            holder.templateLayout.setBackgroundColor(Color.parseColor("#FFF2CC"));
+            holder.templateLayout.setBackgroundColor(Color.parseColor("#FFFFFAD3"));
         } else {
             if (position%2 == 0){
                 holder.templateLayout.setBackgroundColor(Color.parseColor("#80FFFFFF"));

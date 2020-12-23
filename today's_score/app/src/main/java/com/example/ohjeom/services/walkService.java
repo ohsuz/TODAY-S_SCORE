@@ -1,5 +1,8 @@
 package com.example.ohjeom.services;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +10,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+
+import com.example.ohjeom.MainActivity;
+import com.example.ohjeom.R;
 
 public class walkService extends Service implements SensorEventListener {
     private SensorManager sensorManager;
@@ -20,6 +29,30 @@ public class walkService extends Service implements SensorEventListener {
     @Override
     public void onCreate() {
         super.onCreate();
+        Intent clsIntent = new Intent(walkService.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(walkService.this, 0, clsIntent, 0);
+
+        NotificationCompat.Builder clsBuilder;
+        if( Build.VERSION.SDK_INT >= 26 )
+        {
+            String CHANNEL_ID = "channel_id";
+            NotificationChannel clsChannel = new NotificationChannel(CHANNEL_ID, "서비스 앱", NotificationManager.IMPORTANCE_DEFAULT);
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(clsChannel);
+
+            clsBuilder = new NotificationCompat.Builder(this, CHANNEL_ID );
+        }
+        else
+        {
+            clsBuilder = new NotificationCompat.Builder(this);
+        }
+
+        // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
+        clsBuilder.setSmallIcon(R.drawable.icon_school)
+                .setContentTitle("서비스 앱" ).setContentText("서비스 앱")
+                .setContentIntent(pendingIntent);
+
+        // foreground 서비스로 실행한다.
+        startForeground(1, clsBuilder.build());
     }
 
     @Override
