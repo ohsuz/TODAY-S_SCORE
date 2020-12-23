@@ -39,13 +39,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.templates.TemplateActivity" />
-        <activity android:name=".ui.templates.templateMaker.MakerActivity1" />
-        <activity android:name=".ui.templates.templateMaker.MakerActivity2" /> <!-- Services -->
-        <service android:name=".services.phoneService" />
-        <service android:name=".services.sleepService" />
-        <service android:name=".services.wakeupService" />
-        <service android:name=".services.walkService" />
+
+        <activity android:name=".ui.templates.TemplateActivity"/>
+        <activity android:name=".ui.templates.templateMaker.MakerActivity1"/>
+        <activity android:name=".ui.templates.templateMaker.MakerActivity2"/>
+
+        <!-- Services -->
+        <service android:name=".services.phoneService"/>
+        <service android:name=".services.sleepService"/>
+        <service android:name=".services.wakeupService"/>
+        <service android:name=".services.walkService"/>
+
     </application>
 
 </manifest>

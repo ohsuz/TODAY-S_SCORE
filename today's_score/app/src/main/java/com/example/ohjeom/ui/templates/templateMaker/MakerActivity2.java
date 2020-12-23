@@ -117,21 +117,21 @@ public class MakerActivity2 extends AppCompatActivity {
 
         int i = 0;
         for (String s : selectedOptions) {
-            s = selectedOptions.get(i++);
+            s = selectedOptions.get(i++).replace(" ","");
             switch (s) {
-                case "기상":
+                case "기상검사":
                     wakeup_layout.setVisibility(View.VISIBLE);
                     components[0] = true;
                     break;
-                case "운동":
+                case "걸음수검사":
                     step_layout.setVisibility(View.VISIBLE);
                     components[2] = true;
                     break;
-                case "수면":
+                case "수면검사":
                     sleep_layout.setVisibility(View.VISIBLE);
                     components[1] = true;
                     break;
-                case "장소":
+                case "장소도착검사":
                     location_layout.setVisibility(View.VISIBLE);
                     components[4] = true;
                     if (!checkLocationServicesStatus()) {
@@ -140,7 +140,7 @@ public class MakerActivity2 extends AppCompatActivity {
                         PermissionChecker.checkRunTimePermission(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
                     }
                     break;
-                case "공부":
+                case "핸드폰사용량검사":
                     phone_layout.setVisibility(View.VISIBLE);
                     components[3] = true;
                     break;

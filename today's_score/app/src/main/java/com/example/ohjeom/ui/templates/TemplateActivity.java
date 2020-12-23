@@ -1,13 +1,16 @@
 package com.example.ohjeom.ui.templates;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -29,9 +32,11 @@ import com.example.ohjeom.adapters.LocationAdapter;
 import com.example.ohjeom.models.Location;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
-import com.example.ohjeom.services.startService;
+import com.example.ohjeom.models.Test;
+import com.example.ohjeom.ui.templates.templateMaker.MakerActivity2;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class TemplateActivity extends AppCompatActivity {
@@ -85,7 +90,7 @@ public class TemplateActivity extends AppCompatActivity {
         //if문으로 검사할것!
         //기상
         components = privateTemplate.getComponents();
-        if(components[0]==true)
+        if(components[0])
             wakeupLayout.setVisibility(View.VISIBLE);
 
         wakeupHour = privateTemplate.getWakeupHour();
@@ -98,7 +103,7 @@ public class TemplateActivity extends AppCompatActivity {
         wakeupTimePicker.setEnabled(false);
 
         //수면
-        if(components[1]==true)
+        if(components[1])
             sleepLayout.setVisibility(View.VISIBLE);
         sleepHour = privateTemplate.getSleepHour();
         sleepMin = privateTemplate.getSleepMin();
@@ -110,7 +115,7 @@ public class TemplateActivity extends AppCompatActivity {
         sleepTimePicker.setEnabled(false);
 
         //운동
-        if(components[2]==true)
+        if(components[2])
             walkLayout.setVisibility(View.VISIBLE);
         walkHour = privateTemplate.getWalkHour();
         walkMin = privateTemplate.getWalkMin();
@@ -146,7 +151,7 @@ public class TemplateActivity extends AppCompatActivity {
 
 
         //핸드폰 사용
-        if(components[3]==true)
+        if(components[3])
             phoneLayout.setVisibility(View.VISIBLE);
         startHour = privateTemplate.getStartHour();
         startMin = privateTemplate.getStartMin();
@@ -176,7 +181,7 @@ public class TemplateActivity extends AppCompatActivity {
         appcheckListView.setAdapter(appCheckAdapter);
 
         //장소
-        if(components[4]==true)
+        if(components[4])
             locationLayout.setVisibility(View.VISIBLE);
 
         RecyclerView locationListView = (RecyclerView) findViewById(R.id.location_listview);
@@ -195,17 +200,40 @@ public class TemplateActivity extends AppCompatActivity {
     }
     //Setting
     public void mOnClick(View v){
+        AlertDialog.Builder builder = new AlertDialog.Builder(TemplateActivity.this);
 
-        templates.get(position).setSelected(true);
+        View view = LayoutInflater.from(TemplateActivity.this)
+                .inflate(R.layout.dialog_template, null, false);
+        builder.setView(view);
 
-        Intent intentService = new Intent(this, startService.class);
-        intentService.putExtra("template",templates.get(position));
-        startService(intentService);
+        final Button registerBtn = (Button) view.findViewById(R.id.register_button);
+        final Button cancelBtn = (Button) view.findViewById(R.id.cancel_button);
 
-        Intent intentHome = new Intent(this, MainActivity.class);
-        intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intentHome.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intentHome);
-        finish();
+
+        final AlertDialog dialog = builder.create();
+        final Intent intentHome = new Intent(this, MainActivity.class);
+
+        registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                templates.get(position).setSelected(true);
+                templates.get(position).startExamination(getApplicationContext());
+                Test.setTemplate(privateTemplate); // 점수를 측정할 템플릿으로 이 템플릿을 설정
+
+                intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intentHome.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intentHome);
+                finish();
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        dialog.show();
     }
 }

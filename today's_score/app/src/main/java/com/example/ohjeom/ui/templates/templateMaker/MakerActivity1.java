@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MakerActivity1 extends AppCompatActivity {
 
-    final String[] options = {"기상","장소","운동","공부","수면"};
+    final String[] options = {"기상 검사","장소 도착 검사","걸음수 검사","핸드폰 사용량 검사","수면 검사"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
