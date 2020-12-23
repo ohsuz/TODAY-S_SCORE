@@ -117,21 +117,21 @@ public class MakerActivity2 extends AppCompatActivity {
 
         int i = 0;
         for (String s : selectedOptions) {
-            s = selectedOptions.get(i++).replace(" ","");
+            s = selectedOptions.get(i++);
             switch (s) {
-                case "기상검사":
+                case "기상":
                     wakeup_layout.setVisibility(View.VISIBLE);
                     components[0] = true;
                     break;
-                case "걸음수검사":
+                case "운동":
                     step_layout.setVisibility(View.VISIBLE);
                     components[2] = true;
                     break;
-                case "수면검사":
+                case "수면":
                     sleep_layout.setVisibility(View.VISIBLE);
                     components[1] = true;
                     break;
-                case "장소도착검사":
+                case "장소":
                     location_layout.setVisibility(View.VISIBLE);
                     components[4] = true;
                     if (!checkLocationServicesStatus()) {
@@ -140,7 +140,7 @@ public class MakerActivity2 extends AppCompatActivity {
                         PermissionChecker.checkRunTimePermission(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
                     }
                     break;
-                case "핸드폰사용량검사":
+                case "공부":
                     phone_layout.setVisibility(View.VISIBLE);
                     components[3] = true;
                     break;
@@ -450,111 +450,6 @@ public class MakerActivity2 extends AppCompatActivity {
 
         //보낼 데이터 : 템플릿 이름, 기상 시간 , 운동 시간&걸음 수, 핸드폰 앱 list&시작 시간&종료 시간, 장소 list(이름, 위도, 경도)&시간, 수면 시간
 
-        /*
-        검증 기능 test -> 원래는 데이터만 보내서 DB에 저장할 것이므로 현재 필요X
-        //기상 설정
-        Calendar wakeup_cal = Calendar.getInstance();
-        wakeup_cal.set(Calendar.HOUR_OF_DAY, wakeup_hour);
-        wakeup_cal.set(Calendar.MINUTE, wakeup_minute);
-        wakeup_cal.set(Calendar.SECOND, 0);
-        wakeup_time = wakeup_cal.getTimeInMillis();
-
-        //운동 설정
-        Calendar walk_cal = Calendar.getInstance();
-        walk_cal.set(Calendar.HOUR_OF_DAY, walk_hour);
-        walk_cal.set(Calendar.MINUTE, walk_minute);
-        walk_cal.set(Calendar.SECOND, 0);
-
-        //수면 설정
-        Calendar sleep_cal = Calendar.getInstance();
-        sleep_cal.set(Calendar.HOUR_OF_DAY, sleep_hour);
-        sleep_cal.set(Calendar.MINUTE, sleep_minute);
-        sleep_cal.set(Calendar.SECOND, 0);
-
-        //공부 설정
-        Calendar phone_cal = Calendar.getInstance();
-        phone_cal.set(Calendar.HOUR_OF_DAY, phone_hour);
-        phone_cal.set(Calendar.MINUTE, phone_minute);
-        phone_cal.set(Calendar.SECOND, 0);
-
-        Calendar phone_endcal = Calendar.getInstance();
-        phone_endcal.set(Calendar.HOUR_OF_DAY, phone_endhour);
-        phone_endcal.set(Calendar.MINUTE, phone_endminute);
-        phone_endcal.set(Calendar.SECOND, 0);
-
-        phone_time = phone_cal.getTimeInMillis();
-        phone_endtime = phone_endcal.getTimeInMillis();
-
-        List<ResolveInfo> checklist = ((App_infoAdapter) mAdapter).getchecklist();
-        ArrayList<String> packname = new ArrayList<>();
-        for (int i = 0; i < checklist.size(); i++) {
-            Log.d("패키지 이름", checklist.get(i).activityInfo.packageName);
-            ResolveInfo checkapp = checklist.get(i);
-            packname.add(checkapp.activityInfo.packageName);
-            Log.d("패키지 이름 :", packname.get(i));
-        }
-
-        //알람매니저
-        //기상
-        Intent wakeup_intent = new Intent(write.this, wakeup_service.class);
-        wakeup_intent.putExtra("wakeup_time", wakeup_time);
-        PendingIntent wakeup_sender = PendingIntent.getService(write.this, 0, wakeup_intent, 0);
-
-        AlarmManager wakeup_am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        wakeup_am.set(AlarmManager.RTC_WAKEUP, wakeup_time, wakeup_sender);
-
-        //운동
-        Intent walk_intent = new Intent(write.this, walk_service.class);
-        walk_intent.putExtra("set_count", set_count);
-        PendingIntent walk_sender = PendingIntent.getService(write.this, 0, walk_intent, 0);
-
-        AlarmManager walk_am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        walk_am.set(AlarmManager.RTC_WAKEUP, wakeup_cal.getTimeInMillis(), walk_sender);
-
-        //수면
-        Intent sleep_intent = new Intent(write.this, sleep_service.class);
-        PendingIntent sleep_sender = PendingIntent.getService(write.this, 0, sleep_intent, 0);
-
-        AlarmManager sleep_am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        sleep_am.set(AlarmManager.RTC_WAKEUP, sleep_cal.getTimeInMillis(), sleep_sender);
-
-        //공부
-        Intent phone_intent = new Intent(write.this, phone_service.class);
-        phone_intent.putExtra("packname", packname);
-        phone_intent.putExtra("phone_time", phone_endtime);
-        phone_intent.putExtra("phone_endtime", phone_time);
-        PendingIntent phone_sender = PendingIntent.getService(write.this, 0, phone_intent, 0);
-
-        AlarmManager phone_am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        phone_am.set(AlarmManager.RTC_WAKEUP, phone_endcal.getTimeInMillis(), phone_sender);
-
-        //타이머 설정
-        //기상
-        wakeup_endtime = wakeup_time + (60 * 60 * 1000);
-        Date set_wakeup = new Date(wakeup_endtime);
-
-        wakeup_Timer = new Timer();
-        wakeup_Timer.schedule(new Wakeup_Timer(), set_wakeup);
-
-        //운동
-        Date set_walk = new Date(walk_cal.getTimeInMillis());
-
-        walk_Timer = new Timer();
-        walk_Timer.schedule(new Walk_Timer(), set_walk);
-
-        //수면
-        if (sleep_cal.getTimeInMillis() - wakeup_time >= 0) {
-            wakeup_cal.add(Calendar.DATE, 1);
-            sleep_endtime = wakeup_cal.getTimeInMillis();
-        } else {
-            sleep_endtime = wakeup_cal.getTimeInMillis();
-        }
-
-        Date set_sleep = new Date(sleep_endtime);
-
-        sleep_Timer = new Timer();
-        sleep_Timer.schedule(new Sleep_Timer(), set_sleep);
-        */
     }
 
     @Override

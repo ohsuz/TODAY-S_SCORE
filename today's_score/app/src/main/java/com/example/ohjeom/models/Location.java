@@ -1,26 +1,15 @@
 package com.example.ohjeom.models;
 
-public class Location {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public class Location implements Serializable {
     private String name;
     private double lat;
     private double lng;
     private int locationHour, locationMin;
-
-    public int getLocationHour() {
-        return locationHour;
-    }
-
-    public void setLocationHour(int locationHour) {
-        this.locationHour = locationHour;
-    }
-
-    public int getLocationMin() {
-        return locationMin;
-    }
-
-    public void setLocationMin(int locationMin) {
-        this.locationMin = locationMin;
-    }
 
     public String getName() {
         return name;
@@ -44,5 +33,21 @@ public class Location {
 
     public void setLng(double lng) {
         this.lng = lng;
+    }
+
+    public int getLocationHour() {
+        return locationHour;
+    }
+
+    public void setLocationHour(int locationHour) {
+        this.locationHour = locationHour;
+    }
+
+    public int getLocationMin() {
+        return locationMin;
+    }
+
+    public void setLocationMin(int locationMin) {
+        this.locationMin = locationMin;
     }
 }
