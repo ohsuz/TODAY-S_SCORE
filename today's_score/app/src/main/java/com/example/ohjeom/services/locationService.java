@@ -81,8 +81,6 @@ public class locationService extends Service {
         location.setLocationHour(hour);
         location.setLocationMin(min);
 
-        Log.d("ㅡㅡ", String.valueOf(startId));
-
         locationTimer = new Timer();
         locationTimer.schedule(new LocationTimer(),0, 10000);
 
