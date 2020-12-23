@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.templates.TemplatesFragment">
+
+    <TextView
+        android:text="오늘의 점수"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.1"
+        android:textAppearance="@style/title"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:background="@color/colorPrimary"/>
+
+    <ListView
+        android:id="@+id/score_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:padding="30dp"
+        android:dividerHeight="20dp"
+        android:divider="#00000000"/>
+
+</LinearLayout>

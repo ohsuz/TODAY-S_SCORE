@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/icon_school"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/icon_school"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="50dp"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorTemplateBackground"/>
+
+    <!-- Layout 배경 꾸미기 끝 -->
+
+    <EditText
+        android:id="@+id/temp_name"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:hint="Template Name"
+        android:textAppearance="@style/title"
+        android:textColor="#fff"
+        android:textAlignment="center"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@color/colorPrimary"/>
+
+    <ImageView
+        android:id="@+id/next"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="21dp"
+        android:layout_marginRight="15dp"
+        app:srcCompat="@drawable/icon_next" />
+
+    <!-- 상단 바 부분 끝 -->
+
+    <ListView
+        android:id="@+id/option_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="70dp"
+        android:padding="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:choiceMode = "multipleChoice"
+        android:dividerHeight="20dp"
+        android:divider="#00000000"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

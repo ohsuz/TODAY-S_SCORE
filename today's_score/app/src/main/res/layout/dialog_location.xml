@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/custom_button">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/jua"
+        android:text="목표 위치"
+        android:textSize="25sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/autocomplete_fragment"
+            class="com.google.android.libraries.places.widget.AutocompleteSupportFragment" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/jua"
+        android:text="목표 도착 시간"
+        android:textSize="25sp" />
+
+    <TimePicker
+        android:id="@+id/location_timepicker"
+        android:layout_width="170dp"
+        android:layout_height="130dp"
+        android:timePickerMode="spinner"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="등록"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/jua"
+        android:background="@drawable/custom_button"/>
+
+</LinearLayout>

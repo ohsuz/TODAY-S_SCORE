@@ -1,0 +1,30 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorRed</item>
+    </style>
+
+    <!-- Bottom Navigation View 폰트 설정 -->
+    <style name="Widget.BottomNavigationView"
+        parent="Widget.Design.BottomNavigationView">
+        <item name="fontFamily">@font/jua</item>
+    </style>
+
+    <!-- Tab Layout 폰트 설정 -->
+    <style name="tab_style" parent="@android:style/TextAppearance.Widget.TabWidget">
+        <item name="android:fontFamily">@font/jua</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+
+    <!-- Title bar 폰트 설정 -->
+    <style name="title" parent="@style/TextAppearance.AppCompat">
+        <item name="android:textColor">#fff</item>
+        <item name="android:textSize">35sp</item>
+        <item name="android:fontFamily">@font/jua</item>
+    </style>
+
+
+</resources>

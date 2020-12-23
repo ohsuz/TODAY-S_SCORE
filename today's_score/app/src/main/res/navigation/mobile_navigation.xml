@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_statistics"
+        android:name="com.example.ohjeom.ui.statistics.StatisticsFragment"
+        android:label="@string/title_statistics"
+        tools:layout="@layout/fragment_statistics" />
+
+    <fragment
+        android:id="@+id/navigation_templates"
+        android:name="com.example.ohjeom.ui.templates.TemplatesFragment"
+        android:label="@string/title_templates"
+        tools:layout="@layout/fragment_templates" />
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.ohjeom.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_rankings"
+        android:name="com.example.ohjeom.ui.rankings.RankingsFragment"
+        android:label="@string/title_rankings"
+        tools:layout="@layout/fragment_rankings" />
+
+    <fragment
+        android:id="@+id/navigation_groups"
+        android:name="com.example.ohjeom.ui.groups.GroupsFragment"
+        android:label="@string/title_groups"
+        tools:layout="@layout/fragment_groups" />
+</navigation>

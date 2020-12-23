@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/template_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:src="@drawable/icon_evaluation"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="25dp"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/template_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_gravity="center"
+        android:text="템플릿 이름"
+        android:fontFamily="@font/jua"
+        android:textSize="25sp"
+        android:gravity="center_vertical"/>
+
+</LinearLayout>

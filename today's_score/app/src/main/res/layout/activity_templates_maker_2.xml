@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <!-- Layout 배경 꾸미기: view -> icon_school -> framelayout -->
+    <View
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:background="@color/colorPrimary"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <ImageView
+        android:id="@+id/icon_school"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/icon_school"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorTemplateBackground">
+    </FrameLayout>
+    <!-- Layout 배경 꾸미기: view -> icon_school -> framelayout -->
+
+    <!-- 상단바:  temp_name -> save -->
+    <TextView
+        android:id="@+id/temp_name"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="Template Name"
+        android:textAlignment="center"
+        android:textAppearance="@style/title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/set_button"
+        android:onClick="mOnClick"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="21dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon_pencil" />
+    <!-- 상단바:  temp_name -> save -->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        android:fadingEdge="none"
+        android:fillViewport="true"
+        android:orientation="vertical"
+        android:scrollbars="none"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- 기상 점수 시작 -->
+            <LinearLayout
+                android:id="@+id/wakeup_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/rounded"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/half_rounded"
+                    android:fontFamily="@font/jua"
+                    android:gravity="center"
+                    android:padding="7dp"
+                    android:text="기상 점수 측정"
+                    android:textColor="#FFFAEC"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/jua"
+                    android:text="목표 기상 시간"
+                    android:textSize="25sp" />
+
+                <TimePicker
+                    android:id="@+id/wakeup_timepicker"
+                    android:layout_width="170dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="center"
+                    android:timePickerMode="spinner" />
+            </LinearLayout>
+            <!-- 기상 점수 끝 -->
+
+            <!-- 수면 점수 시작 -->
+            <LinearLayout
+                android:id="@+id/sleep_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/rounded"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/half_rounded"
+                    android:fontFamily="@font/jua"
+                    android:gravity="center"
+                    android:padding="7dp"
+                    android:text="수면 점수 측정"
+                    android:textColor="#FFFAEC"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/jua"
+                    android:text="목표 수면 시간"
+                    android:textSize="25sp" />
+
+                <TimePicker
+                    android:id="@+id/sleep_timepicker"
+                    android:layout_width="170dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="center_horizontal"
+                    android:timePickerMode="spinner" />
+
+            </LinearLayout>
+            <!-- 수면 점수 끝 -->
+
+            <!-- 운동 시작 -->
+            <LinearLayout
+                android:id="@+id/step_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/rounded"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/half_rounded"
+                    android:fontFamily="@font/jua"
+                    android:gravity="center"
+                    android:padding="7dp"
+                    android:text="운동 점수 측정"
+                    android:textColor="#FFFAEC"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/jua"
+                    android:text="목표 걸음 수"
+                    android:textSize="25sp" />
+
+                <RelativeLayout
+                    android:id="@+id/SeekbarLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp">
+
+                    <ImageView
+                        android:id="@+id/myImageView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_thumbicon" />
+
+                    <TextView
+                        android:id="@+id/thumbtext"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_alignLeft="@id/myImageView"
+                        android:layout_alignTop="@id/myImageView"
+                        android:layout_alignRight="@id/myImageView"
+                        android:layout_alignBottom="@id/myImageView"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_marginBottom="14dp"
+                        android:fontFamily="@font/jua"
+                        android:textColor="#FFFAEC"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textSize="10sp" />
+                </RelativeLayout>
+
+                <SeekBar
+                    android:id="@+id/countsb"
+                    android:layout_width="289dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:max="10"
+                    android:progress="5"
+                    android:thumb="@drawable/custom_seekbar_thumb"
+                    android:progressDrawable="@drawable/custom_seekbar"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/jua"
+                    android:text="측정 종료 시간"
+                    android:textSize="25sp" />
+
+                <TimePicker
+                    android:id="@+id/walk_timepicker"
+                    android:layout_width="170dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="center_horizontal"
+                    android:timePickerMode="spinner" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/phone_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/rounded"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/half_rounded"
+                    android:fontFamily="@font/jua"
+                    android:gravity="center"
+                    android:padding="7dp"
+                    android:text="핸드폰 사용 점수 측정"
+                    android:textColor="#FFFAEC"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/jua"
+                    android:text="목표 핸드폰 사용시간"
+                    android:textSize="25sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/jua"
+                            android:text="시작 시간"
+                            android:textSize="20sp" />
+                        <TimePicker
+                            android:id="@+id/phone_timepicker"
+                            android:layout_width="170dp"
+                            android:layout_height="130dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="10dp"
+                            android:timePickerMode="spinner" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/jua"
+                            android:text="종료 시간"
+                            android:textSize="20sp" />
+                        <TimePicker
+                            android:id="@+id/phone_endtimepicker"
+                            android:layout_width="170dp"
+                            android:layout_height="130dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="10dp"
+                            android:timePickerMode="spinner" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/jua"
+                    android:text="측정 앱"
+                    android:textSize="25sp" />
+
+                <Button
+                    android:id="@+id/appButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/custom_button_yellow"
+                    android:fontFamily="@font/jua"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="앱 추가" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/appcheck_listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:scrollbars="vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/location_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/rounded"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/half_rounded"
+                    android:fontFamily="@font/jua"
+                    android:gravity="center"
+                    android:padding="7dp"
+                    android:text="장소 도착 점수 측정"
+                    android:textColor="#FFFAEC"
+                    android:textSize="28sp" />
+
+                <Button
+                    android:id="@+id/location_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/custom_button_yellow"
+                    android:fontFamily="@font/jua"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="장소 추가" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/location_listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:scrollbars="vertical" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

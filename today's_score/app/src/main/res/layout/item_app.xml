@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <CheckBox
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:checked="false"
+        android:id="@+id/checkbox"/>
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/app_icon"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/app_name"
+        android:text="앱 이름"
+        android:fontFamily="@font/jua"
+        android:textSize="15sp"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp"
+        android:gravity="center_vertical"/>
+
+</LinearLayout>
