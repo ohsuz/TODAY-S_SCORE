@@ -184,12 +184,15 @@ public class startService extends Service {
 
             AlarmManager phoneAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             phoneAM.setRepeating(AlarmManager.RTC_WAKEUP,stopTime, AlarmManager.INTERVAL_DAY,phoneSender);
-
         }
+
         //장소 검사 시작
         if(components[4]){
-            PendingIntent locationSender;
-            AlarmManager locationAM;
+            Intent locationIntent = new Intent(this, locationService.class);
+            locationIntent.putExtra("locations",template.getLocations());
+            startService(locationIntent);
+
+            /*
             int count = 0;
             for(Location location:template.getLocations()) {
                 Calendar locationCal = Calendar.getInstance();
@@ -211,13 +214,7 @@ public class startService extends Service {
                 locationAM.setRepeating(AlarmManager.RTC_WAKEUP, locationTime, AlarmManager.INTERVAL_DAY,locationSender);
                 count++;
             }
-        }
-    }
-
-    private class LocationThread extends Thread {
-        private static final String TAG = "LocationThread";
-        public void run(){
-
+             */
         }
     }
 
