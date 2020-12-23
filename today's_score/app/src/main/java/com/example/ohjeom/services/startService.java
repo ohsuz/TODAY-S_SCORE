@@ -188,33 +188,10 @@ public class startService extends Service {
 
         //장소 검사 시작
         if(components[4]){
+            locationService locationservice = new locationService();
             Intent locationIntent = new Intent(this, locationService.class);
             locationIntent.putExtra("locations",template.getLocations());
             startService(locationIntent);
-
-            /*
-            int count = 0;
-            for(Location location:template.getLocations()) {
-                Calendar locationCal = Calendar.getInstance();
-                locationCal.set(Calendar.HOUR_OF_DAY, location.getLocationHour());
-                locationCal.set(Calendar.MINUTE, location.getLocationMin());
-                locationCal.set(Calendar.SECOND, 0);
-
-                long locationTime = locationCal.getTimeInMillis();
-
-                Intent locationIntent = new Intent(this, locationService.class);
-                locationIntent.putExtra("name",location.getName());
-                locationIntent.putExtra("lat",location.getLat());
-                locationIntent.putExtra("lng",location.getLng());
-                locationIntent.putExtra("hour",location.getLocationHour());
-                locationIntent.putExtra("min",location.getLocationMin());
-                Log.d("ㅇㅇ", location.getName());
-                locationSender = PendingIntent.getService(this, count,locationIntent, 0);
-                locationAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-                locationAM.setRepeating(AlarmManager.RTC_WAKEUP, locationTime, AlarmManager.INTERVAL_DAY,locationSender);
-                count++;
-            }
-             */
         }
     }
 

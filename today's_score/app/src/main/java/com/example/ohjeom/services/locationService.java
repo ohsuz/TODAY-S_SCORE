@@ -22,6 +22,9 @@ import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Location;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -31,9 +34,8 @@ public class locationService extends Service {
 
     private static final String TAG = "장소";
 
-    private int tryNum;
-    private Location location = new Location() , real = new Location();
-    private Timer locationTimer;
+    private ArrayList<Location> locations;
+    private Location real = new Location();
 
     public locationService() {
     }
@@ -69,20 +71,11 @@ public class locationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        tryNum = 0;
-        String name = intent.getStringExtra("name");
-        double lat = intent.getDoubleExtra("lat",0);
-        double lng = intent.getDoubleExtra("lng",0);
-        int hour = intent.getIntExtra("hour",0);
-        int min = intent.getIntExtra("min",0);
-        location.setName(name);
-        location.setLat(lat);
-        location.setLng(lng);
-        location.setLocationHour(hour);
-        location.setLocationMin(min);
+        Log.d("야!!","왜안돼요!!");
+        locations = (ArrayList<Location>) intent.getSerializableExtra("locations");
 
-        locationTimer = new Timer();
-        locationTimer.schedule(new LocationTimer(),0, 10000);
+        LocationThread thread = new LocationThread();
+        thread.start();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -99,7 +92,37 @@ public class locationService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    private class LocationThread extends Thread {
+        private static final String TAG = "Location Thread";
+        public void run(){
+            for(Location s:locations){
+
+                Log.d("야!!","왜안돼!!");
+                Timer l_timer = new Timer();
+                l_timer.schedule(new LocationTimer(l_timer,s),0,10000);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }
+    }
+
     class LocationTimer extends TimerTask {
+
+        private Timer timer;
+        private Location location;
+        private int tryNum;
+
+        LocationTimer(Timer timer,Location location)
+        {
+            this.timer = timer;
+            tryNum = 0;
+            this.location = location;
+        }
+
         @Override
         public void run(){
             int locationScore = getLocationScore(locationService.this, real, location, tryNum);
@@ -110,8 +133,8 @@ public class locationService extends Service {
             } else {
                 Log.d(TAG, "완벽한 "+locationScore+"점");
                 // @@@@ 여기서 점수를 보내면 됨
-                locationTimer.cancel();
-                stopSelf();
+                timer.cancel();
+                Log.d(TAG, "측정 종료~");
             }
         }
     }
@@ -121,13 +144,13 @@ public class locationService extends Service {
         int score = 0;
         if (distance > 0 && distance <= 0.002) { //@@@ 0.001로 바꿀예정
             switch(tryNum) {
-                case 0: // 제시간에 도착 시, 100점
+                case 0: //제시간에 도착 시, 100점
                     score = 100;
                     break;
-                case 1: // 30분 후에 도착 시, 70점
+                case 1: //30분 후에 도착 시, 70점
                     score = 70;
                     break;
-                case 2: // 1시간 후에 도착 시, 50점
+                case 2: //1시간 후에 도착 시, 50점
                     score = 50;
                     break;
             }
