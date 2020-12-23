@@ -33,6 +33,7 @@ import com.example.ohjeom.models.Location;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.models.Test;
+import com.example.ohjeom.services.startService;
 import com.example.ohjeom.ui.templates.templateMaker.MakerActivity2;
 
 import java.util.ArrayList;
@@ -217,12 +218,16 @@ public class TemplateActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 templates.get(position).setSelected(true);
-                templates.get(position).startExamination(getApplicationContext());
                 Test.setTemplate(privateTemplate); // 점수를 측정할 템플릿으로 이 템플릿을 설정
+
+                Intent intentService = new Intent(TemplateActivity.this, startService.class);
+                intentService.putExtra("template",templates.get(position));
+                startService(intentService);
 
                 intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intentHome.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentHome);
+                dialog.dismiss();
                 finish();
             }
         });
@@ -230,7 +235,7 @@ public class TemplateActivity extends AppCompatActivity {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                dialog.dismiss();
             }
         });
 
