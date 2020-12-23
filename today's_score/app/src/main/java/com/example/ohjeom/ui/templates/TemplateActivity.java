@@ -77,7 +77,6 @@ public class TemplateActivity extends AppCompatActivity {
         templates = Templates.getTemplates();
         privateTemplate = templates.get(position);
 
-        //
         TextView templateName = (TextView)findViewById(R.id.temp_name);
         templateName.setText(privateTemplate.getTemplateName());
 
