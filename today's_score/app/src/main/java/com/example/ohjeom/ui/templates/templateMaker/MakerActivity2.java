@@ -378,7 +378,6 @@ public class MakerActivity2 extends AppCompatActivity {
                     String appActivity = info.activityInfo.name;
                     String appPackageName = info.activityInfo.packageName;
                     String appName = info.loadLabel(pm).toString();
-
                     Drawable drawable = info.activityInfo.loadIcon(pm);
                     Log.d("TEST", "appName : " + appName + ", appActivity : " + appActivity + ", appPackageName : " + appPackageName);
                 }

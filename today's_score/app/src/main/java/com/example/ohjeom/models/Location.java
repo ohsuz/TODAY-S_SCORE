@@ -1,8 +1,4 @@
 package com.example.ohjeom.models;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.Serializable;
 
 public class Location implements Serializable {
