@@ -1,14 +1,19 @@
 package com.example.ohjeom.ui.templates;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -16,6 +21,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -24,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
+import com.example.ohjeom.adapters.AppAdapter;
 import com.example.ohjeom.adapters.AppCheckAdapter;
 import com.example.ohjeom.adapters.LocationAdapter;
 import com.example.ohjeom.models.Location;
@@ -32,7 +39,10 @@ import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.models.Test;
 import com.example.ohjeom.services.StartService;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class TemplateActivity extends AppCompatActivity {
@@ -43,11 +53,13 @@ public class TemplateActivity extends AppCompatActivity {
     private int sleepHour, sleepMin;
     private int startHour, startMin;
     private int stopHour, stopMin;
+    private int startMonth, startDay;
     private RelativeLayout seekbarLayout;
     private TextView thumbText;
     private SeekBar countSb;
     private boolean[] components;
     private Template privateTemplate;
+    private Calendar startCal;
 
     private ArrayList<Template> templates;
     private ArrayList<Location> locationList;
@@ -193,6 +205,7 @@ public class TemplateActivity extends AppCompatActivity {
         locationListView.addItemDecoration(dividerItemDecoration);
 
     }
+
     //Setting
     public void mOnClick(View v){
         AlertDialog.Builder builder = new AlertDialog.Builder(TemplateActivity.this);
@@ -200,6 +213,19 @@ public class TemplateActivity extends AppCompatActivity {
         View view = LayoutInflater.from(TemplateActivity.this)
                 .inflate(R.layout.dialog_template, null, false);
         builder.setView(view);
+
+        startCal = Calendar.getInstance();
+        startMonth = startCal.get(Calendar.MONTH);
+        startDay = startCal.get(Calendar.DAY_OF_MONTH);
+
+        DatePicker datePicker = (DatePicker) view.findViewById(R.id.datePicker);
+        datePicker.init(startCal.get(Calendar.YEAR), startCal.get(Calendar.MONTH), startCal.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                startMonth = month;
+                startDay = dayOfMonth;
+            }
+        });
 
         final Button registerBtn = (Button) view.findViewById(R.id.register_button);
         final Button cancelBtn = (Button) view.findViewById(R.id.cancel_button);
@@ -216,6 +242,8 @@ public class TemplateActivity extends AppCompatActivity {
 
                 Intent intentService = new Intent(TemplateActivity.this, StartService.class);
                 intentService.putExtra("template",templates.get(position));
+                intentService.putExtra("month",startMonth);
+                intentService.putExtra("day",startDay);
                 startService(intentService);
 
                 intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -257,8 +257,8 @@ public class MakerActivity2 extends AppCompatActivity {
 
                 final Button button = (Button) view.findViewById(R.id.button);
 
-                wakeupHour = currentTime.get(Calendar.HOUR_OF_DAY);
-                wakeupMin = currentTime.get(Calendar.MINUTE);
+                locationHour = currentTime.get(Calendar.HOUR_OF_DAY);
+                locationMin = currentTime.get(Calendar.MINUTE);
 
                 locationTimePicker = (TimePicker) view.findViewById(R.id.location_timepicker);
                 locationTimePicker.setIs24HourView(true);

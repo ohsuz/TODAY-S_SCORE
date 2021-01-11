@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -25,8 +26,13 @@ import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Location;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LocationService1 extends Service {
     private static final String TAG = "locationService";

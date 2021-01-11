@@ -28,6 +28,9 @@ import java.util.TimerTask;
 public class StartService extends Service {
     private String TAG = "StartService";
     private Template template;
+    private int month, day;
+    private PendingIntent wakeupSender,sleepSender,walkSender,phoneSender,locationSender1,locationSender2,locationSender3;
+    private AlarmManager wakeupAM,sleepAM,walkAM,phoneAM,locationAM1,locationAM2,locationAM3;
 
     public StartService() {
     }
@@ -54,7 +57,7 @@ public class StartService extends Service {
 
         // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
         clsBuilder.setSmallIcon(R.drawable.icon_school)
-                .setContentTitle("서비스 앱" ).setContentText("서비스 앱")
+                .setContentTitle("서비스 앱").setContentText("서비스 앱")
                 .setContentIntent(pendingIntent);
 
         // foreground 서비스로 실행한다.
@@ -64,12 +67,40 @@ public class StartService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         template = (Template) intent.getSerializableExtra("template");
+        month = intent.getIntExtra("month",0);
+        day = intent.getIntExtra("day",0);
         startExamination();
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
+
+        PendingIntent[] piList = new PendingIntent[]{wakeupSender,sleepSender,walkSender,phoneSender,locationSender1,locationSender2,locationSender3};
+        AlarmManager[] amList = new AlarmManager[]{wakeupAM, sleepAM, walkAM, phoneAM, locationAM1,locationAM2,locationAM3};
+
+        for(int i=0;i<5;i++)
+            if(amList[i] != null) {
+                Log.d("알람해제:", String.valueOf(amList[i]));
+                amList[i].cancel(piList[i]);
+                piList[i].cancel();
+            }
+
+        Class[] serviceName = new Class[]{WakeupService.class, SleepService.class, WalkService.class, PhoneService.class,
+                LocationService1.class, LocationService2.class, LocationService3.class};
+        String[] serviceList = {"com.example.ohjeom.services.WakeupService","com.example.ohjeom.services.SleepService","com.example.ohjeom.services.WalkService",
+                "com.example.ohjeom.services.PhoneService", "com.example.ohjeom.services.LocationService1",
+                "com.example.ohjeom.services.LocationService2", "com.example.ohjeom.services.LocationService3"};
+
+        for(int i=0;i<5;i++){
+            if(isServiceRunning(serviceList[i])){
+                Intent intent = new Intent(StartService.this, serviceName[i]);
+                stopService(intent);
+            }
+            else
+                Log.d("작동중 아님",serviceList[i]);
+        }
+
         super.onDestroy();
     }
 
@@ -84,6 +115,8 @@ public class StartService extends Service {
         //기상 검사 시작
         if(components[0]) {
             Calendar wakeupCal = Calendar.getInstance();
+            wakeupCal.set(Calendar.MONTH, month);
+            wakeupCal.set(Calendar.DAY_OF_MONTH, day);
             wakeupCal.set(Calendar.HOUR_OF_DAY, template.getWakeupHour());
             wakeupCal.set(Calendar.MINUTE,template.getWakeupMin());
             wakeupCal.set(Calendar.SECOND, 0);
@@ -91,9 +124,9 @@ public class StartService extends Service {
 
             Intent wakeupIntent = new Intent(this, WakeupService.class);
             wakeupIntent.putExtra("wakeupTime", wakeupTime);
-            PendingIntent wakeupSender = PendingIntent.getService(this, 0, wakeupIntent, 0);
+            wakeupSender = PendingIntent.getService(this, 0, wakeupIntent, 0);
 
-            AlarmManager wakeupAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            wakeupAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             wakeupAM.setRepeating(AlarmManager.RTC_WAKEUP, wakeupTime, AlarmManager.INTERVAL_DAY,wakeupSender);
 
             //타이머 설정
@@ -107,20 +140,25 @@ public class StartService extends Service {
         //수면 검사 시작
         if(components[1]){
             Calendar sleepCal = Calendar.getInstance();
+            sleepCal.set(Calendar.MONTH, month);
+            sleepCal.set(Calendar.DAY_OF_MONTH, day);
             sleepCal.set(Calendar.HOUR_OF_DAY, template.getSleepHour());
             sleepCal.set(Calendar.MINUTE, template.getSleepMin());
             sleepCal.set(Calendar.SECOND, 0);
 
             Calendar wakeupCal = Calendar.getInstance();
+            wakeupCal.set(Calendar.MONTH, month);
+            wakeupCal.set(Calendar.DAY_OF_MONTH, day);
             wakeupCal.set(Calendar.HOUR_OF_DAY, template.getWakeupHour());
             wakeupCal.set(Calendar.MINUTE, template.getWakeupMin());
             wakeupCal.set(Calendar.SECOND, 0);
             long wakeupTime = wakeupCal.getTimeInMillis();
 
             Intent sleepIntent = new Intent(this, SleepService.class);
+            sleepSender = PendingIntent.getService(this, 0, sleepIntent, 0);
             PendingIntent sleepSender = PendingIntent.getService(this, 0, sleepIntent, 0);
 
-            AlarmManager sleepAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            sleepAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             sleepAM.setRepeating(AlarmManager.RTC_WAKEUP, sleepCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY,sleepSender);
 
             //타이머 설정
@@ -139,21 +177,25 @@ public class StartService extends Service {
         //걸음수 검사 시작
         if(components[2]){
             Calendar walkCal = Calendar.getInstance();
+            walkCal.set(Calendar.MONTH, month);
+            walkCal.set(Calendar.DAY_OF_MONTH, day);
             walkCal.set(Calendar.HOUR_OF_DAY, template.getWalkHour());
             walkCal.set(Calendar.MINUTE, template.getWalkMin());
             walkCal.set(Calendar.SECOND, 0);
 
             Calendar walkstartCal = Calendar.getInstance();
+            walkstartCal.set(Calendar.MONTH, month);
+            walkstartCal.set(Calendar.DAY_OF_MONTH, day);
             walkstartCal.set(Calendar.HOUR_OF_DAY, template.getWakeupHour());
             walkstartCal.set(Calendar.MINUTE, template.getWakeupMin());
             walkstartCal.set(Calendar.SECOND, 0);
 
             Intent walkIntent = new Intent(this, WalkService.class);
             walkIntent.putExtra("walkCount", template.getWalkCount());
-            PendingIntent walk_sender = PendingIntent.getService(this, 0, walkIntent, 0);
+            walkSender = PendingIntent.getService(this, 0, walkIntent, 0);
 
-            AlarmManager walkAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-            walkAM.setRepeating(AlarmManager.RTC_WAKEUP,walkstartCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY,walk_sender);
+            walkAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            walkAM.setRepeating(AlarmManager.RTC_WAKEUP,walkstartCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY,walkSender);
 
             //타이머 설정
             Date walkStop = new Date(walkCal.getTimeInMillis());
@@ -165,11 +207,15 @@ public class StartService extends Service {
         //핸드폰 사용 검사 시작
         if(components[3]){
             Calendar startCal = Calendar.getInstance();
+            startCal.set(Calendar.MONTH, month);
+            startCal.set(Calendar.DAY_OF_MONTH, day);
             startCal.set(Calendar.HOUR_OF_DAY, template.getStartHour());
             startCal.set(Calendar.MINUTE, template.getSleepMin());
             startCal.set(Calendar.SECOND, 0);
 
             Calendar stopCal = Calendar.getInstance();
+            stopCal.set(Calendar.MONTH, month);
+            stopCal.set(Calendar.DAY_OF_MONTH, day);
             stopCal.set(Calendar.HOUR_OF_DAY, template.getStopHour());
             stopCal.set(Calendar.MINUTE, template.getStopMin());
             stopCal.set(Calendar.SECOND, 0);
@@ -181,14 +227,21 @@ public class StartService extends Service {
             phoneIntent.putExtra("appNames", (Serializable) template.getAppNames());
             phoneIntent.putExtra("startTime",startTime);
             phoneIntent.putExtra("stopTime",stopTime);
-            PendingIntent phoneSender = PendingIntent.getService(this, 0, phoneIntent, 0);
+            phoneSender = PendingIntent.getService(this, 0, phoneIntent, 0);
 
-            AlarmManager phoneAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            phoneAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             phoneAM.setRepeating(AlarmManager.RTC_WAKEUP,stopTime, AlarmManager.INTERVAL_DAY,phoneSender);
         }
 
         //장소 검사 시작
         if(components[4]){
+
+            Calendar locationCal = Calendar.getInstance();
+            locationCal.set(Calendar.MONTH, month);
+            locationCal.set(Calendar.DAY_OF_MONTH, day);
+
+            long locationTime = locationCal.getTimeInMillis();
+
             //LocationService locationService = new LocationService(); @@@@@@@@ 안 쓰임
             //locationIntent.putExtra("locations",template.getLocations());
             Intent locationIntent1 = new Intent(this, LocationService1.class);
@@ -198,21 +251,38 @@ public class StartService extends Service {
             switch (template.getLocations().size()) {
                 case 1:
                     locationIntent1.putExtra("location",template.getLocations().get(0));
-                    startService(locationIntent1);
+                    locationSender1 = PendingIntent.getService(this, 0, locationIntent1, 0);
+
+                    locationAM1 = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                    locationAM1.setRepeating(AlarmManager.RTC_WAKEUP,locationTime, AlarmManager.INTERVAL_DAY,locationSender1);
                     break;
                 case 2:
                     locationIntent1.putExtra("location",template.getLocations().get(0));
                     locationIntent2.putExtra("location",template.getLocations().get(1));
-                    startService(locationIntent1);
-                    startService(locationIntent2);
+
+                    locationSender1 = PendingIntent.getService(this, 0, locationIntent1, 0);
+                    locationSender2 = PendingIntent.getService(this, 0, locationIntent2, 0);
+
+                    locationAM1 = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                    locationAM1.setRepeating(AlarmManager.RTC_WAKEUP,locationTime, AlarmManager.INTERVAL_DAY,locationSender1);
+                    locationAM2 = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                    locationAM2.setRepeating(AlarmManager.RTC_WAKEUP,locationTime, AlarmManager.INTERVAL_DAY,locationSender2);
                     break;
                 case 3:
                     locationIntent1.putExtra("location",template.getLocations().get(0));
                     locationIntent2.putExtra("location",template.getLocations().get(1));
-                    locationIntent3.putExtra("location",template.getLocations().get(1));
-                    startService(locationIntent1);
-                    startService(locationIntent2);
-                    startService(locationIntent3);
+                    locationIntent3.putExtra("location",template.getLocations().get(2));
+
+                    locationSender1 = PendingIntent.getService(this, 0, locationIntent1, 0);
+                    locationSender2 = PendingIntent.getService(this, 0, locationIntent2, 0);
+                    locationSender3 = PendingIntent.getService(this, 0, locationIntent3, 0);
+
+                    locationAM1 = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                    locationAM1.setRepeating(AlarmManager.RTC_WAKEUP,locationTime, AlarmManager.INTERVAL_DAY,locationSender1);
+                    locationAM2 = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                    locationAM2.setRepeating(AlarmManager.RTC_WAKEUP,locationTime, AlarmManager.INTERVAL_DAY,locationSender2);
+                    locationAM3 = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                    locationAM3.setRepeating(AlarmManager.RTC_WAKEUP,locationTime, AlarmManager.INTERVAL_DAY,locationSender3);
                     break;
                 default:
                     Log.d(TAG, "SWITCH DEFAULT");
