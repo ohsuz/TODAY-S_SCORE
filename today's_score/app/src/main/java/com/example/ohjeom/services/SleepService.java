@@ -22,9 +22,9 @@ import com.example.ohjeom.R;
 
 import java.util.Calendar;
 
-public class sleepService extends Service implements SensorEventListener {
+public class SleepService extends Service implements SensorEventListener {
 
-    public sleepService() {
+    public SleepService() {
     }
 
     private SensorManager sensorManager;
@@ -39,8 +39,8 @@ public class sleepService extends Service implements SensorEventListener {
     @Override
     public void onCreate() {
         super.onCreate();
-        Intent clsIntent = new Intent(sleepService.this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(sleepService.this, 0, clsIntent, 0);
+        Intent clsIntent = new Intent(SleepService.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(SleepService.this, 0, clsIntent, 0);
 
         NotificationCompat.Builder clsBuilder;
         if( Build.VERSION.SDK_INT >= 26 )

@@ -21,21 +21,21 @@ import com.example.ohjeom.R;
 
 import java.util.Calendar;
 
-public class wakeupService extends Service implements SensorEventListener {
+public class WakeupService extends Service implements SensorEventListener {
 
     private SensorManager sensorManager;
     private Sensor stepDetectorSensor;
     private int walkCount = 0;
     private long wakeupTime;
 
-    public wakeupService() {
+    public WakeupService() {
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Intent clsIntent = new Intent(wakeupService.this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(wakeupService.this, 0, clsIntent, 0);
+        Intent clsIntent = new Intent(WakeupService.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(WakeupService.this, 0, clsIntent, 0);
 
         NotificationCompat.Builder clsBuilder;
         if( Build.VERSION.SDK_INT >= 26 )

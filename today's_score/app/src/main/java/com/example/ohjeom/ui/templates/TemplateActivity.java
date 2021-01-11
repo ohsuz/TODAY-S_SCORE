@@ -1,12 +1,10 @@
 package com.example.ohjeom.ui.templates;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -26,18 +24,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
-import com.example.ohjeom.adapters.AppAdapter;
 import com.example.ohjeom.adapters.AppCheckAdapter;
 import com.example.ohjeom.adapters.LocationAdapter;
 import com.example.ohjeom.models.Location;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.models.Test;
-import com.example.ohjeom.services.startService;
-import com.example.ohjeom.ui.templates.templateMaker.MakerActivity2;
+import com.example.ohjeom.services.StartService;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class TemplateActivity extends AppCompatActivity {
@@ -219,7 +214,7 @@ public class TemplateActivity extends AppCompatActivity {
                 templates.get(position).setSelected(true);
                 Test.setTemplate(privateTemplate); // 점수를 측정할 템플릿으로 이 템플릿을 설정
 
-                Intent intentService = new Intent(TemplateActivity.this, startService.class);
+                Intent intentService = new Intent(TemplateActivity.this, StartService.class);
                 intentService.putExtra("template",templates.get(position));
                 startService(intentService);
 

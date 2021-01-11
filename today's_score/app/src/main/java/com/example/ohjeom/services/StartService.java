@@ -16,7 +16,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
-import com.example.ohjeom.models.Location;
 import com.example.ohjeom.models.Template;
 
 import java.io.Serializable;
@@ -26,9 +25,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class startService extends Service {
+public class StartService extends Service {
+    private String TAG = "StartService";
     private Template template;
-    public startService() {
+
+    public StartService() {
     }
 
     @Override
@@ -88,7 +89,7 @@ public class startService extends Service {
             wakeupCal.set(Calendar.SECOND, 0);
             long wakeupTime = wakeupCal.getTimeInMillis();
 
-            Intent wakeupIntent = new Intent(this,wakeupService.class);
+            Intent wakeupIntent = new Intent(this, WakeupService.class);
             wakeupIntent.putExtra("wakeupTime", wakeupTime);
             PendingIntent wakeupSender = PendingIntent.getService(this, 0, wakeupIntent, 0);
 
@@ -116,7 +117,7 @@ public class startService extends Service {
             wakeupCal.set(Calendar.SECOND, 0);
             long wakeupTime = wakeupCal.getTimeInMillis();
 
-            Intent sleepIntent = new Intent(this, sleepService.class);
+            Intent sleepIntent = new Intent(this, SleepService.class);
             PendingIntent sleepSender = PendingIntent.getService(this, 0, sleepIntent, 0);
 
             AlarmManager sleepAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
@@ -147,7 +148,7 @@ public class startService extends Service {
             walkstartCal.set(Calendar.MINUTE, template.getWakeupMin());
             walkstartCal.set(Calendar.SECOND, 0);
 
-            Intent walkIntent = new Intent(this, walkService.class);
+            Intent walkIntent = new Intent(this, WalkService.class);
             walkIntent.putExtra("walkCount", template.getWalkCount());
             PendingIntent walk_sender = PendingIntent.getService(this, 0, walkIntent, 0);
 
@@ -176,7 +177,7 @@ public class startService extends Service {
             long startTime = startCal.getTimeInMillis();
             long stopTime = stopCal.getTimeInMillis();
 
-            Intent phoneIntent = new Intent(this, phoneService.class);
+            Intent phoneIntent = new Intent(this, PhoneService.class);
             phoneIntent.putExtra("appNames", (Serializable) template.getAppNames());
             phoneIntent.putExtra("startTime",startTime);
             phoneIntent.putExtra("stopTime",stopTime);
@@ -188,10 +189,35 @@ public class startService extends Service {
 
         //장소 검사 시작
         if(components[4]){
-            locationService locationservice = new locationService();
-            Intent locationIntent = new Intent(this, locationService.class);
-            locationIntent.putExtra("locations",template.getLocations());
-            startService(locationIntent);
+            //LocationService locationService = new LocationService(); @@@@@@@@ 안 쓰임
+            //locationIntent.putExtra("locations",template.getLocations());
+            Intent locationIntent1 = new Intent(this, LocationService1.class);
+            Intent locationIntent2 = new Intent(this, LocationService2.class);
+            Intent locationIntent3 = new Intent(this, LocationService3.class);
+
+            switch (template.getLocations().size()) {
+                case 1:
+                    locationIntent1.putExtra("location",template.getLocations().get(0));
+                    startService(locationIntent1);
+                    break;
+                case 2:
+                    locationIntent1.putExtra("location",template.getLocations().get(0));
+                    locationIntent2.putExtra("location",template.getLocations().get(1));
+                    startService(locationIntent1);
+                    startService(locationIntent2);
+                    break;
+                case 3:
+                    locationIntent1.putExtra("location",template.getLocations().get(0));
+                    locationIntent2.putExtra("location",template.getLocations().get(1));
+                    locationIntent3.putExtra("location",template.getLocations().get(1));
+                    startService(locationIntent1);
+                    startService(locationIntent2);
+                    startService(locationIntent3);
+                    break;
+                default:
+                    Log.d(TAG, "SWITCH DEFAULT");
+                    break;
+            }
         }
     }
 
@@ -202,7 +228,7 @@ public class startService extends Service {
             while(true) {
                 if (isServiceRunning("com.example.ohjeom.services.wakeupService")) {
                     Log.d("wakeup_service 작동 :", "O");
-                    Intent intent = new Intent(getApplicationContext(), wakeupService.class); // 이동할 컴포넌트
+                    Intent intent = new Intent(getApplicationContext(), WakeupService.class); // 이동할 컴포넌트
                     stopService(intent);
                     break;
                 }
@@ -217,7 +243,7 @@ public class startService extends Service {
             while(true) {
                 if (isServiceRunning("com.example.ohjeom.services.walkService")) {
                     Log.d("walk_service 작동 :", "O");
-                    Intent intent = new Intent(getApplicationContext(), walkService.class); //이동할 컴포넌트
+                    Intent intent = new Intent(getApplicationContext(), WalkService.class); //이동할 컴포넌트
                     stopService(intent);
                     break;
                 }
@@ -232,7 +258,7 @@ public class startService extends Service {
             while(true) {
                 if (isServiceRunning("com.example.ohjeom.services.sleepService")) {
                     Log.d("service 작동 :", "O");
-                    Intent intent = new Intent(getApplicationContext(), sleepService.class); // 이동할 컴포넌트
+                    Intent intent = new Intent(getApplicationContext(), SleepService.class); // 이동할 컴포넌트
                     stopService(intent);
                     break;
                 }

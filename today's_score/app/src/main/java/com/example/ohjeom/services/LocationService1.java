@@ -10,10 +10,13 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.ohjeom.MainActivity;
@@ -22,47 +25,41 @@ import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Location;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class locationService extends Service {
+public class LocationService1 extends Service {
+    private static final String TAG = "locationService";
+    private static final String ERROR_MSG = "왜안돼!!!!!!!!!!!";
+    private Location location;
+    final private Location real = new Location();
+    Handler handler;
+    private int tryNum = 0;
 
-    private static final String TAG = "장소";
-
-    private ArrayList<Location> locations;
-    private Location real = new Location();
-
-    public locationService() {
+    public LocationService1() {
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Intent clsIntent = new Intent(locationService.this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(locationService.this, 0, clsIntent, 0);
+
+        Intent clsIntent = new Intent(LocationService1.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(LocationService1.this, 0, clsIntent, 0);
 
         NotificationCompat.Builder clsBuilder;
-        if( Build.VERSION.SDK_INT >= 26 )
-        {
+        if (Build.VERSION.SDK_INT >= 26) {
             String CHANNEL_ID = "channel_id";
             NotificationChannel clsChannel = new NotificationChannel(CHANNEL_ID, "서비스 앱", NotificationManager.IMPORTANCE_DEFAULT);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(clsChannel);
 
             clsBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        }
-        else
-        {
+        } else {
             clsBuilder = new NotificationCompat.Builder(this);
         }
 
         // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
         clsBuilder.setSmallIcon(R.drawable.icon_school)
-                .setContentTitle("서비스 앱" ).setContentText("서비스 앱")
+                .setContentTitle("서비스 앱").setContentText("서비스 앱")
                 .setContentIntent(pendingIntent);
 
         // foreground 서비스로 실행한다.
@@ -71,8 +68,8 @@ public class locationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("야!!","왜안돼요!!");
-        locations = (ArrayList<Location>) intent.getSerializableExtra("locations");
+        Log.d(ERROR_MSG, "LocationService - OnStartCommand");
+        location = (Location) intent.getSerializableExtra("location");
 
         LocationThread thread = new LocationThread();
         thread.start();
@@ -82,7 +79,7 @@ public class locationService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("장소 측정","종료");
+        Log.d("장소 측정", "종료");
         super.onDestroy();
     }
 
@@ -93,49 +90,41 @@ public class locationService extends Service {
     }
 
     private class LocationThread extends Thread {
-        private static final String TAG = "Location Thread";
-        public void run(){
-            for(Location s:locations){
+        public void run() {
+            Log.d(TAG, "LocationThread - location: " + location);
 
-                Log.d("야!!","왜안돼!!");
-                Timer l_timer = new Timer();
-                l_timer.schedule(new LocationTimer(l_timer,s),0,10000);
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    break;
+            Looper.prepare();
+            handler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(@NonNull Message msg) {
+                    Log.d(TAG, "LocationThread - handler  - location: " + location.getName() + ", tryNum=" + tryNum);
+                    checkScore(location);
+                    tryNum++;
+                    if (tryNum <= 3) {
+                        handler.sendEmptyMessageDelayed(0, 10000);
+                    }
                 }
+            };
+
+            try {
+                Thread.sleep(1000);
+                handler.sendEmptyMessageDelayed(0, 10000);
+            } catch (InterruptedException e) {
             }
         }
     }
 
-    class LocationTimer extends TimerTask {
+    public void checkScore(Location location) {
+        int locationScore = getLocationScore(LocationService1.this, real, location, tryNum);
 
-        private Timer timer;
-        private Location location;
-        private int tryNum;
-
-        LocationTimer(Timer timer,Location location)
-        {
-            this.timer = timer;
-            tryNum = 0;
-            this.location = location;
-        }
-
-        @Override
-        public void run(){
-            int locationScore = getLocationScore(locationService.this, real, location, tryNum);
-
-            if (tryNum <2 && locationScore == 0) {
-                Log.d(TAG, "점수: "+locationScore);
-                tryNum++;
-            } else {
-                Log.d(TAG, "완벽한 "+locationScore+"점");
-                // @@@@ 여기서 점수를 보내면 됨
-                timer.cancel();
-                Log.d(TAG, "측정 종료~");
-            }
+        if (tryNum < 3 && locationScore == 0) {
+            Log.d(TAG, "점수: " + locationScore);
+        } else {
+            Log.d(TAG, "완벽한 " + locationScore + "점");
+            // @@@@ 여기서 점수를 보내면 됨
+            //Looper.getMainLooper().quitSafely(); // Looper 종료
+            //handler.removeMessages(0);
+            Log.d(TAG, "측정 종료~");
         }
     }
 
@@ -143,7 +132,7 @@ public class locationService extends Service {
         double distance = getDistance(mContext, real, dest);
         int score = 0;
         if (distance > 0 && distance <= 0.002) { //@@@ 0.001로 바꿀예정
-            switch(tryNum) {
+            switch (tryNum) {
                 case 0: //제시간에 도착 시, 100점
                     score = 100;
                     break;
@@ -161,24 +150,24 @@ public class locationService extends Service {
     }
 
     @SuppressLint("DefaultLocale")
-    public static double getDistance(Context mContext, Location real, Location dest) {
+    public static double getDistance(final Context mContext, final Location real, final Location dest) {
         double distance;
         GpsTracker gpsTracker = new GpsTracker(mContext);
 
         double latitude = gpsTracker.getLatitude();
         double longitude = gpsTracker.getLongitude();
-        Log.d("ㅡㅡ",latitude+","+longitude);
+        Log.d(ERROR_MSG, latitude + ", " + longitude);
         String address = getCurrentAddress(mContext, latitude, longitude);
 
-        real.setName(address.replace("대한민국",""));
+        real.setName(address.replace("대한민국", ""));
         real.setLat(Double.parseDouble(String.format("%.4f", latitude)));
         real.setLng(Double.parseDouble(String.format("%.4f", longitude)));
 
         distance = calDistance(real.getLat(), real.getLng(), dest.getLat(), dest.getLng());
 
-        Log.i (TAG,"현재 위치: "+real.getName()+" 위도: "+real.getLat()+" 경도: "+real.getLng());
-        Log.i (TAG,"목표 위치: "+dest.getName()+" 위도: "+dest.getLat()+" 경도: "+dest.getLng());
-        Log.i (TAG, "거리 차: "+distance);
+        Log.i(TAG, "현재 위치: " + real.getName() + " 위도: " + real.getLat() + " 경도: " + real.getLng());
+        Log.i(TAG, "목표 위치: " + dest.getName() + " 위도: " + dest.getLat() + " 경도: " + dest.getLng());
+        Log.i(TAG, "거리 차: " + distance);
 
         return distance;
     }
@@ -213,9 +202,9 @@ public class locationService extends Service {
     static double calDistance(double x, double y, double x1, double y1) {
         double d;
         double xd, yd;
-        yd = Math.pow((y1-y),2);
-        xd = Math.pow((x1-x),2);
-        d = Math.sqrt(yd+xd);
+        yd = Math.pow((y1 - y), 2);
+        xd = Math.pow((x1 - x), 2);
+        d = Math.sqrt(yd + xd);
         return Double.parseDouble(String.format("%.4f", d));
     }
 }

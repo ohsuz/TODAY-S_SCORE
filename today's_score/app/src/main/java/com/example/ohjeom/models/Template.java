@@ -1,29 +1,11 @@
 package com.example.ohjeom.models;
 
-import android.annotation.SuppressLint;
-import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ResolveInfo;
-import android.util.Log;
-import android.widget.EditText;
-
-import com.example.ohjeom.services.phoneService;
-import com.example.ohjeom.services.sleepService;
-import com.example.ohjeom.services.wakeupService;
-import com.example.ohjeom.services.walkService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 public class Template implements Serializable {
 

@@ -13,7 +13,6 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -24,9 +23,8 @@ import com.example.ohjeom.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
 
-public class phoneService extends Service {
+public class PhoneService extends Service {
 
     private long phoneUsageToday=0;
     private long startTime, stopTime;
@@ -45,14 +43,14 @@ public class phoneService extends Service {
         }
     }
 
-    public phoneService() {
+    public PhoneService() {
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Intent clsIntent = new Intent(phoneService.this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(phoneService.this, 0, clsIntent, 0);
+        Intent clsIntent = new Intent(PhoneService.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(PhoneService.this, 0, clsIntent, 0);
 
         NotificationCompat.Builder clsBuilder;
         if( Build.VERSION.SDK_INT >= 26 )
