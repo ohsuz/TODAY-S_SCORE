@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Template implements Serializable {
-
-    private Context context;
     private String templateName;
     private boolean isSelected = false;
     private boolean[] components; // 기상, 수면, 걸음수, 핸드폰, 장소
