@@ -30,14 +30,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
+import com.example.ohjeom.adapters.AppAdapter;
 import com.example.ohjeom.adapters.AppCheckAdapter;
 import com.example.ohjeom.adapters.LocationAdapter;
 import com.example.ohjeom.models.Location;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.models.Test;
-import com.example.ohjeom.services.sleepService;
-import com.example.ohjeom.services.startService;
+import com.example.ohjeom.services.StartService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -208,7 +208,6 @@ public class TemplateActivity extends AppCompatActivity {
 
     //Setting
     public void mOnClick(View v){
-
         AlertDialog.Builder builder = new AlertDialog.Builder(TemplateActivity.this);
 
         View view = LayoutInflater.from(TemplateActivity.this)
@@ -231,6 +230,7 @@ public class TemplateActivity extends AppCompatActivity {
         final Button registerBtn = (Button) view.findViewById(R.id.register_button);
         final Button cancelBtn = (Button) view.findViewById(R.id.cancel_button);
 
+
         final AlertDialog dialog = builder.create();
         final Intent intentHome = new Intent(this, MainActivity.class);
 
@@ -240,10 +240,7 @@ public class TemplateActivity extends AppCompatActivity {
                 templates.get(position).setSelected(true);
                 Test.setTemplate(privateTemplate); // 점수를 측정할 템플릿으로 이 템플릿을 설정
 
-                long startTime = startCal.getTimeInMillis();
-                Date startDate = new Date(startTime);
-
-                Intent intentService = new Intent(TemplateActivity.this, startService.class);
+                Intent intentService = new Intent(TemplateActivity.this, StartService.class);
                 intentService.putExtra("template",templates.get(position));
                 intentService.putExtra("month",startMonth);
                 intentService.putExtra("day",startDay);

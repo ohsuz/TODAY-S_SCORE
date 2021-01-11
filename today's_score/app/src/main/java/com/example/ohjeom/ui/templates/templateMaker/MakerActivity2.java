@@ -2,13 +2,11 @@ package com.example.ohjeom.ui.templates.templateMaker;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,9 +37,6 @@ import com.example.ohjeom.models.Location;
 import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
-import com.example.ohjeom.services.walkService;
-import com.example.ohjeom.services.sleepService;
-import com.example.ohjeom.services.wakeupService;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -55,7 +50,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class MakerActivity2 extends AppCompatActivity {
     private ArrayList<String> selectedOptions;
@@ -301,6 +295,12 @@ public class MakerActivity2 extends AppCompatActivity {
                         Log.i(TAG, "An error occurred: " + status);
                     }
                 });
+
+                if (!checkLocationServicesStatus()) {
+                    showDialogForLocationServiceSetting();
+                }else {
+                    PermissionChecker.checkRunTimePermission(MakerActivity2.this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+                }
 
                 button.setText("추가하기");
                 button.setOnClickListener(new View.OnClickListener() {

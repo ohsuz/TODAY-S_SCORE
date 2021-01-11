@@ -285,7 +285,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/jua"
-                    android:text="목표 핸드폰 사용시간"
+                    android:text="사용량 측정 시간"
                     android:textSize="25sp" />
 
                 <LinearLayout

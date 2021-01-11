@@ -19,18 +19,18 @@ import androidx.core.app.NotificationCompat;
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 
-public class walkService extends Service implements SensorEventListener {
+public class WalkService extends Service implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor stepDetectorSensor;
     private int count = 0, walkCount;
-    public walkService() {
+    public WalkService() {
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Intent clsIntent = new Intent(walkService.this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(walkService.this, 0, clsIntent, 0);
+        Intent clsIntent = new Intent(WalkService.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(WalkService.this, 0, clsIntent, 0);
 
         NotificationCompat.Builder clsBuilder;
         if( Build.VERSION.SDK_INT >= 26 )
