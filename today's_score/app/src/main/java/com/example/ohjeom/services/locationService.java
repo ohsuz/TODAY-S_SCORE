@@ -12,7 +12,6 @@ import android.location.Geocoder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
@@ -22,9 +21,9 @@ import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Location;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -34,6 +33,7 @@ public class locationService extends Service {
 
     private static final String TAG = "장소";
 
+    private int month, day;
     private ArrayList<Location> locations;
     private Location real = new Location();
 
@@ -73,7 +73,8 @@ public class locationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("야!!","왜안돼요!!");
         locations = (ArrayList<Location>) intent.getSerializableExtra("locations");
-
+        month = intent.getIntExtra("month",0);
+        day = intent.getIntExtra("day",0);
         LocationThread thread = new LocationThread();
         thread.start();
 
@@ -97,9 +98,17 @@ public class locationService extends Service {
         public void run(){
             for(Location s:locations){
 
-                Log.d("야!!","왜안돼!!");
+                Calendar locationCal = Calendar.getInstance();
+                locationCal.set(Calendar.HOUR_OF_DAY, s.getLocationHour());
+                locationCal.set(Calendar.MINUTE, s.getLocationMin());
+                locationCal.set(Calendar.SECOND, 0);
+
                 Timer l_timer = new Timer();
-                l_timer.schedule(new LocationTimer(l_timer,s),0,10000);
+
+                //타이머 설정
+                Date locationTime = new Date(locationCal.getTimeInMillis());
+
+                l_timer.schedule(new LocationTimer(l_timer,s),locationTime,10000);
 
                 try {
                     Thread.sleep(1000);

@@ -1,5 +1,6 @@
 package com.example.ohjeom.ui.home;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,11 +11,13 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +33,8 @@ import com.example.ohjeom.adapters.TemplateMakerAdapter;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.models.Test;
+import com.example.ohjeom.services.startService;
+import com.example.ohjeom.services.walkService;
 import com.example.ohjeom.ui.templates.TemplateActivity;
 import com.example.ohjeom.ui.templates.TemplatesViewModel;
 import com.example.ohjeom.ui.templates.privateTemplate.PrivateAdapter;
@@ -43,6 +48,9 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.ACTIVITY_SERVICE;
+import static androidx.core.content.ContextCompat.getSystemService;
 
 public class HomeFragment extends Fragment {
 
@@ -78,7 +86,35 @@ public class HomeFragment extends Fragment {
 
             homeAdapter.notifyDataSetChanged();
         }
+
+        //측정 해제 버튼
+        Button button = root.findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String serviceName = "com.example.ohjeom.services.startService";
+
+                if(isServiceRunning(serviceName)) {
+                    Intent intent = new Intent(getActivity(), startService.class);
+                    getActivity().stopService(intent);
+                }
+                else
+                    Toast.makeText(getActivity(),"현재 측정중이 아닙니다.",Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return root;
     }
 
+    public boolean isServiceRunning(String serviceName) {
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo runServiceInfo : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceName.equals(runServiceInfo.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
+
