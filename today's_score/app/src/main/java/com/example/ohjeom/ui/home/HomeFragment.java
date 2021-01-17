@@ -3,6 +3,7 @@ package com.example.ohjeom.ui.home;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +60,7 @@ public class HomeFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String serviceName = "com.example.ohjeom.services.startService";
+                String serviceName = "com.example.ohjeom.services.StartService";
 
                 if(isServiceRunning(serviceName)) {
                     Intent intent = new Intent(getActivity(), StartService.class);
@@ -76,6 +77,7 @@ public class HomeFragment extends Fragment {
     public boolean isServiceRunning(String serviceName) {
         ActivityManager manager = (ActivityManager) getActivity().getSystemService(ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo runServiceInfo : manager.getRunningServices(Integer.MAX_VALUE)) {
+            Log.d("ㅇㅇㅇ",runServiceInfo.service.getClassName());
             if (serviceName.equals(runServiceInfo.service.getClassName())) {
                 return true;
             }

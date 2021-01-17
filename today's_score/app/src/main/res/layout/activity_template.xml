@@ -390,6 +390,50 @@
 
             </LinearLayout>
 
+            <!-- 소비 점수 시작 -->
+            <LinearLayout
+                android:id="@+id/pay_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/rounded"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/half_rounded"
+                    android:fontFamily="@font/jua"
+                    android:gravity="center"
+                    android:padding="7dp"
+                    android:text="소비 점수 측정"
+                    android:textColor="#FFFAEC"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/jua"
+                    android:text="목표 소비 금액"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/money_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/jua"
+                    android:text="10000"
+                    android:textSize="25sp" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

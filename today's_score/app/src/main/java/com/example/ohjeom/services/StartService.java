@@ -18,7 +18,6 @@ import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 import com.example.ohjeom.models.Template;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,8 +28,8 @@ public class StartService extends Service {
     private String TAG = "StartService";
     private Template template;
     private int month, day;
-    private PendingIntent wakeupSender,sleepSender,walkSender,phoneSender,locationSender1,locationSender2,locationSender3;
-    private AlarmManager wakeupAM,sleepAM,walkAM,phoneAM,locationAM1,locationAM2,locationAM3;
+    private PendingIntent wakeupSender,sleepSender,walkSender,phoneSender,locationSender1,locationSender2,locationSender3,paySender;
+    private AlarmManager wakeupAM,sleepAM,walkAM,phoneAM,locationAM1,locationAM2,locationAM3,payAM;
 
     public StartService() {
     }
@@ -76,10 +75,10 @@ public class StartService extends Service {
     @Override
     public void onDestroy() {
 
-        PendingIntent[] piList = new PendingIntent[]{wakeupSender,sleepSender,walkSender,phoneSender,locationSender1,locationSender2,locationSender3};
-        AlarmManager[] amList = new AlarmManager[]{wakeupAM, sleepAM, walkAM, phoneAM, locationAM1,locationAM2,locationAM3};
+        PendingIntent[] piList = new PendingIntent[]{wakeupSender,sleepSender,walkSender,phoneSender,locationSender1,locationSender2,locationSender3,paySender};
+        AlarmManager[] amList = new AlarmManager[]{wakeupAM, sleepAM, walkAM, phoneAM, locationAM1,locationAM2,locationAM3,payAM};
 
-        for(int i=0;i<5;i++)
+        for(int i=0;i<8;i++)
             if(amList[i] != null) {
                 Log.d("알람해제:", String.valueOf(amList[i]));
                 amList[i].cancel(piList[i]);
@@ -87,13 +86,15 @@ public class StartService extends Service {
             }
 
         Class[] serviceName = new Class[]{WakeupService.class, SleepService.class, WalkService.class, PhoneService.class,
-                LocationService1.class, LocationService2.class, LocationService3.class};
+                LocationService1.class, LocationService2.class, LocationService3.class,PaymentService.class};
         String[] serviceList = {"com.example.ohjeom.services.WakeupService","com.example.ohjeom.services.SleepService","com.example.ohjeom.services.WalkService",
                 "com.example.ohjeom.services.PhoneService", "com.example.ohjeom.services.LocationService1",
-                "com.example.ohjeom.services.LocationService2", "com.example.ohjeom.services.LocationService3"};
+                "com.example.ohjeom.services.LocationService2", "com.example.ohjeom.services.LocationService3",
+                "com.example.ohjeom.services.PaymentService"};
 
-        for(int i=0;i<5;i++){
+        for(int i=0;i<8;i++){
             if(isServiceRunning(serviceList[i])){
+                Log.d("작동중",serviceList[i]);
                 Intent intent = new Intent(StartService.this, serviceName[i]);
                 stopService(intent);
             }
@@ -134,7 +135,7 @@ public class StartService extends Service {
             Date wakeupStop = new Date(wakeupStoptime);
 
             Timer wakeupTimer = new Timer();
-            wakeupTimer.schedule(new WakeupTimer(), wakeupStop);
+            wakeupTimer.schedule(new WakeupTimer(), wakeupStop,1000*60*60*24);
         }
 
         //수면 검사 시작
@@ -171,7 +172,7 @@ public class StartService extends Service {
             Date sleepStop = new Date(sleepStopTime);
 
             Timer sleepTimer = new Timer();
-            sleepTimer.schedule(new SleepTimer(), sleepStop);
+            sleepTimer.schedule(new SleepTimer(), sleepStop,1000*60*60*24);
         }
 
         //걸음수 검사 시작
@@ -201,7 +202,7 @@ public class StartService extends Service {
             Date walkStop = new Date(walkCal.getTimeInMillis());
 
             Timer walkTimer = new Timer();
-            walkTimer.schedule(new WalkTimer(), walkStop);
+            walkTimer.schedule(new WalkTimer(), walkStop,1000*60*60*24);
         }
 
         //핸드폰 사용 검사 시작
@@ -210,7 +211,7 @@ public class StartService extends Service {
             startCal.set(Calendar.MONTH, month);
             startCal.set(Calendar.DAY_OF_MONTH, day);
             startCal.set(Calendar.HOUR_OF_DAY, template.getStartHour());
-            startCal.set(Calendar.MINUTE, template.getSleepMin());
+            startCal.set(Calendar.MINUTE, template.getStartMin());
             startCal.set(Calendar.SECOND, 0);
 
             Calendar stopCal = Calendar.getInstance();
@@ -224,7 +225,7 @@ public class StartService extends Service {
             long stopTime = stopCal.getTimeInMillis();
 
             Intent phoneIntent = new Intent(this, PhoneService.class);
-            phoneIntent.putExtra("appNames", (Serializable) template.getAppNames());
+            phoneIntent.putExtra("appNames", template.getAppNames());
             phoneIntent.putExtra("startTime",startTime);
             phoneIntent.putExtra("stopTime",stopTime);
             phoneSender = PendingIntent.getService(this, 0, phoneIntent, 0);
@@ -289,6 +290,37 @@ public class StartService extends Service {
                     break;
             }
         }
+
+        //소비 검사 시작
+        if(components[5]) {
+            Calendar payCal = Calendar.getInstance();
+            payCal.set(Calendar.MONTH, month);
+            payCal.set(Calendar.DAY_OF_MONTH, day);
+            payCal.set(Calendar.HOUR_OF_DAY, 0);
+            payCal.set(Calendar.MINUTE, 0);
+            payCal.set(Calendar.SECOND, 0);
+
+            Calendar payStopCal = Calendar.getInstance();
+            payStopCal.set(Calendar.MONTH, month);
+            payStopCal.set(Calendar.DAY_OF_MONTH, day);
+            payStopCal.set(Calendar.HOUR_OF_DAY, 23);
+            payStopCal.set(Calendar.MINUTE, 55);
+            payStopCal.set(Calendar.SECOND, 0);
+
+            long payTime = payCal.getTimeInMillis();
+            Date payStop = new Date(payStopCal.getTimeInMillis());
+
+            Intent payIntent = new Intent(this, PaymentService.class);
+            payIntent.putExtra("money", template.getMoney());
+            paySender = PendingIntent.getService(this, 0, payIntent, 0);
+
+            payAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            payAM.setRepeating(AlarmManager.RTC_WAKEUP,payTime, AlarmManager.INTERVAL_DAY,paySender);
+
+            //타이머 설정
+            Timer payTimer = new Timer();
+            payTimer.schedule(new PayTimer(),payStop,1000*60*60*24);
+        }
     }
 
     //기상
@@ -296,7 +328,7 @@ public class StartService extends Service {
         @Override
         public void run() {
             while(true) {
-                if (isServiceRunning("com.example.ohjeom.services.wakeupService")) {
+                if (isServiceRunning("com.example.ohjeom.services.WakeupService")) {
                     Log.d("wakeup_service 작동 :", "O");
                     Intent intent = new Intent(getApplicationContext(), WakeupService.class); // 이동할 컴포넌트
                     stopService(intent);
@@ -311,7 +343,7 @@ public class StartService extends Service {
         @Override
         public void run() {
             while(true) {
-                if (isServiceRunning("com.example.ohjeom.services.walkService")) {
+                if (isServiceRunning("com.example.ohjeom.services.WalkService")) {
                     Log.d("walk_service 작동 :", "O");
                     Intent intent = new Intent(getApplicationContext(), WalkService.class); //이동할 컴포넌트
                     stopService(intent);
@@ -326,9 +358,24 @@ public class StartService extends Service {
         @Override
         public void run() {
             while(true) {
-                if (isServiceRunning("com.example.ohjeom.services.sleepService")) {
+                if (isServiceRunning("com.example.ohjeom.services.SleepService")) {
                     Log.d("service 작동 :", "O");
                     Intent intent = new Intent(getApplicationContext(), SleepService.class); // 이동할 컴포넌트
+                    stopService(intent);
+                    break;
+                }
+            }
+        }
+    }
+
+    //소비
+    class PayTimer extends TimerTask {
+        @Override
+        public void run() {
+            while(true) {
+                if (isServiceRunning("com.example.ohjeom.services.PaymentService")) {
+                    Log.d("service 작동 :", "O");
+                    Intent intent = new Intent(getApplicationContext(), PaymentService.class); // 이동할 컴포넌트
                     stopService(intent);
                     break;
                 }

@@ -11,13 +11,22 @@ public class Template implements Serializable {
     private String templateName;
     private boolean isSelected = false;
     private boolean[] components; // 기상, 수면, 걸음수, 핸드폰, 장소
-    public static String[] componentNames = {"기상 검사", "수면 검사", "걸음수 검사", "핸드폰 사용량 검사", "장소 도착 검사"};
+    public static String[] componentNames = {"기상 검사", "수면 검사", "걸음수 검사", "핸드폰 사용량 검사", "장소 도착 검사","소비 검사"};
     private int walkHour, walkMin, walkCount;
     private int wakeupHour, wakeupMin;
     private int sleepHour, sleepMin;
     private ArrayList<Location> locations;
-    private List<ResolveInfo> appNames;
+    private ArrayList<String> appNames;
     private int startHour, startMin, stopHour, stopMin;
+    private int money;
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
 
     public boolean[] getComponents() {
         return components;
@@ -107,11 +116,11 @@ public class Template implements Serializable {
         this.locations = locations;
     }
 
-    public List<ResolveInfo> getAppNames() {
+    public ArrayList<String> getAppNames() {
         return appNames;
     }
 
-    public void setAppNames(List<ResolveInfo> appNames) {
+    public void setAppNames(ArrayList<String> appNames) {
         this.appNames = appNames;
     }
 

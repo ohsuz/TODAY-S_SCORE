@@ -10,8 +10,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
         android:allowBackup="true"
@@ -20,12 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <!-- Meta Data -->
+
+     <!-- Meta Data -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAJwn6eRf35L370GtqtYzUROb2YpVT8KQc" />
-
-        <!-- Activities -->
+            android:value="AIzaSyAJwn6eRf35L370GtqtYzUROb2YpVT8KQc" /> <!-- Activities -->
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
@@ -35,19 +35,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.templates.TemplateActivity"/>
-        <activity android:name=".ui.templates.templateMaker.MakerActivity1"/>
-        <activity android:name=".ui.templates.templateMaker.MakerActivity2"/>
+        <activity android:name=".ui.templates.TemplateActivity" />
+        <activity android:name=".ui.templates.templateMaker.MakerActivity1" />
+        <activity android:name=".ui.templates.templateMaker.MakerActivity2" /> <!-- Services -->
+        <service android:name=".services.PhoneService" />
+        <service android:name=".services.SleepService" />
+        <service android:name=".services.WakeupService" />
+        <service android:name=".services.WalkService" />
+        <service android:name=".services.LocationService1" />
+        <service android:name=".services.LocationService2" />
+        <service android:name=".services.LocationService3" />
+        <service android:name=".services.StartService" />
+        <service android:name=".services.PaymentService" />
 
-        <!-- Services -->
-        <service android:name=".services.PhoneService"/>
-        <service android:name=".services.SleepService"/>
-        <service android:name=".services.WakeupService"/>
-        <service android:name=".services.WalkService"/>
-        <service android:name=".services.LocationService1"/>
-        <service android:name=".services.LocationService2"/>
-        <service android:name=".services.LocationService3"/>
-        <service android:name=".services.StartService"/>
+        <receiver
+            android:name=".receivers.SmsReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="1">
+                <action android:name="com.test.alarmtestous.ALARM_START" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

@@ -53,6 +53,7 @@ public class TemplateActivity extends AppCompatActivity {
     private int sleepHour, sleepMin;
     private int startHour, startMin;
     private int stopHour, stopMin;
+    private int money;
     private int startMonth, startDay;
     private RelativeLayout seekbarLayout;
     private TextView thumbText;
@@ -63,6 +64,7 @@ public class TemplateActivity extends AppCompatActivity {
 
     private ArrayList<Template> templates;
     private ArrayList<Location> locationList;
+    private ArrayList<String> appNames;
     private List<ResolveInfo> checkList;
     private LocationAdapter locationAdapter;
     private AppCheckAdapter appCheckAdapter;
@@ -93,6 +95,7 @@ public class TemplateActivity extends AppCompatActivity {
         LinearLayout sleepLayout = (LinearLayout) findViewById(R.id.sleep_layout);
         LinearLayout locationLayout = (LinearLayout) findViewById(R.id.location_layout);
         LinearLayout phoneLayout = (LinearLayout) findViewById(R.id.phone_layout);
+        LinearLayout payLayout = (LinearLayout) findViewById(R.id.pay_layout);
 
         //if문으로 검사할것!
         //기상
@@ -156,7 +159,6 @@ public class TemplateActivity extends AppCompatActivity {
             });
         }
 
-
         //핸드폰 사용
         if(components[3])
             phoneLayout.setVisibility(View.VISIBLE);
@@ -178,8 +180,19 @@ public class TemplateActivity extends AppCompatActivity {
         phoneStopTimepicker.setIs24HourView(true);
         phoneStopTimepicker.setEnabled(false);
 
-        checkList = privateTemplate.getAppNames();
+        appNames = privateTemplate.getAppNames();
         PackageManager pm = getPackageManager();
+        List<ResolveInfo> resolveInfos;
+        Intent mainIntent = new Intent(Intent.ACTION_MAIN,null);
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        resolveInfos = pm.queryIntentActivities(mainIntent,0);
+        checkList = new ArrayList<>();
+        for(String appName:appNames) {
+            for (ResolveInfo resolveInfo : resolveInfos) {
+                if (resolveInfo.activityInfo.packageName.equals(appName))
+                    checkList.add(resolveInfo);
+            }
+        }
         appCheckAdapter = new AppCheckAdapter(pm,checkList);
         RecyclerView appcheckListView = findViewById(R.id.appcheck_listview);
         appcheckListView.setHasFixedSize(true);
@@ -204,6 +217,12 @@ public class TemplateActivity extends AppCompatActivity {
                 linearLayoutManager.getOrientation());
         locationListView.addItemDecoration(dividerItemDecoration);
 
+        //소비
+        if(components[5])
+            payLayout.setVisibility(View.VISIBLE);
+
+        TextView moneyText = findViewById(R.id.money_text);
+        moneyText.setText(String.valueOf(privateTemplate.getMoney()));
     }
 
     //Setting
@@ -241,7 +260,7 @@ public class TemplateActivity extends AppCompatActivity {
                 Test.setTemplate(privateTemplate); // 점수를 측정할 템플릿으로 이 템플릿을 설정
 
                 Intent intentService = new Intent(TemplateActivity.this, StartService.class);
-                intentService.putExtra("template",templates.get(position));
+                intentService.putExtra("template",(Serializable) templates.get(position));
                 intentService.putExtra("month",startMonth);
                 intentService.putExtra("day",startDay);
                 startService(intentService);

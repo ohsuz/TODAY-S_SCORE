@@ -1,5 +1,6 @@
 package com.example.ohjeom;
 
+import android.Manifest;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -37,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"please give access", Toast.LENGTH_SHORT).show();
             }
         }
+
+        checkSMSPermissions();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -66,6 +71,38 @@ public class MainActivity extends AppCompatActivity {
         }
         catch (PackageManager.NameNotFoundException e) {
             return false;
+        }
+    }
+
+    private void checkSMSPermissions() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this,"권한 있음",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this,"권한 없음",Toast.LENGTH_LONG).show();
+
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECEIVE_SMS)){
+                Toast.makeText(this, "권한 설명 필요함.", Toast.LENGTH_LONG).show();
+            } else {
+                String[] permissions = {
+                        Manifest.permission.RECEIVE_SMS
+                };
+
+                //권한이 할당되지 않았으면 해당 권한을 요청
+                ActivityCompat.requestPermissions(this,permissions,1);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        if (requestCode == 1){
+            for(int i=0;i<permissions.length;i++)
+                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this,permissions[i]+"권한이 승인됨.",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this,permissions[i]+"권한이 승인되지 않음.",Toast.LENGTH_LONG).show();
+                }
         }
     }
 

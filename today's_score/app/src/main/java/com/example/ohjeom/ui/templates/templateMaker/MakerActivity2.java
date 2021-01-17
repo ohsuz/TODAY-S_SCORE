@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -59,10 +60,11 @@ public class MakerActivity2 extends AppCompatActivity {
     private RecyclerView.LayoutManager gLayoutManager;
     private AppAdapter appAdapter;
     private ArrayList<Location> locationList;
+    private ArrayList<String> appNames;
     private LocationAdapter locationAdapter;
     private AppCheckAdapter appCheckAdapter;
     private Template privateTemplate;
-    private boolean[] components = {false,false,false,false,false};
+    private boolean[] components = {false,false,false,false,false,false};
 
     private int wakeupHour, wakeupMin;
     private int walkHour, walkMin, walkCount;
@@ -70,6 +72,7 @@ public class MakerActivity2 extends AppCompatActivity {
     private int startHour, startMin;
     private int stopHour, stopMin;
     private int locationHour, locationMin;
+    private int money;
 
     private Calendar currentTime;
     private TimePicker wakeupTimePicker, walkTimePicker, sleepTimePicker, phoneStartTimePicker, phoneStopTimePicker, locationTimePicker;
@@ -77,7 +80,7 @@ public class MakerActivity2 extends AppCompatActivity {
     private RelativeLayout seekbarLayout;
     private TextView thumbText;
     private SeekBar countSb;
-    private List<ResolveInfo> appNames;
+    private List<ResolveInfo> appInfos;
 
     // 위치 설정
     private GpsTracker gpsTracker;
@@ -100,6 +103,7 @@ public class MakerActivity2 extends AppCompatActivity {
         LinearLayout sleep_layout = (LinearLayout) findViewById(R.id.sleep_layout);
         LinearLayout location_layout = (LinearLayout) findViewById(R.id.location_layout);
         LinearLayout phone_layout = (LinearLayout) findViewById(R.id.phone_layout);
+        LinearLayout pay_layout = findViewById(R.id.pay_layout);
 
         Intent intent = getIntent();
         templateName = intent.getStringExtra("templateName");
@@ -138,6 +142,9 @@ public class MakerActivity2 extends AppCompatActivity {
                     phone_layout.setVisibility(View.VISIBLE);
                     components[3] = true;
                     break;
+                case "소비검사":
+                    pay_layout.setVisibility(View.VISIBLE);
+                    components[5] = true;
             }
         }
 
@@ -396,9 +403,9 @@ public class MakerActivity2 extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        appNames = ((AppAdapter)appAdapter).getChecklist();
+                        appInfos = ((AppAdapter)appAdapter).getChecklist();
                         PackageManager pm2 = getPackageManager();
-                        appCheckAdapter = new AppCheckAdapter(pm2, appNames);
+                        appCheckAdapter = new AppCheckAdapter(pm2, appInfos);
                         RecyclerView appcheckListView = findViewById(R.id.appcheck_listview);
                         appcheckListView.setHasFixedSize(true);
                         gLayoutManager = new GridLayoutManager(MakerActivity2.this,2);
@@ -413,16 +420,47 @@ public class MakerActivity2 extends AppCompatActivity {
         });
 
         PackageManager pm2 = getPackageManager();
-        appCheckAdapter = new AppCheckAdapter(pm2, appNames);
+        appCheckAdapter = new AppCheckAdapter(pm2, appInfos);
         RecyclerView appcheckListView = findViewById(R.id.appcheck_listview);
         appcheckListView.setHasFixedSize(true);
         lLayoutManager = new LinearLayoutManager(MakerActivity2.this);
         appcheckListView.setLayoutManager(lLayoutManager);
         appcheckListView.setAdapter(appCheckAdapter);
 
+        //소비
+        final TextView moneyText = findViewById(R.id.money_text);
+        ImageButton payButton1 = findViewById(R.id.pay_button1);
+        ImageButton payButton2 = findViewById(R.id.pay_button2);
+        money = Integer.parseInt(moneyText.getText().toString());
+
+        payButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moneyText.setText(String.valueOf((Integer.parseInt(moneyText.getText().toString())+1000)));
+                money = Integer.parseInt(moneyText.getText().toString());
+            }
+        });
+
+        payButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moneyText.setText(String.valueOf((Integer.parseInt(moneyText.getText().toString())-1000)));
+                money = Integer.parseInt(moneyText.getText().toString());
+            }
+        });
     }
 
     public void mOnClick(View v) {
+
+        appNames = new ArrayList<>();
+
+        if(components[3]) {
+            for (ResolveInfo resolveInfo : appInfos) {
+                String s = resolveInfo.activityInfo.packageName;
+                appNames.add(s);
+                Log.d("앱 이름", s);
+            }
+        }
 
         privateTemplate.setTemplateName(templateName);
         privateTemplate.setWalkHour(walkHour);
@@ -438,6 +476,7 @@ public class MakerActivity2 extends AppCompatActivity {
         privateTemplate.setStopHour(stopHour);
         privateTemplate.setStopMin(stopMin);
         privateTemplate.setWalkCount(walkCount);
+        privateTemplate.setMoney(money);
 
         Templates.getTemplates().add(privateTemplate);
 
@@ -447,7 +486,7 @@ public class MakerActivity2 extends AppCompatActivity {
         startActivity(intentHome);
         finish();
 
-        //보낼 데이터 : 템플릿 이름, 기상 시간 , 운동 시간&걸음 수, 핸드폰 앱 list&시작 시간&종료 시간, 장소 list(이름, 위도, 경도)&시간, 수면 시간
+        //보낼 데이터 : 템플릿 이름, 기상 시간 , 운동 시간&걸음 수, 핸드폰 앱 list&시작 시간&종료 시간, 장소 list(이름, 위도, 경도)&시간, 수면 시간, 소비 금액
 
     }
 

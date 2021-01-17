@@ -29,11 +29,11 @@ public class PhoneService extends Service {
     private long phoneUsageToday=0;
     private long startTime, stopTime;
     private int phoneTime;
-    List<AppUsageInfo> appUsageList;
-    List<ResolveInfo> appNames;
+    private List<AppUsageInfo> appUsageList;
+    private ArrayList<String> appNames = new ArrayList<>();
+    private ArrayList<Integer> appUsageTimes = new ArrayList<>();
 
     private class AppUsageInfo {
-        Drawable appIcon;
         String appName, packageName;
         long timeInForeground;
         int launchCount;
@@ -78,7 +78,7 @@ public class PhoneService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("앱 사용시간-","가져오기 시작");
-        appNames = (List<ResolveInfo>) intent.getSerializableExtra("appNames");
+        appNames = intent.getStringArrayListExtra("appNames");
         startTime = intent.getLongExtra("startTime",1);
         stopTime = intent.getLongExtra("stopTime",1);
 
@@ -150,11 +150,11 @@ public class PhoneService extends Service {
         appUsageList = new ArrayList<>(map.values());
         PackageManager pm = getPackageManager();
 
-        for(ResolveInfo s:appNames){
-            String appName = s.activityInfo.packageName;
+        for(String appName:appNames){
             for (AppUsageInfo appUsageInfo : appUsageList) {
                 if(appName.equals(appUsageInfo.packageName)) {
-                    Log.d("앱 이름:", s.loadLabel(pm).toString() + ", 사용 시간:" + (appUsageInfo.timeInForeground) / (60 * 1000) + "분");
+                    Log.d("앱 이름:", appName + ", 사용 시간:" + (appUsageInfo.timeInForeground) / (60 * 1000) + "분");
+                    appUsageTimes.add((int) ((appUsageInfo.timeInForeground) / (60 * 1000)));
                     phoneTime+=appUsageInfo.timeInForeground/(60*1000);
                 }
             }
@@ -164,7 +164,7 @@ public class PhoneService extends Service {
         int phoneScore = ScoreCalculate(Time,phoneTime);
         Log.d("핸드폰 사용 점수", String.valueOf(phoneScore));
         /*
-        점수보내기
+        점수보내기 & appUsageTimes(앱별 사용시간), phoneTime(총 사용시간)
          */
         Log.d("핸드폰 측정","종료");
 

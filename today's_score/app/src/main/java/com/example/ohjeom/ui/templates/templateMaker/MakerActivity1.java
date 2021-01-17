@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MakerActivity1 extends AppCompatActivity {
 
-    final String[] options = {"기상 검사","장소 도착 검사","걸음수 검사","핸드폰 사용량 검사","수면 검사"};
+    final String[] options = {"기상 검사","장소 도착 검사","걸음수 검사","핸드폰 사용량 검사","수면 검사","소비 검사"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class MakerActivity1 extends AppCompatActivity {
         optionlist.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         optionlist.setAdapter(makerAdapter);
 
-        for(int i=0;i<5;i++){
+        for(int i=0;i<6;i++){
             makerAdapter.addItem(options[i]);
         }
 
@@ -47,7 +47,7 @@ public class MakerActivity1 extends AppCompatActivity {
             public void onClick(View view) {
                 SparseBooleanArray booleans = optionlist.getCheckedItemPositions();
                 ArrayList<String> selectedOptions = new ArrayList<String>();
-                for(int i=0; i<5; i++) {
+                for(int i=0; i<6; i++) {
                     if(booleans.get(i)){
                         selectedOptions.add(options[i]);
                     }

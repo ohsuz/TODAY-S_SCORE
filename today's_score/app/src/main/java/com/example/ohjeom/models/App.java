@@ -17,7 +17,6 @@ public class App {
     public int getStartHour() {
         return startHour;
     }
-
     public void setStartHour(int startHour) {
         this.startHour = startHour;
     }
