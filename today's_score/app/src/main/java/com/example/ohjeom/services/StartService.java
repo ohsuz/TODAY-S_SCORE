@@ -17,6 +17,7 @@ import androidx.core.app.NotificationCompat;
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 import com.example.ohjeom.models.Template;
+import com.example.ohjeom.models.Weather;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -28,8 +29,8 @@ public class StartService extends Service {
     private String TAG = "StartService";
     private Template template;
     private int month, day;
-    private PendingIntent wakeupSender,sleepSender,walkSender,phoneSender,locationSender1,locationSender2,locationSender3,paySender;
-    private AlarmManager wakeupAM,sleepAM,walkAM,phoneAM,locationAM1,locationAM2,locationAM3,payAM;
+    private PendingIntent wakeupSender,sleepSender,walkSender,weatherSender,phoneSender,locationSender1,locationSender2,locationSender3,paySender;
+    private AlarmManager wakeupAM,sleepAM,walkAM,weatherAM,phoneAM,locationAM1,locationAM2,locationAM3,payAM;
 
     public StartService() {
     }
@@ -85,14 +86,13 @@ public class StartService extends Service {
                 piList[i].cancel();
             }
 
-        Class[] serviceName = new Class[]{WakeupService.class, SleepService.class, WalkService.class, PhoneService.class,
+        Class[] serviceName = new Class[]{WakeupService.class, SleepService.class, WalkService.class, WeatherService.class, PhoneService.class,
                 LocationService1.class, LocationService2.class, LocationService3.class,PaymentService.class};
         String[] serviceList = {"com.example.ohjeom.services.WakeupService","com.example.ohjeom.services.SleepService","com.example.ohjeom.services.WalkService",
-                "com.example.ohjeom.services.PhoneService", "com.example.ohjeom.services.LocationService1",
-                "com.example.ohjeom.services.LocationService2", "com.example.ohjeom.services.LocationService3",
-                "com.example.ohjeom.services.PaymentService"};
+                "com.example.ohjeom.services.WalkService","com.example.ohjeom.services.PhoneService", "com.example.ohjeom.services.LocationService1",
+                "com.example.ohjeom.services.LocationService2", "com.example.ohjeom.services.LocationService3", "com.example.ohjeom.services.PaymentService"};
 
-        for(int i=0;i<8;i++){
+        for(int i=0;i<9;i++){
             if(isServiceRunning(serviceList[i])){
                 Log.d("작동중",serviceList[i]);
                 Intent intent = new Intent(StartService.this, serviceName[i]);
@@ -177,6 +177,7 @@ public class StartService extends Service {
 
         //걸음수 검사 시작
         if(components[2]){
+            //걸음 수 설정
             Calendar walkCal = Calendar.getInstance();
             walkCal.set(Calendar.MONTH, month);
             walkCal.set(Calendar.DAY_OF_MONTH, day);
@@ -187,9 +188,16 @@ public class StartService extends Service {
             Calendar walkstartCal = Calendar.getInstance();
             walkstartCal.set(Calendar.MONTH, month);
             walkstartCal.set(Calendar.DAY_OF_MONTH, day);
-            walkstartCal.set(Calendar.HOUR_OF_DAY, template.getWakeupHour());
-            walkstartCal.set(Calendar.MINUTE, template.getWakeupMin());
-            walkstartCal.set(Calendar.SECOND, 0);
+            if(!components[0]) {
+                walkstartCal.set(Calendar.HOUR_OF_DAY, template.getWakeupHour());
+                walkstartCal.set(Calendar.MINUTE, template.getWakeupMin());
+                walkstartCal.set(Calendar.SECOND, 0);
+            }
+            else {
+                walkstartCal.set(Calendar.HOUR_OF_DAY, 0);
+                walkstartCal.set(Calendar.MINUTE, 0);
+                walkstartCal.set(Calendar.SECOND, 0);
+            }
 
             Intent walkIntent = new Intent(this, WalkService.class);
             walkIntent.putExtra("walkCount", template.getWalkCount());
@@ -197,6 +205,15 @@ public class StartService extends Service {
 
             walkAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             walkAM.setRepeating(AlarmManager.RTC_WAKEUP,walkstartCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY,walkSender);
+
+            //날씨 서비스 설정
+            Intent weatherIntent = new Intent(this, WeatherService.class);
+            weatherIntent.putExtra("walkStartTime",walkstartCal.get(Calendar.HOUR_OF_DAY));
+            weatherIntent.putExtra("walkStopTime",template.getWalkHour());
+            weatherSender = PendingIntent.getService(this,0,weatherIntent,0);
+
+            weatherAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            weatherAM.setRepeating(AlarmManager.RTC_WAKEUP,walkstartCal.getTimeInMillis(),AlarmManager.INTERVAL_DAY,weatherSender);
 
             //타이머 설정
             Date walkStop = new Date(walkCal.getTimeInMillis());
@@ -231,7 +248,11 @@ public class StartService extends Service {
             phoneSender = PendingIntent.getService(this, 0, phoneIntent, 0);
 
             phoneAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-            phoneAM.setRepeating(AlarmManager.RTC_WAKEUP,stopTime, AlarmManager.INTERVAL_DAY,phoneSender);
+            phoneAM.setRepeating(AlarmManager.RTC_WAKEUP,startTime, AlarmManager.INTERVAL_DAY,phoneSender);
+
+            //타이머 설정
+            Timer phoneTimer = new Timer();
+            phoneTimer.schedule(new PhoneTimer(),stopTime,1000*60*60*24);
         }
 
         //장소 검사 시작
@@ -361,6 +382,21 @@ public class StartService extends Service {
                 if (isServiceRunning("com.example.ohjeom.services.SleepService")) {
                     Log.d("service 작동 :", "O");
                     Intent intent = new Intent(getApplicationContext(), SleepService.class); // 이동할 컴포넌트
+                    stopService(intent);
+                    break;
+                }
+            }
+        }
+    }
+
+    //핸드폰
+    class PhoneTimer extends TimerTask {
+        @Override
+        public void run() {
+            while(true) {
+                if (isServiceRunning("com.example.ohjeom.services.PhoneService")) {
+                    Log.d("service 작동 :", "O");
+                    Intent intent = new Intent(getApplicationContext(), PhoneService.class); // 이동할 컴포넌트
                     stopService(intent);
                     break;
                 }
