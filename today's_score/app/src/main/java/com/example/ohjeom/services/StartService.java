@@ -112,9 +112,9 @@ public class StartService extends Service {
     }
 
     public void startExamination() {
-        boolean[] components = template.getComponents();
+        String[] components = template.getComponents();
         //기상 검사 시작
-        if(components[0]) {
+        if(components[0].equals("true")) {
             Calendar wakeupCal = Calendar.getInstance();
             wakeupCal.set(Calendar.MONTH, month);
             wakeupCal.set(Calendar.DAY_OF_MONTH, day);
@@ -139,7 +139,7 @@ public class StartService extends Service {
         }
 
         //수면 검사 시작
-        if(components[1]){
+        if(components[1].equals("true")){
             Calendar sleepCal = Calendar.getInstance();
             sleepCal.set(Calendar.MONTH, month);
             sleepCal.set(Calendar.DAY_OF_MONTH, day);
@@ -176,7 +176,7 @@ public class StartService extends Service {
         }
 
         //걸음수 검사 시작
-        if(components[2]){
+        if(components[2].equals("true")){
             Calendar walkCal = Calendar.getInstance();
             walkCal.set(Calendar.MONTH, month);
             walkCal.set(Calendar.DAY_OF_MONTH, day);
@@ -206,7 +206,7 @@ public class StartService extends Service {
         }
 
         //핸드폰 사용 검사 시작
-        if(components[3]){
+        if(components[3].equals("true")){
             Calendar startCal = Calendar.getInstance();
             startCal.set(Calendar.MONTH, month);
             startCal.set(Calendar.DAY_OF_MONTH, day);
@@ -235,7 +235,7 @@ public class StartService extends Service {
         }
 
         //장소 검사 시작
-        if(components[4]){
+        if(components[4].equals("true")){
 
             Calendar locationCal = Calendar.getInstance();
             locationCal.set(Calendar.MONTH, month);
@@ -249,6 +249,7 @@ public class StartService extends Service {
             Intent locationIntent2 = new Intent(this, LocationService2.class);
             Intent locationIntent3 = new Intent(this, LocationService3.class);
 
+            /*
             switch (template.getLocations().size()) {
                 case 1:
                     locationIntent1.putExtra("location",template.getLocations().get(0));
@@ -289,10 +290,12 @@ public class StartService extends Service {
                     Log.d(TAG, "SWITCH DEFAULT");
                     break;
             }
+
+             */
         }
 
         //소비 검사 시작
-        if(components[5]) {
+        if(components[5].equals("true")) {
             Calendar payCal = Calendar.getInstance();
             payCal.set(Calendar.MONTH, month);
             payCal.set(Calendar.DAY_OF_MONTH, day);
@@ -311,7 +314,7 @@ public class StartService extends Service {
             Date payStop = new Date(payStopCal.getTimeInMillis());
 
             Intent payIntent = new Intent(this, PaymentService.class);
-            payIntent.putExtra("money", template.getMoney());
+            payIntent.putExtra("money", template.getMoneyResult());
             paySender = PendingIntent.getService(this, 0, payIntent, 0);
 
             payAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);

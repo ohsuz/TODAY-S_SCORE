@@ -23,7 +23,7 @@ import static android.content.Context.ACTIVITY_SERVICE;
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
-    private boolean[] components;
+    private String[] components;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment {
             //scores.setBackgroundColor(Color.parseColor("#CCE6F1E6"));
 
             for(int i=0; i<5; i++){
-                if (components[i]) {
+                if (components[i].equals("true")) {
                     Test test = new Test(Template.componentNames[i]);
                     homeAdapter.addTest(test);
                 }

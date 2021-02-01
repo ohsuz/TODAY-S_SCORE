@@ -1,15 +1,24 @@
 package com.example.ohjeom.models;
 
-import java.util.ArrayList;
-
 public class Templates {
-    private static ArrayList<Template> templates = new ArrayList<>();
+    private String[] templateNamesResult;
+    private String[] isSelectedArrResult;
+    public static String[] templateNames;
+    public static String[] isSelectedArr;
 
-    public static ArrayList<Template> getTemplates() {
-        return templates;
+    public String[] getTemplateNamesResult() {
+        return templateNamesResult;
     }
 
-    public void setPrivateTemplates(ArrayList<Template> templates) {
-        this.templates = templates;
+    public void setTemplateNamesResult(String[] templateNamesResult) {
+        this.templateNamesResult = templateNamesResult;
+    }
+
+    public String[] getIsSelectedArrResult() {
+        return isSelectedArrResult;
+    }
+
+    public void setIsSelectedArrResult(String[] isSelectedArrResult) {
+        this.isSelectedArrResult = isSelectedArrResult;
     }
 }
