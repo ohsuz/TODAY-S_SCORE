@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -27,6 +28,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
@@ -38,14 +44,19 @@ import com.example.ohjeom.models.Location;
 import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
+import com.example.ohjeom.retrofit.RetrofitClient;
+import com.example.ohjeom.retrofit.TemplateService;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -53,18 +64,25 @@ import java.util.List;
 import java.util.Timer;
 
 public class MakerActivity2 extends AppCompatActivity {
-    private ArrayList<String> selectedOptions;
+    private static final String TAG = "MakerActivity2";
+    private Retrofit retrofit;
+    private TemplateService templateService;
+
+
+    private Template privateTemplate;
     private String templateName;
+    private ArrayList<String> selectedOptions;
+    private String[] components = {"false", "false", "false", "false", "false", "false"};
 
     private RecyclerView.LayoutManager lLayoutManager;
     private RecyclerView.LayoutManager gLayoutManager;
+
     private AppAdapter appAdapter;
-    private ArrayList<Location> locationList;
-    private ArrayList<String> appNames;
     private LocationAdapter locationAdapter;
     private AppCheckAdapter appCheckAdapter;
-    private Template privateTemplate;
-    private boolean[] components = {false,false,false,false,false,false};
+
+    private ArrayList<Location> locationList;
+    private String[] appNames;
 
     private int wakeupHour, wakeupMin;
     private int walkHour, walkMin, walkCount;
@@ -76,34 +94,31 @@ public class MakerActivity2 extends AppCompatActivity {
 
     private Calendar currentTime;
     private TimePicker wakeupTimePicker, walkTimePicker, sleepTimePicker, phoneStartTimePicker, phoneStopTimePicker, locationTimePicker;
-    private Timer wakeupTimer, walkTimer, sleepTimer;
     private RelativeLayout seekbarLayout;
     private TextView thumbText;
     private SeekBar countSb;
     private List<ResolveInfo> appInfos;
 
     // 위치 설정
-    private GpsTracker gpsTracker;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
-    private static final String TAG = "aaaaaaaaaaaaaaa";
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_templates_maker_2);
+        retrofit = RetrofitClient.getInstance();
+        templateService = retrofit.create(TemplateService.class);
 
         TextView template = (TextView)findViewById(R.id.temp_name);
-
         //레이아웃 출력
-        LinearLayout wakeup_layout = (LinearLayout) findViewById(R.id.wakeup_layout);
-        LinearLayout step_layout = (LinearLayout) findViewById(R.id.step_layout);
-        LinearLayout sleep_layout = (LinearLayout) findViewById(R.id.sleep_layout);
-        LinearLayout location_layout = (LinearLayout) findViewById(R.id.location_layout);
-        LinearLayout phone_layout = (LinearLayout) findViewById(R.id.phone_layout);
-        LinearLayout pay_layout = findViewById(R.id.pay_layout);
+        LinearLayout wakeupLayout = (LinearLayout) findViewById(R.id.wakeup_layout);
+        LinearLayout stepLayout = (LinearLayout) findViewById(R.id.step_layout);
+        LinearLayout sleepLayout = (LinearLayout) findViewById(R.id.sleep_layout);
+        LinearLayout locationLayout = (LinearLayout) findViewById(R.id.location_layout);
+        LinearLayout phoneLayout = (LinearLayout) findViewById(R.id.phone_layout);
+        LinearLayout payLayout = findViewById(R.id.pay_layout);
 
         Intent intent = getIntent();
         templateName = intent.getStringExtra("templateName");
@@ -114,46 +129,46 @@ public class MakerActivity2 extends AppCompatActivity {
         privateTemplate = new Template();
 
         int i = 0;
-        for (String s : selectedOptions) {
-            s = selectedOptions.get(i++).replace(" ","");
-            switch (s) {
+        for (String option : selectedOptions) {
+            option = selectedOptions.get(i++).replace(" ","");
+            switch (option) {
                 case "기상검사":
-                    wakeup_layout.setVisibility(View.VISIBLE);
-                    components[0] = true;
-                    break;
-                case "걸음수검사":
-                    step_layout.setVisibility(View.VISIBLE);
-                    components[2] = true;
+                    wakeupLayout.setVisibility(View.VISIBLE);
+                    components[0] = "true";
                     break;
                 case "수면검사":
-                    sleep_layout.setVisibility(View.VISIBLE);
-                    components[1] = true;
+                    sleepLayout.setVisibility(View.VISIBLE);
+                    components[1] = "true";
+                    break;
+                case "걸음수검사":
+                    stepLayout.setVisibility(View.VISIBLE);
+                    components[2] = "true";
+                    break;
+                case "핸드폰사용량검사":
+                    phoneLayout.setVisibility(View.VISIBLE);
+                    components[3] = "true";
                     break;
                 case "장소도착검사":
-                    location_layout.setVisibility(View.VISIBLE);
-                    components[4] = true;
+                    locationLayout.setVisibility(View.VISIBLE);
+                    components[4] = "true";
                     if (!checkLocationServicesStatus()) {
                         showDialogForLocationServiceSetting();
                     }else {
                         PermissionChecker.checkRunTimePermission(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
                     }
                     break;
-                case "핸드폰사용량검사":
-                    phone_layout.setVisibility(View.VISIBLE);
-                    components[3] = true;
-                    break;
                 case "소비검사":
-                    pay_layout.setVisibility(View.VISIBLE);
-                    components[5] = true;
+                    payLayout.setVisibility(View.VISIBLE);
+                    components[5] = "true";
             }
         }
 
-        privateTemplate.setComponents(components);
-
-        //현재 시간
+        // privateTemplate.setComponents(components); --------------------- 필요없는거 확실해지면 지우자
         currentTime = Calendar.getInstance();
 
-        //기상
+        /*
+        기상 검사
+         */
         wakeupHour = currentTime.get(Calendar.HOUR_OF_DAY);
         wakeupMin = currentTime.get(Calendar.MINUTE);
 
@@ -167,7 +182,9 @@ public class MakerActivity2 extends AppCompatActivity {
             }
         });
 
-        //운동
+        /*
+        운동 검사
+         */
         walkHour = currentTime.get(Calendar.HOUR_OF_DAY);
         walkMin = currentTime.get(Calendar.MINUTE);
 
@@ -215,16 +232,16 @@ public class MakerActivity2 extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
 
-        //수면
+        /*
+        수면 검사
+         */
         sleepHour = currentTime.get(Calendar.HOUR_OF_DAY);
         sleepMin = currentTime.get(Calendar.MINUTE);
 
@@ -238,7 +255,9 @@ public class MakerActivity2 extends AppCompatActivity {
             }
         });
 
-        //장소
+        /*
+        장소 검사
+         */
         RecyclerView locationListView = (RecyclerView) findViewById(R.id.location_listview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         locationListView.setLayoutManager(linearLayoutManager);
@@ -255,7 +274,6 @@ public class MakerActivity2 extends AppCompatActivity {
         location_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(MakerActivity2.this);
 
                 View view = LayoutInflater.from(MakerActivity2.this)
@@ -266,7 +284,6 @@ public class MakerActivity2 extends AppCompatActivity {
 
                 locationHour = currentTime.get(Calendar.HOUR_OF_DAY);
                 locationMin = currentTime.get(Calendar.MINUTE);
-
                 locationTimePicker = (TimePicker) view.findViewById(R.id.location_timepicker);
                 locationTimePicker.setIs24HourView(true);
                 locationTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
@@ -278,7 +295,7 @@ public class MakerActivity2 extends AppCompatActivity {
                 });
 
                 final AlertDialog dialog = builder.create();
-                final Location dest = new Location();
+                final Location location = new Location();
 
                 Places.initialize(getApplicationContext(), getString(R.string.api_key));
                 //PlacesClient placesClient = Places.createClient(this);
@@ -290,10 +307,10 @@ public class MakerActivity2 extends AppCompatActivity {
                     @Override
                     public void onPlaceSelected(@NotNull Place place) {
                         // TODO: Get info about the selected place.
-                        dest.setName(place.getName());
-                        dest.setLat(Double.parseDouble(String.format("%.4f", place.getLatLng().latitude)));
-                        dest.setLng(Double.parseDouble(String.format("%.4f", place.getLatLng().longitude)));
-                        Log.i(TAG, "목표 위치: " + dest.getName() + " 위도: " + dest.getLat() + " 경도: " + dest.getLng());
+                        location.setName(place.getName());
+                        location.setLat(Double.parseDouble(String.format("%.4f", place.getLatLng().latitude)));
+                        location.setLng(Double.parseDouble(String.format("%.4f", place.getLatLng().longitude)));
+                        Log.i(TAG, "목표 위치: " + location.getName() + " 위도: " + location.getLat() + " 경도: " + location.getLng());
                     }
 
                     @Override
@@ -313,11 +330,10 @@ public class MakerActivity2 extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        location.setLocationHour(locationHour);
+                        location.setLocationMin(locationMin);
 
-                        dest.setLocationHour(locationHour);
-                        dest.setLocationMin(locationMin);
-
-                        locationList.add(dest);
+                        locationList.add(location);
                         locationAdapter.notifyDataSetChanged();
 
                         dialog.dismiss();
@@ -332,7 +348,9 @@ public class MakerActivity2 extends AppCompatActivity {
             }
         });
 
-        //공부
+        /*
+        핸드폰 사용량 검사
+         */
         startHour = currentTime.get(Calendar.HOUR_OF_DAY);
         startMin = currentTime.get(Calendar.MINUTE);
 
@@ -363,34 +381,16 @@ public class MakerActivity2 extends AppCompatActivity {
         appButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(MakerActivity2.this);
-
                 View view = LayoutInflater.from(MakerActivity2.this)
                         .inflate(R.layout.dialog_app, null, false);
                 builder.setView(view);
-
                 final Button button = (Button) view.findViewById(R.id.button);
-
-                //Data
                 final PackageManager pm = getPackageManager();
-
                 Intent applistIntent = new Intent(Intent.ACTION_MAIN);
                 applistIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
                 List<ResolveInfo> appList = pm.queryIntentActivities(applistIntent, 0);
 
-                /*
-                for (ResolveInfo info : app_list) {
-                    String appActivity = info.activityInfo.name;
-                    String appPackageName = info.activityInfo.packageName;
-                    String appName = info.loadLabel(pm).toString();
-                    Drawable drawable = info.activityInfo.loadIcon(pm);
-                    Log.d("TEST", "appName : " + appName + ", appActivity : " + appActivity + ", appPackageName : " + appPackageName);
-                }
-                */
-
-                //View
                 appAdapter = new AppAdapter(pm, appList);
                 RecyclerView appListView = view.findViewById(R.id.app_listview);
                 appListView.setHasFixedSize(true);
@@ -412,6 +412,13 @@ public class MakerActivity2 extends AppCompatActivity {
                         appcheckListView.setLayoutManager(gLayoutManager);
                         appcheckListView.setAdapter(appCheckAdapter);
                         dialog.dismiss();
+
+                        appNames = new String[appInfos.size()];
+                        for (int i = 0; i < appInfos.size(); i++) {
+                            String appName = appInfos.get(i).activityInfo.packageName;
+                            appNames[i] = appName;
+                            Log.d("앱 이름", appName);
+                        }
                     }
                 });
                 dialog.show();
@@ -427,7 +434,9 @@ public class MakerActivity2 extends AppCompatActivity {
         appcheckListView.setLayoutManager(lLayoutManager);
         appcheckListView.setAdapter(appCheckAdapter);
 
-        //소비
+        /*
+        소비 검사
+         */
         final TextView moneyText = findViewById(R.id.money_text);
         ImageButton payButton1 = findViewById(R.id.pay_button1);
         ImageButton payButton2 = findViewById(R.id.pay_button2);
@@ -451,43 +460,121 @@ public class MakerActivity2 extends AppCompatActivity {
     }
 
     public void mOnClick(View v) {
+        JsonObject body = getBody();
 
-        appNames = new ArrayList<>();
-
-        if(components[3]) {
-            for (ResolveInfo resolveInfo : appInfos) {
-                String s = resolveInfo.activityInfo.packageName;
-                appNames.add(s);
-                Log.d("앱 이름", s);
+        templateService.registerTemplate(body).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 404) { // 템플릿 등록 실패
+                    try {
+                        Toast.makeText(MakerActivity2.this, "템플릿 등록에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        Log.d("TemplateService", "res:" + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else { // 템플릿 등록 성공
+                    try {
+                        Log.d("TemplateService", "res:" + response.body().string());
+                        updateTemplateList();
+                        Intent intentHome = new Intent(MakerActivity2.this, MainActivity.class);
+                        intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intentHome.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intentHome);
+                        finish();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("TemplateService", "Failed API call with call: " + call
+                        + ", exception: " + t);
+            }
+        });
+    }
+
+    public void updateTemplateList() {
+        JsonObject body = new JsonObject();
+        body.addProperty("userID", "aaa");
+
+        templateService.getPrivateName(body).enqueue(new Callback<Templates>() {
+            @Override
+            public void onResponse(Call<Templates> call, Response<Templates> response) {
+                if (response.code() == 404) {
+                    try {
+                        Log.d("TemplateService", "res:" + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Templates templates = response.body();
+                    Templates.templateNames = templates.getTemplateNamesResult();
+                    Templates.isSelectedArr = templates.getIsSelectedArrResult();
+                }
+            }
+            @Override
+            public void onFailure(Call<Templates> call, Throwable t) {
+                Log.d("TemplateService", "Failed API call with call: " + call
+                        + ", exception: " + t);
+            }
+        });
+
+    }
+
+    public JsonObject getBody() {
+        JsonObject body = new JsonObject();
+        body.addProperty("userID", "aaa");
+        body.addProperty("templateName", templateName);
+        body.addProperty("isSelected", false);
+        body.addProperty("components", Arrays.toString(components));
+
+        // 순서: 기상 수면 걸음수 핸드폰사용량 장소도착 소비
+        if (components[0].equals("true")) {
+            JsonObject  wakeObj = new JsonObject ();
+            wakeObj.addProperty("h", wakeupHour);
+            wakeObj.addProperty("m", wakeupMin);
+            body.addProperty("wake", wakeObj.toString());
         }
-
-        privateTemplate.setTemplateName(templateName);
-        privateTemplate.setWalkHour(walkHour);
-        privateTemplate.setWalkMin(walkMin);
-        privateTemplate.setWakeupHour(wakeupHour);
-        privateTemplate.setWakeupMin(wakeupMin);
-        privateTemplate.setSleepHour(sleepHour);
-        privateTemplate.setSleepMin(sleepMin);
-        privateTemplate.setLocations(locationList);
-        privateTemplate.setAppNames(appNames);
-        privateTemplate.setStartHour(startHour);
-        privateTemplate.setStartMin(startMin);
-        privateTemplate.setStopHour(stopHour);
-        privateTemplate.setStopMin(stopMin);
-        privateTemplate.setWalkCount(walkCount);
-        privateTemplate.setMoney(money);
-
-        Templates.getTemplates().add(privateTemplate);
-
-        Intent intentHome = new Intent(this, MainActivity.class);
-        intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intentHome.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intentHome);
-        finish();
-
-        //보낼 데이터 : 템플릿 이름, 기상 시간 , 운동 시간&걸음 수, 핸드폰 앱 list&시작 시간&종료 시간, 장소 list(이름, 위도, 경도)&시간, 수면 시간, 소비 금액
-
+        if (components[1].equals("true")) {
+            JsonObject  sleepObj = new JsonObject ();
+            sleepObj.addProperty("h", sleepHour);
+            sleepObj.addProperty("m", sleepMin);
+            body.addProperty("sleep", sleepObj.toString());
+        }
+        if (components[2].equals("true")) {
+            JsonObject walkObj = new JsonObject();
+            walkObj.addProperty("goal", walkCount);
+            walkObj.addProperty("h", walkHour);
+            walkObj.addProperty("m", walkMin);
+            body.addProperty("walk", walkObj.toString());
+        }
+        if (components[3].equals("true")) {
+            JsonObject appObj= new JsonObject();
+            appObj.addProperty("appNames", Arrays.toString(appNames));
+            appObj.addProperty("startH", startHour);
+            appObj.addProperty("startM", startMin);
+            appObj.addProperty("stopH", stopHour);
+            appObj.addProperty("stopM", stopMin);
+            body.addProperty("app", String.valueOf(appObj));
+        }
+        if (components[4].equals("true")) {
+            JsonArray locationArr = new JsonArray();
+            for (Location location: locationList) {
+                JsonObject locationObj = new JsonObject();
+                locationObj.addProperty("locationName", location.getName());
+                locationObj.addProperty("lat", location.getLat());
+                locationObj.addProperty("lng", location.getLng());
+                locationObj.addProperty("h", location.getLocationHour());
+                locationObj.addProperty("m", location.getLocationMin());
+                locationArr.add(locationObj);
+            }
+            body.addProperty("locations", locationArr.toString());
+        }
+        if (components[5].equals("true")) {
+            body.addProperty("money", money);
+        }
+        return body;
     }
 
     @Override

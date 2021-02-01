@@ -8,9 +8,17 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.ohjeom.models.Template;
+import com.example.ohjeom.models.Templates;
+import com.example.ohjeom.retrofit.RetrofitClient;
+import com.example.ohjeom.retrofit.TemplateService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.JsonObject;
+
+import java.io.IOException;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -19,15 +27,49 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import static com.example.ohjeom.ui.templates.privateTemplate.PrivateFragment.pAdapter;
 
 public class MainActivity extends AppCompatActivity {
+    String[] templates = new String[]{};
+    private Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        retrofit = RetrofitClient.getInstance();
+        TemplateService templateService = retrofit.create(TemplateService.class);
+        JsonObject body = new JsonObject();
+        body.addProperty("userID", "aaa");
+
+        templateService.getPrivateName(body).enqueue(new Callback<Templates>() {
+            @Override
+            public void onResponse(Call<Templates> call, Response<Templates> response) {
+                if (response.code() == 404) {
+                    try {
+                        Toast.makeText(MainActivity.this, "개인 템플릿 이름 호출에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        Log.d("TemplateService", "res:" + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "개인 템플릿 이름 호출에 성공했습니다.", Toast.LENGTH_SHORT).show();
+                    Templates templates = response.body();
+                    Templates.templateNames = templates.getTemplateNamesResult();
+                    Templates.isSelectedArr = templates.getIsSelectedArrResult();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Templates> call, Throwable t) {
+                Log.d("TemplateService", "Failed API call with call: " + call
+                        + ", exception: " + t);
+            }
+        });
 
         // 가장 먼저 permission 체크
         if(!checkUsageStatsPermissions()){
@@ -59,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         // NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
     }
+
+
 
     public boolean checkUsageStatsPermissions(){
         try {
@@ -109,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent != null) {
-
         }
         super.onNewIntent(intent);
     }

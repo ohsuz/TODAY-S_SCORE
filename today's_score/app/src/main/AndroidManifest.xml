@@ -19,6 +19,7 @@
         android:allowBackup="true"
         android:icon="@drawable/icon_school"
         android:label="@string/app_name"
+        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <service
@@ -28,19 +29,22 @@
         <!-- Meta Data -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAJwn6eRf35L370GtqtYzUROb2YpVT8KQc" /> <!-- Activities -->
+            android:value="AIzaSyAJwn6eRf35L370GtqtYzUROb2YpVT8KQc" />
+
+        <!-- Activities -->
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.templates.TemplateActivity" />
         <activity android:name=".ui.templates.templateMaker.MakerActivity1" />
-        <activity android:name=".ui.templates.templateMaker.MakerActivity2" /> <!-- Services -->
+        <activity android:name=".ui.templates.templateMaker.MakerActivity2" />
+
+        <!-- Services -->
         <service android:name=".services.PhoneService" />
         <service android:name=".services.SleepService" />
         <service android:name=".services.WakeupService" />
