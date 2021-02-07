@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.example.ohjeom.MainActivity;
@@ -35,6 +36,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LocationService1 extends Service {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+    /*
     private static final String TAG = "locationService";
     private static final String ERROR_MSG = "왜안돼!!!!!!!!!!!";
     private Location location;
@@ -213,4 +220,5 @@ public class LocationService1 extends Service {
         d = Math.sqrt(yd + xd);
         return Double.parseDouble(String.format("%.4f", d));
     }
+     */
 }

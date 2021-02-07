@@ -92,6 +92,8 @@ public class MakerActivity2 extends AppCompatActivity {
     private int sleepHour, sleepMin;
     private int startHour, startMin;
     private int stopHour, stopMin;
+    private String locationName;
+    private double locationLat, locationLng;
     private int locationHour, locationMin;
     private int money;
 
@@ -299,7 +301,6 @@ public class MakerActivity2 extends AppCompatActivity {
                 });
 
                 final AlertDialog dialog = builder.create();
-                final Location location = new Location();
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                 Places.initialize(getApplicationContext(), getString(R.string.api_key));
@@ -312,10 +313,10 @@ public class MakerActivity2 extends AppCompatActivity {
                     @Override
                     public void onPlaceSelected(@NotNull Place place) {
                         // TODO: Get info about the selected place.
-                        location.setName(place.getName());
-                        location.setLat(Double.parseDouble(String.format("%.4f", place.getLatLng().latitude)));
-                        location.setLng(Double.parseDouble(String.format("%.4f", place.getLatLng().longitude)));
-                        Log.i(TAG, "목표 위치: " + location.getName() + " 위도: " + location.getLat() + " 경도: " + location.getLng());
+                        locationName = place.getName();
+                        locationLng = Double.parseDouble(String.format("%.4f", place.getLatLng().latitude));
+                        locationLat = Double.parseDouble(String.format("%.4f", place.getLatLng().longitude));
+                        Log.i(TAG, "목표 위치: " + locationName + " 위도: " + locationLng + " 경도: " + locationLat);
                     }
 
                     @Override
@@ -335,8 +336,7 @@ public class MakerActivity2 extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        location.setLocationHour(locationHour);
-                        location.setLocationMin(locationMin);
+                        Location location = new Location(locationName, locationLat, locationLng, locationHour, locationMin);
 
                         locationList.add(location);
                         locationAdapter.notifyDataSetChanged();

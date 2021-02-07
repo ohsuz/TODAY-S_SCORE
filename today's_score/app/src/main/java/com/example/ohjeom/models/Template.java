@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class Template implements Parcelable {
         startMin = in.readInt();
         stopHour = in.readInt();
         stopMin = in.readInt();
-        //locations = (ArrayList<Location>) in.readSerializable();
+        in.readTypedList(locations, Location.CREATOR);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class Template implements Parcelable {
         dest.writeInt(startMin);
         dest.writeInt(stopHour);
         dest.writeInt(stopMin);
-        //dest.writeSerializable(locations); /* @@@@@@@@@@@@@ 여기서부터 다시 */
+        dest.writeTypedList(locations);
     }
 
     @Override
@@ -148,13 +149,8 @@ public class Template implements Parcelable {
             JsonArray locationArr = (JsonArray)parser.parse(this.locationResult);
             for (int i = 0; i < locationArr.size(); i++) {
                 JsonObject locationObj = (JsonObject) locationArr.get(i);
-                Location location = new Location();
-                location.setName(locationObj.get("locationName").getAsString().trim());
-                Log.d("@@@@@@", "Template: " + location.getName());
-                location.setLat(locationObj.get("lat").getAsDouble());
-                location.setLng(locationObj.get("lng").getAsDouble());
-                location.setLocationHour(locationObj.get("h").getAsInt());
-                location.setLocationMin(locationObj.get("m").getAsInt());
+                Location location = new Location(locationObj.get("locationName").getAsString().trim(),locationObj.get("lat").getAsDouble(),
+                        locationObj.get("lng").getAsDouble(),locationObj.get("h").getAsInt(),locationObj.get("m").getAsInt());
                 this.locations.add(location);
             }
         }

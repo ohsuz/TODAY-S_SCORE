@@ -26,9 +26,16 @@ import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class LocationService3 extends Service {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+    /*
     private static final String TAG = "locationService";
     private static final String ERROR_MSG = "왜안돼!!!!!!!!!!!";
     private Location location;
@@ -207,4 +214,5 @@ public class LocationService3 extends Service {
         d = Math.sqrt(yd + xd);
         return Double.parseDouble(String.format("%.4f", d));
     }
+    */
 }
