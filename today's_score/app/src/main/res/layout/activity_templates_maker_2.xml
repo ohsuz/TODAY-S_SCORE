@@ -445,37 +445,34 @@
                     android:text="목표 소비 금액"
                     android:textSize="25sp" />
 
-                <ImageButton
-                    android:id="@+id/pay_button1"
-                    android:layout_width="66dp"
-                    android:layout_height="52dp"
-                    android:layout_gravity="center"
-                    android:scaleType="fitXY"
-                    android:background="@android:color/transparent"
-                    android:padding="0dp"
-                    android:src="@drawable/ic_baseline_arrow_drop_up_24" />
-
-                <TextView
-                    android:id="@+id/money_text"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:fontFamily="@font/jua"
-                    android:text="10000"
-                    android:textSize="25sp" />
+                    android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/pay_button2"
-                    android:layout_width="66dp"
-                    android:layout_height="52dp"
-                    android:layout_gravity="center"
-                    android:scaleType="fitXY"
-                    android:padding="0dp"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/ic_baseline_arrow_drop_down_24"/>
+                    <EditText
+                        android:id="@+id/money_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/jua"
+                        android:text="50000"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/jua"
+                        android:text="원"
+                        android:textSize="25sp"/>
+
+                </LinearLayout>
 
             </LinearLayout>
             <!-- 소비 점수 끝 -->
+
 
         </LinearLayout>
 

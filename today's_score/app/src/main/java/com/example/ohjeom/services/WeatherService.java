@@ -2,6 +2,7 @@ package com.example.ohjeom.services;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Weather;
@@ -33,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class WeatherService extends Service {
-
+    private static final String TAG = "WeatherService";
     private int startTime;
     private int stopTime;
     private Map<Integer, Weather> weatherList = new HashMap<>();
@@ -44,6 +46,25 @@ public class WeatherService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Intent clsIntent = new Intent(WeatherService.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(WeatherService.this, 0, clsIntent, 0);
+
+        NotificationCompat.Builder clsBuilder;
+        if( Build.VERSION.SDK_INT >= 26 ) {
+            String CHANNEL_ID = "channel_id";
+            NotificationChannel clsChannel = new NotificationChannel(CHANNEL_ID, "서비스 앱", NotificationManager.IMPORTANCE_DEFAULT);
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(clsChannel);
+
+            clsBuilder = new NotificationCompat.Builder(this, CHANNEL_ID );
+        } else {
+            clsBuilder = new NotificationCompat.Builder(this);
+        }
+
+        clsBuilder.setSmallIcon(R.drawable.icon_school)
+                .setContentTitle("오늘의 점수").setContentText("Service is running...")
+                .setContentIntent(pendingIntent);
+
+        startForeground(1, clsBuilder.build());
     }
 
     @Override
@@ -84,25 +105,23 @@ public class WeatherService extends Service {
 
         @Override
         protected void onPostExecute(JSONObject result) {
-            Log.i("가져온 결과값",result.toString());
+            Log.i(TAG + "가져온 결과값",result.toString());
 
             try {
                 JSONArray hourly = (JSONArray) result.get("hourly");
                 for (int i=0;i<hourly.length();i++){
                     JSONObject tmp = (JSONObject) hourly.get(i);
-
                     String dt = tmp.get("dt").toString();
-
                     Date date = new Date();
-                    date.setTime(Long.parseLong(dt)*1000+9*60*60*1000);
-
+                    date.setTime(Long.parseLong(dt)*1000);
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(date);
 
                     int hour = cal.get(Calendar.HOUR_OF_DAY);
-                    if(hour<startTime)
+                    if (hour < startTime) {
                         continue;
-                    if(hour==stopTime)
+                    }
+                    if (hour == stopTime)
                         break;
 
                     String temp = String.valueOf((Double.parseDouble(String.valueOf(tmp.get("temp")))-273.15));
@@ -111,10 +130,10 @@ public class WeatherService extends Service {
 
                     weatherList.put(hour,new Weather(temp,clouds,pop));
 
-                    Log.i("가져온 시간", String.valueOf(hour));
-                    Log.i("가져온 기온", temp);
-                    Log.i("가져온 햇빛", clouds);
-                    Log.i("가져온 강수확률", pop);
+                    Log.i(TAG + "가져온 시간", String.valueOf(hour));
+                    Log.i(TAG + "가져온 기온", temp);
+                    Log.i(TAG + "가져온 햇빛", clouds);
+                    Log.i(TAG + "가져온 강수확률", pop);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -136,7 +155,7 @@ public class WeatherService extends Service {
                     BufferedReader in = new BufferedReader(reader);
 
                     String readed;
-                    while((readed=in.readLine())!=null){
+                    while ((readed=in.readLine()) != null){
                         JSONObject jObect = new JSONObject(readed);
                         return jObect;
                     }
@@ -162,7 +181,7 @@ public class WeatherService extends Service {
 
         while (iterator.hasNext()) {
             int time = (int) iterator.next();
-            Log.d("추천 시간대", String.valueOf(time)+"시");
+            Log.d(TAG + "추천 시간대", String.valueOf(time)+"시");
             NotificationWeather(time,goodWeatherList.get(time));
             break;
         }
@@ -185,6 +204,7 @@ public class WeatherService extends Service {
         }
         return weatherList;
     }
+
     private Map<Integer, Weather> calculateTemp(Map<Integer,Weather> popList) {
         int[] temp = {5, 0, -10, -100};
         Set set = popList.keySet();
@@ -204,15 +224,15 @@ public class WeatherService extends Service {
     }
 
     private Map<Integer, Weather> calculateClouds(Map<Integer,Weather> tempList) {
-        int[][] clouds = {{60,90},{30,60},{90,100},{0,30}};
+        int[] clouds = {0, 30, 60, 90, 100};
         Set set = tempList.keySet();
         Iterator iterator = set.iterator();
         for (int i = 0; i < 4; i++) {
             Map<Integer, Weather> goodWeahterList = new HashMap<>();
             while (iterator.hasNext()) {
                 int time = (int) iterator.next();
-                if (Double.parseDouble(tempList.get(time).getClouds()) <= clouds[i][1]
-                        ||Double.parseDouble(tempList.get(time).getClouds()) >= clouds[i][0] ) {
+                if (Double.parseDouble(tempList.get(time).getClouds()) >= clouds[i]
+                    || Double.parseDouble(tempList.get(time).getClouds()) < clouds[i+1]) {
                     goodWeahterList.put(time, tempList.get(time));
                 }
             }
@@ -227,24 +247,22 @@ public class WeatherService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_weather")
                 .setSmallIcon(R.drawable.icon_school) //BitMap 이미지 요구
                 .setContentTitle("오늘의 점수 : 걷기 좋은 시간대")
-                .setContentText("오늘은" + time + "시에 걷기 좋아요!")
+                .setContentText("오늘은 " + time + "시에 걷기 좋아요!")
                 // 더 많은 내용이라서 일부만 보여줘야 하는 경우 아래 주석을 제거하면 setContentText에 있는 문자열 대신 아래 문자열을 보여줌
                 //.setStyle(new NotificationCompat.BigTextStyle().bigText("더 많은 내용을 보여줘야 하는 경우..."))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        //OREO API 26 이상에서는 채널 필요
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setSmallIcon(R.drawable.icon_school); //mipmap 사용시 Oreo 이상에서 시스템 UI 에러남
+            builder.setSmallIcon(R.drawable.icon_school);
             NotificationChannel channel = new NotificationChannel("channel_weather", "오늘의 점수 알리미", NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription("시간대 추천");
-            // 노티피케이션 채널을 시스템에 등록
             assert notificationManager != null;
             notificationManager.createNotificationChannel(channel);
-        }else builder.setSmallIcon(R.drawable.icon_school); // Oreo 이하에서 mipmap 사용하지 않으면 Couldn't create icon: StatusBarIcon 에러남
+        }else builder.setSmallIcon(R.drawable.icon_school);
 
         assert notificationManager != null;
-        notificationManager.notify(3, builder.build()); // 고유숫자로 노티피케이션 동작시킴
+        notificationManager.notify(3, builder.build());
     }
 }

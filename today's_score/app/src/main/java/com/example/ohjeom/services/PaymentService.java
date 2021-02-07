@@ -11,16 +11,16 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 import com.example.ohjeom.models.AccountSummary;
 import com.example.ohjeom.models.Payment;
 
 import java.util.ArrayList;
-import java.util.Timer;
+
 
 public class PaymentService extends Service {
+    public static String TAG = "PaymentService";
     public static int total;
     public static ArrayList<Payment> payments;
     private int amount = 0;
@@ -45,7 +45,6 @@ public class PaymentService extends Service {
             String CHANNEL_ID = "channel_id";
             NotificationChannel clsChannel = new NotificationChannel(CHANNEL_ID, "서비스 앱", NotificationManager.IMPORTANCE_DEFAULT);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(clsChannel);
-
             clsBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         } else {
             clsBuilder = new NotificationCompat.Builder(this);
@@ -53,7 +52,7 @@ public class PaymentService extends Service {
 
         // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
         clsBuilder.setSmallIcon(R.drawable.icon_school)
-                .setContentTitle("서비스 앱").setContentText("서비스 앱")
+                .setContentTitle("오늘의 점수").setContentText("Service is running...")
                 .setContentIntent(pendingIntent);
 
         // foreground 서비스로 실행한다.
@@ -67,7 +66,7 @@ public class PaymentService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //처음 실행 시
         if(startId==1) {
-            Log.d("소비 검사","시작");
+            Log.d(TAG,"시작");
             money = intent.getIntExtra("money",0);
             return super.onStartCommand(intent, flags, startId);
         }
@@ -76,12 +75,11 @@ public class PaymentService extends Service {
             String[] array = message.split(" ");
 
             for (String s : array) {
-                Log.d("dd", s);
+                Log.d(TAG, s);
                 if (s.contains("원") && amount == 0) {
-                    s = s.replace("원", "");
-                    amount = Integer.parseInt(s.replace(",", ""));
+                    amount = Integer.parseInt(s.replace(",", "").replace("원", ""));
                     total += amount;
-                    Log.d("현재까지 총합:", String.valueOf(total));
+                    Log.d(TAG + " 현재까지 총합:", String.valueOf(total));
                 }
                 if (next) {
                     usage = s;
@@ -103,7 +101,7 @@ public class PaymentService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("소비 검사","종료");
+        Log.d(TAG,"종료");
 
         /*
         서버로 점수 보내기 및 총 사용량 & 사용내역 보내기 : score,accountSummary 보내면 됨
@@ -113,14 +111,14 @@ public class PaymentService extends Service {
 
         Log.d("합계:", String.valueOf(total));
         for (Payment p : accountSummary.getDetails()) {
-            Log.d("사용내역 : ", p.getUsage() + p.getAmount() + "원");
+            Log.d(TAG + "사용내역 : ", p.getUsage() + p.getAmount() + "원");
         }
 
         if (total < money)
             score = 100;
         else
             score = 0;
-        Log.d("소비 점수:", String.valueOf(score));
+        Log.d(TAG, String.valueOf(score));
 
         super.onDestroy();
     }

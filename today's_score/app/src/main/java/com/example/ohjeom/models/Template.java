@@ -90,7 +90,7 @@ public class Template implements Parcelable {
         dest.writeInt(startMin);
         dest.writeInt(stopHour);
         dest.writeInt(stopMin);
-        dest.writeSerializable(locations); /* @@@@@@@@@@@@@ 여기서부터 다시 */
+        //dest.writeSerializable(locations); /* @@@@@@@@@@@@@ 여기서부터 다시 */
     }
 
     @Override

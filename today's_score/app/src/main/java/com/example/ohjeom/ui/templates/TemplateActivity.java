@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,6 +62,7 @@ public class TemplateActivity extends AppCompatActivity {
     private SeekBar countSb;
     private String[] components;
     private Template privateTemplate;
+    private int pos;
     private Calendar startCal;
     private ArrayList<Location> locationList = new ArrayList<>();
     private String[] appNames;
@@ -79,6 +82,7 @@ public class TemplateActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         privateTemplate = intent.getParcelableExtra("template");
+
         Log.d("@@@@@@", "TemplateActivity: " + privateTemplate.getNameResult());
 
         TextView templateName = (TextView) findViewById(R.id.temp_name);
@@ -255,16 +259,17 @@ public class TemplateActivity extends AppCompatActivity {
 
         final AlertDialog dialog = builder.create();
         final Intent intentHome = new Intent(this, MainActivity.class);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        /*
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                templates.get(position).setISelected(true);
+                //isSelectedArr true 로 바꿔줘야함 -> 어떻게 접근..?\
+
                 Test.setTemplate(privateTemplate); // 점수를 측정할 템플릿으로 이 템플릿을 설정
 
                 Intent intentService = new Intent(TemplateActivity.this, StartService.class);
-                intentService.putExtra("template", (Serializable) templates.get(position));
+                intentService.putExtra("template", privateTemplate);
                 intentService.putExtra("month", startMonth);
                 intentService.putExtra("day", startDay);
                 startService(intentService);
@@ -276,8 +281,6 @@ public class TemplateActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-         */
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override

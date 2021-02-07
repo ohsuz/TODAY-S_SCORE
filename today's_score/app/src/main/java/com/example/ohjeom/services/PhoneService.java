@@ -23,24 +23,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import com.example.ohjeom.BuildConfig;
+import com.android.volley.BuildConfig;
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
+import com.example.ohjeom.models.Weather;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class PhoneService extends Service {
-
-    private long phoneUsageToday=0;
+    private static final String TAG = "PhoneService";
+    private int phoneUsageToday;
     private long startTime, stopTime;
-    private int phoneTime;
     private boolean run = true;
     private List<AppUsageInfo> appUsageList;
-    private ArrayList<String> appNames = new ArrayList<>();
-    private ArrayList<Integer> appUsageTimes = new ArrayList<>();
+    private String[] appNames;
+    private ArrayList<Integer> appUsageTimes = new ArrayList<>(); //시간만 보내고 싶을때 (순서 꼬이는 경우가 없으면 사용 가능)
+    private Map<String,Long> appUsageTimesList = new HashMap<>();
 
     private class AppUsageInfo {
         String appName, packageName;
@@ -63,36 +68,31 @@ public class PhoneService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(PhoneService.this, 0, clsIntent, 0);
 
         NotificationCompat.Builder clsBuilder;
-        if( Build.VERSION.SDK_INT >= 26 )
-        {
+        if( Build.VERSION.SDK_INT >= 26 ) {
             String CHANNEL_ID = "channel_id";
             NotificationChannel clsChannel = new NotificationChannel(CHANNEL_ID, "서비스 앱", NotificationManager.IMPORTANCE_DEFAULT);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(clsChannel);
 
             clsBuilder = new NotificationCompat.Builder(this, CHANNEL_ID );
-        }
-        else
-        {
+        } else {
             clsBuilder = new NotificationCompat.Builder(this);
         }
 
-        // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
         clsBuilder.setSmallIcon(R.drawable.icon_school)
-                .setContentTitle("서비스 앱" ).setContentText("서비스 앱")
+                .setContentTitle("오늘의 점수").setContentText("Service is running...")
                 .setContentIntent(pendingIntent);
 
-        // foreground 서비스로 실행한다.
         startForeground(1, clsBuilder.build());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("앱 사용시간-","가져오기 시작");
-        appNames = intent.getStringArrayListExtra("appNames");
+        Log.d(TAG + "앱 사용시간-","가져오기 시작");
+        appNames = intent.getStringArrayExtra("appNames");
         startTime = intent.getLongExtra("startTime",1);
         stopTime = intent.getLongExtra("stopTime",1);
 
-        for(int i=0;i<appNames.size();i++)
+        for (int i = 0; i < appNames.length; i++)
             appUsageTimes.add(0);
 
         PhoneThread thread = new PhoneThread();
@@ -106,16 +106,23 @@ public class PhoneService extends Service {
         run = false;
 
         int Time = (int) ((stopTime - startTime)/(60*1000));
-        phoneTime /= 60;
-        int phoneScore = ScoreCalculate(Time,phoneTime);
+        phoneUsageToday /= 60;
+        int phoneScore = ScoreCalculate(Time, phoneUsageToday);
 
-        Log.d("핸드폰 사용 점수", String.valueOf(phoneScore));
+        Log.d(TAG + "핸드폰 사용 점수", String.valueOf(phoneScore));
+        Log.d(TAG + "총 사용시간", String.valueOf(phoneUsageToday));
+        Set set = appUsageTimesList.keySet();
+        Iterator iterator = set.iterator();
+        while (iterator.hasNext()) {
+            String appName = (String) iterator.next();
+            Log.d(TAG + "앱별 사용시간", appName+","+appUsageTimesList.get(appName));
+
+        }
+
         /*
         점수보내기 & appUsageTimes(앱별 사용시간), phoneTime(총 사용시간)
          */
-        Log.d("핸드폰 측정","종료");
-
-        Log.d("앱 사용시간-","가져오기 종료");
+        Log.d(TAG + "앱 사용시간-","가져오기 종료");
         super.onDestroy();
     }
 
@@ -126,10 +133,19 @@ public class PhoneService extends Service {
     }
 
     private class PhoneThread extends Thread {
-        private static final String TAG = "ScreenThread";
         public void run(){
+            long diff = (stopTime - startTime) / 1000;
+            double[] notificationTime = {0.25, 0.5, 0.75, 1};
+            int i = 0;
             while (run) {
-                getUsageStatistics();
+                phoneUsageToday = getUsageStatistics();
+                if(i <= 3) {
+                    if (phoneUsageToday >= (long) diff * notificationTime[i]) {
+                        Log.d(TAG + "알림 보내기", (notificationTime[i] * 100) + "% 초과");
+                        NotificationWarning((int) (notificationTime[i] * 100));
+                        i++;
+                    }
+                }
                 try {
                     Thread.sleep(1000*60);
                 } catch (InterruptedException e) {
@@ -139,7 +155,8 @@ public class PhoneService extends Service {
         }
     }
 
-    void getUsageStatistics() {
+    private int getUsageStatistics() {
+        int sum = 0;
 
         UsageEvents.Event currentEvent;
         List<UsageEvents.Event> allEvents = new ArrayList<>();
@@ -149,8 +166,6 @@ public class PhoneService extends Service {
 
         assert mUsageStatsManager != null;
         UsageEvents usageEvents = mUsageStatsManager.queryEvents(startTime, System.currentTimeMillis());
-        Log.d("가져오는 시간", String.valueOf(System.currentTimeMillis()));
-        //capturing all events in a array to compare with next element
         while (usageEvents.hasNextEvent()) {
             currentEvent = new UsageEvents.Event();
             usageEvents.getNextEvent(currentEvent);
@@ -158,78 +173,75 @@ public class PhoneService extends Service {
                     currentEvent.getEventType() == UsageEvents.Event.MOVE_TO_BACKGROUND) {
                 allEvents.add(currentEvent);
                 String key = currentEvent.getPackageName();
-                // taking it into a collection to access by package name
                 if (map.get(key)==null)
                     map.put(key,new AppUsageInfo(key));
             }
         }
 
-        //만약 이벤트 발생한것이 없을 시? 현재 foreground에 있는 앱 이름 가져와서 비교 후, timeInforeground에 시간 추가
-        if(allEvents == null){
-            Log.d("이벤트 발생안함","ㅇㅇㅇ");
+        // 만약 이벤트 발생한것이 없을 시? 현재 foreground에 있는 앱 이름 가져와서 비교 후, timeInforeground에 시간 추가
+        if(allEvents.isEmpty()){
             String appName = getTopPackageName(PhoneService.this);
-            if(appNames.contains(appName))
+            Log.d(TAG ,"이벤트 미발생" + appName);
+            if(Arrays.asList(appNames).contains(appName)) {
+                map.put(appName,new AppUsageInfo(appName));
                 map.get(appName).timeInForeground += System.currentTimeMillis() - startTime;
-            //map.get().timeInforeground = System.currentTimeMillis() - startTime;
+            }
         }
 
-        //iterating through the arraylist
-        for (int i=0;i<allEvents.size()-1;i++){
+        for (int i = 0; i < allEvents.size()-1; i++){
+            Log.d(TAG + "이벤트 발생",allEvents.get(i).getPackageName()+","+allEvents.get(i).getEventType());
             UsageEvents.Event E0=allEvents.get(i);
             UsageEvents.Event E1=allEvents.get(i+1);
 
-            if(i==allEvents.size()-2&&E1.getEventType()==1){
-                map.get(E1.getPackageName()).timeInForeground += System.currentTimeMillis() - E1.getTimeStamp();
+            //처음 Background 에 들어온 경우
+            if(i==0&&E0.getEventType()==2){
+                map.get(E0.getPackageName()).timeInForeground += E0.getTimeStamp() - startTime;
             }
 
-            //for launchCount of apps in time range
-            if (!E0.getPackageName().equals(E1.getPackageName()) && E1.getEventType()==1){
-                // if true, E1 (launch event of an app) app launched
-                map.get(E1.getPackageName()).launchCount++;
+            //계속 Foreground인 경우
+            if(i==allEvents.size()-2&&E1.getEventType()==1){
+                map.get(E1.getPackageName()).timeInForeground += System.currentTimeMillis() - E1.getTimeStamp();
             }
 
             //for UsageTime of apps in time range
             if (E0.getEventType()==1 && E1.getEventType()==2
                     && E0.getClassName().equals(E1.getClassName())){
                 long diff = E1.getTimeStamp()-E0.getTimeStamp();
-                phoneUsageToday+=diff; //gloabl Long var for total usagetime in the timerange
                 map.get(E0.getPackageName()).timeInForeground += diff;
             }
         }
 
         //transferred final data into modal class object
         appUsageList = new ArrayList<>(map.values());
-        PackageManager pm = getPackageManager();
-
-        int i = 0;
-        phoneTime = 0;
-        for(String appName:appNames){
+        int i =0;
+        for(String appName: appNames){
             boolean isin = false;
             for (AppUsageInfo appUsageInfo : appUsageList) {
                 if(appName.equals(appUsageInfo.packageName)) {
-                    Log.d("앱 이름:", appName + ", 사용 시간:" + (appUsageInfo.timeInForeground) / 1000 + "초");
+                    Log.d(TAG + "앱 이름:", appName + ", 사용 시간:" + (appUsageInfo.timeInForeground) / 1000 + "초");
                     appUsageTimes.set(i, (int) appUsageInfo.timeInForeground/1000);
-                    phoneTime+=(appUsageInfo.timeInForeground/1000);
+                    appUsageTimesList.put(appName,appUsageInfo.timeInForeground/1000);
+                    sum += (appUsageInfo.timeInForeground/1000);
                     isin = true;
                 }
             }
-            if(isin)
-                continue;
-            else {
-                Log.d("앱 이름:", appName + ", 사용 시간: 0 초");
+            if(!isin) {
+                Log.d(TAG + "앱 이름:", appName + ", 사용 시간: 0초");
+                appUsageTimes.set(i, 0);
+                appUsageTimesList.put(appName, (long) 0);
             }
+            i++;
         }
-        NotificationWarning(30);
+        Log.d(TAG + "총 사용시간", sum + "초");
+        return sum;
     }
 
-    public void NotificationWarning(int i) {
-
+    public void NotificationWarning(int percent) {
+        Log.d("percent:", String.valueOf(percent));
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_warning")
-                .setSmallIcon(R.drawable.icon_school) //BitMap 이미지 요구
+                .setSmallIcon(R.drawable.icon_school)
                 .setContentTitle("오늘의 점수 : 앱 사용량 알리미")
-                .setContentText("핸드폰 목표 사용량의 "+i+"%를 도달했습니다.")
-                // 더 많은 내용이라서 일부만 보여줘야 하는 경우 아래 주석을 제거하면 setContentText에 있는 문자열 대신 아래 문자열을 보여줌
-                //.setStyle(new NotificationCompat.BigTextStyle().bigText("더 많은 내용을 보여줘야 하는 경우..."))
+                .setContentText("핸드폰 목표 사용량의 "+percent+"%를 도달했습니다.")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
 
@@ -239,8 +251,7 @@ public class PhoneService extends Service {
             builder.setSmallIcon(R.drawable.icon_school); //mipmap 사용시 Oreo 이상에서 시스템 UI 에러남
             NotificationChannel channel = new NotificationChannel("channel_warning", "오늘의 점수 알리미", NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription("앱 사용량 경고");
-            // 노티피케이션 채널을 시스템에 등록
-            assert notificationManager != null;
+            assert notificationManager != null; // 노티피케이션 채널을 시스템에 등록
             notificationManager.createNotificationChannel(channel);
         }else builder.setSmallIcon(R.drawable.icon_school); // Oreo 이하에서 mipmap 사용하지 않으면 Couldn't create icon: StatusBarIcon 에러남
 
@@ -248,17 +259,17 @@ public class PhoneService extends Service {
         notificationManager.notify(2, builder.build()); // 고유숫자로 노티피케이션 동작시킴
     }
 
-    public int ScoreCalculate(long Time, long phoneTime){
-        int score = 0;
-        if(phoneTime<Time * (1/10))
+    public int ScoreCalculate(long time, long phoneTime){
+        int score;
+        if (phoneTime < time*0.1)
             score = 100;
-        else if(phoneTime < Time*(2/10))
+        else if (phoneTime < time*0.2)
             score = 80;
-        else if(phoneTime < Time*(3/10))
+        else if (phoneTime < time *0.3)
             score = 60;
-        else if(phoneTime < Time*(4/10))
+        else if (phoneTime < time*0.4)
             score = 40;
-        else if(phoneTime < Time*(5/10))
+        else if (phoneTime < time*0.5)
             score = 20;
         else
             score = 0;
@@ -267,12 +278,10 @@ public class PhoneService extends Service {
 
     public static String getTopPackageName(@NonNull Context context) {
         UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
-
         long lastRunAppTimeStamp = 0L;
-
-        final long INTERVAL = 1000 * 60 * 5;
+        final long INTERVAL = 1000 * 60 * 60;
         final long end = System.currentTimeMillis();
-        // 1 minute ago
+        // 1 hour ago
         final long begin = end - INTERVAL;
 
         LongSparseArray packageNameMap = new LongSparseArray<>();
@@ -301,5 +310,4 @@ public class PhoneService extends Service {
         }
         return event.getEventType() == UsageEvents.Event.MOVE_TO_FOREGROUND;
     }
-
 }

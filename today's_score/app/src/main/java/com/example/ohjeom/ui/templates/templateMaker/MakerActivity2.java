@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -98,6 +101,7 @@ public class MakerActivity2 extends AppCompatActivity {
     private TextView thumbText;
     private SeekBar countSb;
     private List<ResolveInfo> appInfos;
+    private EditText moneyText;
 
     // 위치 설정
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -296,6 +300,7 @@ public class MakerActivity2 extends AppCompatActivity {
 
                 final AlertDialog dialog = builder.create();
                 final Location location = new Location();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                 Places.initialize(getApplicationContext(), getString(R.string.api_key));
                 //PlacesClient placesClient = Places.createClient(this);
@@ -399,6 +404,7 @@ public class MakerActivity2 extends AppCompatActivity {
                 appListView.setAdapter(appAdapter);
 
                 final AlertDialog dialog = builder.create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -437,31 +443,14 @@ public class MakerActivity2 extends AppCompatActivity {
         /*
         소비 검사
          */
-        final TextView moneyText = findViewById(R.id.money_text);
-        ImageButton payButton1 = findViewById(R.id.pay_button1);
-        ImageButton payButton2 = findViewById(R.id.pay_button2);
+        moneyText = findViewById(R.id.money_text);
         money = Integer.parseInt(moneyText.getText().toString());
-
-        payButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                moneyText.setText(String.valueOf((Integer.parseInt(moneyText.getText().toString())+1000)));
-                money = Integer.parseInt(moneyText.getText().toString());
-            }
-        });
-
-        payButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                moneyText.setText(String.valueOf((Integer.parseInt(moneyText.getText().toString())-1000)));
-                money = Integer.parseInt(moneyText.getText().toString());
-            }
-        });
     }
 
     public void mOnClick(View v) {
-        JsonObject body = getBody();
+        money = Integer.parseInt(moneyText.getText().toString());
 
+        JsonObject body = getBody();
         templateService.registerTemplate(body).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

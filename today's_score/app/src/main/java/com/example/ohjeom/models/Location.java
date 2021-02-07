@@ -1,10 +1,10 @@
 package com.example.ohjeom.models;
-import java.io.Serializable;
 
 public class Location {
     private String name;
     private double lat, lng;
     private int locationHour, locationMin;
+
 
     public String getName() {
         return name;

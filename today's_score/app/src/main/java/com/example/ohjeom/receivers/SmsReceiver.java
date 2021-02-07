@@ -16,11 +16,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static android.content.Context.ACTIVITY_SERVICE;
+import static java.util.Arrays.asList;
 
 public class SmsReceiver extends BroadcastReceiver {
     private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
     private static final String TAG ="SmsReceiver";
     private int count = 1;
+    private String[] phoneNumber = {"01029698752"}; // 결제문자 전화번호으로 목록 채워줘야함.
 
     static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -39,7 +41,7 @@ public class SmsReceiver extends BroadcastReceiver {
             SmsMessage[] messages = parseSmsMessage(bundle);
 
             //메시지가 있을 경우 내용을 로그로 출력해 봄
-            if (messages.length > 0 && messages[0].getOriginatingAddress().equals("01012345678") && messages[0].getMessageBody().toString().contains("원")) {
+            if (messages.length > 0 && asList(phoneNumber).contains(messages[0].getOriginatingAddress()) && messages[0].getMessageBody().toString().contains("원")) {
                 //메시지의 내용을 가져오기
                 String sender = messages[0].getOriginatingAddress();
                 String contents = messages[0].getMessageBody().toString();

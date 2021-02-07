@@ -26,11 +26,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class StartService extends Service {
-    private String TAG = "StartService";
+    private static final String TAG = "StartService";
     private Template template;
     private int month, day;
     private PendingIntent wakeupSender,sleepSender,walkSender,weatherSender,phoneSender,locationSender1,locationSender2,locationSender3,paySender;
     private AlarmManager wakeupAM,sleepAM,walkAM,weatherAM,phoneAM,locationAM1,locationAM2,locationAM3,payAM;
+    private Timer wakeupTimer, sleepTimer, walkTimer, phoneTimer, payTimer;
 
     public StartService() {
     }
@@ -42,46 +43,41 @@ public class StartService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, clsIntent, 0);
 
         NotificationCompat.Builder clsBuilder;
-        if(Build.VERSION.SDK_INT >= 26)
-        {
+        if(Build.VERSION.SDK_INT >= 26) {
             String CHANNEL_ID = "channel_id";
             NotificationChannel clsChannel = new NotificationChannel(CHANNEL_ID, "서비스 앱", NotificationManager.IMPORTANCE_DEFAULT);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(clsChannel);
 
             clsBuilder = new NotificationCompat.Builder(this, CHANNEL_ID );
-        }
-        else
-        {
+        } else {
             clsBuilder = new NotificationCompat.Builder(this);
         }
 
-        // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
         clsBuilder.setSmallIcon(R.drawable.icon_school)
-                .setContentTitle("서비스 앱").setContentText("서비스 앱")
+                .setContentTitle("오늘의 점수").setContentText("Service is ruuning...")
                 .setContentIntent(pendingIntent);
 
-        // foreground 서비스로 실행한다.
         startForeground(1, clsBuilder.build());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        template = (Template) intent.getSerializableExtra("template");
+        template = (Template) intent.getParcelableExtra("template");
         month = intent.getIntExtra("month",0);
         day = intent.getIntExtra("day",0);
+        Log.d(TAG + "측정 시작",template.getNameResult());
         startExamination();
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
-
         PendingIntent[] piList = new PendingIntent[]{wakeupSender,sleepSender,walkSender,phoneSender,locationSender1,locationSender2,locationSender3,paySender};
         AlarmManager[] amList = new AlarmManager[]{wakeupAM, sleepAM, walkAM, phoneAM, locationAM1,locationAM2,locationAM3,payAM};
 
         for(int i=0;i<8;i++)
             if(amList[i] != null) {
-                Log.d("알람해제:", String.valueOf(amList[i]));
+                Log.d(TAG + "알람해제:", String.valueOf(amList[i]));
                 amList[i].cancel(piList[i]);
                 piList[i].cancel();
             }
@@ -91,15 +87,21 @@ public class StartService extends Service {
         String[] serviceList = {"com.example.ohjeom.services.WakeupService","com.example.ohjeom.services.SleepService","com.example.ohjeom.services.WalkService",
                 "com.example.ohjeom.services.WalkService","com.example.ohjeom.services.PhoneService", "com.example.ohjeom.services.LocationService1",
                 "com.example.ohjeom.services.LocationService2", "com.example.ohjeom.services.LocationService3", "com.example.ohjeom.services.PaymentService"};
-
+        Timer[] timers = new Timer[]{wakeupTimer, sleepTimer, walkTimer, phoneTimer, payTimer};
         for(int i=0;i<9;i++){
+            Log.d(TAG + "서비스해제: ", String.valueOf(serviceName[i]));
             if(isServiceRunning(serviceList[i])){
-                Log.d("작동중",serviceList[i]);
+                Log.d(TAG + "작동중",serviceList[i]);
                 Intent intent = new Intent(StartService.this, serviceName[i]);
                 stopService(intent);
             }
             else
-                Log.d("작동중 아님",serviceList[i]);
+                Log.d(TAG + "작동중 아님",serviceList[i]);
+        }
+
+        for(int i=0;i<5;i++){
+            if(timers[i] != null)
+                timers[i].cancel();
         }
 
         super.onDestroy();
@@ -107,7 +109,6 @@ public class StartService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -134,7 +135,7 @@ public class StartService extends Service {
             long wakeupStoptime = wakeupTime + (60 * 60 * 1000);
             Date wakeupStop = new Date(wakeupStoptime);
 
-            Timer wakeupTimer = new Timer();
+            wakeupTimer = new Timer();
             wakeupTimer.schedule(new WakeupTimer(), wakeupStop,1000*60*60*24);
         }
 
@@ -148,12 +149,20 @@ public class StartService extends Service {
             sleepCal.set(Calendar.SECOND, 0);
 
             Calendar wakeupCal = Calendar.getInstance();
-            wakeupCal.set(Calendar.MONTH, month);
-            wakeupCal.set(Calendar.DAY_OF_MONTH, day);
-            wakeupCal.set(Calendar.HOUR_OF_DAY, template.getWakeupHour());
-            wakeupCal.set(Calendar.MINUTE, template.getWakeupMin());
-            wakeupCal.set(Calendar.SECOND, 0);
-            long wakeupTime = wakeupCal.getTimeInMillis();
+            long wakeupTime;
+            if(components[0].equals("true")) {
+                wakeupCal.set(Calendar.MONTH, month);
+                wakeupCal.set(Calendar.DAY_OF_MONTH, day);
+                wakeupCal.set(Calendar.HOUR_OF_DAY, template.getWakeupHour());
+                wakeupCal.set(Calendar.MINUTE, template.getWakeupMin());
+                wakeupCal.set(Calendar.SECOND, 0);
+                if (sleepCal.getTimeInMillis() - wakeupCal.getTimeInMillis() >= 0) {
+                    wakeupCal.add(Calendar.DATE, 1);
+                }
+                wakeupTime = wakeupCal.getTimeInMillis();
+            } else {
+                wakeupTime = sleepCal.getTimeInMillis() + 1000 * 60 * 4;
+            }
 
             Intent sleepIntent = new Intent(this, SleepService.class);
             sleepSender = PendingIntent.getService(this, 0, sleepIntent, 0);
@@ -162,16 +171,9 @@ public class StartService extends Service {
             sleepAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             sleepAM.setRepeating(AlarmManager.RTC_WAKEUP, sleepCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY,sleepSender);
 
-            //타이머 설정
-            if (sleepCal.getTimeInMillis() - wakeupTime >= 0) {
-                wakeupCal.add(Calendar.DATE, 1);
-            }
-
-            long sleepStopTime = wakeupCal.getTimeInMillis();
-
+            long sleepStopTime = wakeupTime;
             Date sleepStop = new Date(sleepStopTime);
-
-            Timer sleepTimer = new Timer();
+            sleepTimer = new Timer();
             sleepTimer.schedule(new SleepTimer(), sleepStop,1000*60*60*24);
         }
 
@@ -185,11 +187,20 @@ public class StartService extends Service {
             walkCal.set(Calendar.SECOND, 0);
 
             Calendar walkstartCal = Calendar.getInstance();
-            walkstartCal.set(Calendar.MONTH, month);
-            walkstartCal.set(Calendar.DAY_OF_MONTH, day);
-            walkstartCal.set(Calendar.HOUR_OF_DAY, template.getWakeupHour());
-            walkstartCal.set(Calendar.MINUTE, template.getWakeupMin());
-            walkstartCal.set(Calendar.SECOND, 0);
+
+            if(components[0].equals("true")) {
+                walkstartCal.set(Calendar.MONTH, month);
+                walkstartCal.set(Calendar.DAY_OF_MONTH, day);
+                walkstartCal.set(Calendar.HOUR_OF_DAY, template.getWakeupHour());
+                walkstartCal.set(Calendar.MINUTE, template.getWakeupMin());
+                walkstartCal.set(Calendar.SECOND, 0);
+            } else {
+                walkstartCal.set(Calendar.MONTH, month);
+                walkstartCal.set(Calendar.DAY_OF_MONTH, day);
+                walkstartCal.set(Calendar.HOUR_OF_DAY, 0);
+                walkstartCal.set(Calendar.MINUTE, 0);
+                walkstartCal.set(Calendar.SECOND, 0);
+            }
 
             Intent walkIntent = new Intent(this, WalkService.class);
             walkIntent.putExtra("walkCount", template.getWalkCount());
@@ -207,10 +218,8 @@ public class StartService extends Service {
             weatherAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             weatherAM.setRepeating(AlarmManager.RTC_WAKEUP,walkstartCal.getTimeInMillis(),AlarmManager.INTERVAL_DAY,weatherSender);
 
-            //타이머 설정
             Date walkStop = new Date(walkCal.getTimeInMillis());
-
-            Timer walkTimer = new Timer();
+            walkTimer = new Timer();
             walkTimer.schedule(new WalkTimer(), walkStop,1000*60*60*24);
         }
 
@@ -232,6 +241,7 @@ public class StartService extends Service {
 
             long startTime = startCal.getTimeInMillis();
             long stopTime = stopCal.getTimeInMillis();
+            Date phoneStop = new Date(stopTime);
 
             Intent phoneIntent = new Intent(this, PhoneService.class);
             phoneIntent.putExtra("appNames", template.getAppNames());
@@ -242,9 +252,8 @@ public class StartService extends Service {
             phoneAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             phoneAM.setRepeating(AlarmManager.RTC_WAKEUP,startTime, AlarmManager.INTERVAL_DAY,phoneSender);
 
-            //타이머 설정
-            Timer phoneTimer = new Timer();
-            phoneTimer.schedule(new PhoneTimer(),stopTime,1000*60*60*24);
+            phoneTimer = new Timer();
+            phoneTimer.schedule(new PhoneTimer(),phoneStop,1000*60*60*24);
         }
 
         //장소 검사 시작
@@ -333,8 +342,7 @@ public class StartService extends Service {
             payAM = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             payAM.setRepeating(AlarmManager.RTC_WAKEUP,payTime, AlarmManager.INTERVAL_DAY,paySender);
 
-            //타이머 설정
-            Timer payTimer = new Timer();
+            payTimer = new Timer();
             payTimer.schedule(new PayTimer(),payStop,1000*60*60*24);
         }
     }
@@ -345,8 +353,8 @@ public class StartService extends Service {
         public void run() {
             while(true) {
                 if (isServiceRunning("com.example.ohjeom.services.WakeupService")) {
-                    Log.d("wakeup_service 작동 :", "O");
-                    Intent intent = new Intent(getApplicationContext(), WakeupService.class); // 이동할 컴포넌트
+                    Log.d(TAG, "Wakeup service 작동 : O");
+                    Intent intent = new Intent(StartService.this, WakeupService.class); // 이동할 컴포넌트
                     stopService(intent);
                     break;
                 }
@@ -360,8 +368,8 @@ public class StartService extends Service {
         public void run() {
             while(true) {
                 if (isServiceRunning("com.example.ohjeom.services.WalkService")) {
-                    Log.d("walk_service 작동 :", "O");
-                    Intent intent = new Intent(getApplicationContext(), WalkService.class); //이동할 컴포넌트
+                    Log.d(TAG, "Walk service 작동 : O");
+                    Intent intent = new Intent(StartService.this, WalkService.class); //이동할 컴포넌트
                     stopService(intent);
                     break;
                 }
@@ -375,8 +383,8 @@ public class StartService extends Service {
         public void run() {
             while(true) {
                 if (isServiceRunning("com.example.ohjeom.services.SleepService")) {
-                    Log.d("service 작동 :", "O");
-                    Intent intent = new Intent(getApplicationContext(), SleepService.class); // 이동할 컴포넌트
+                    Log.d(TAG, "Sleep service 작동 : O");
+                    Intent intent = new Intent(StartService.this, SleepService.class); // 이동할 컴포넌트
                     stopService(intent);
                     break;
                 }
@@ -390,8 +398,8 @@ public class StartService extends Service {
         public void run() {
             while(true) {
                 if (isServiceRunning("com.example.ohjeom.services.PhoneService")) {
-                    Log.d("service 작동 :", "O");
-                    Intent intent = new Intent(getApplicationContext(), PhoneService.class); // 이동할 컴포넌트
+                    Log.d(TAG, "Phone service 작동 : O");
+                    Intent intent = new Intent(StartService.this, PhoneService.class); // 이동할 컴포넌트
                     stopService(intent);
                     break;
                 }
@@ -405,8 +413,8 @@ public class StartService extends Service {
         public void run() {
             while(true) {
                 if (isServiceRunning("com.example.ohjeom.services.PaymentService")) {
-                    Log.d("service 작동 :", "O");
-                    Intent intent = new Intent(getApplicationContext(), PaymentService.class); // 이동할 컴포넌트
+                    Log.d(TAG, "Payment service 작동 : O");
+                    Intent intent = new Intent(StartService.this, PaymentService.class); // 이동할 컴포넌트
                     stopService(intent);
                     break;
                 }
@@ -423,16 +431,5 @@ public class StartService extends Service {
             }
         }
         return false;
-    }
-
-    //서비스 리스트 이름 확인
-    void getServiceList()	{
-        ActivityManager activity_manager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningServiceInfo> service_info = activity_manager.getRunningServices(100);
-
-        for(int i=0; i<service_info.size(); i++) {
-            Log.d("aaaaaaaaaaaaa", "Service: " + service_info.get(i).service.getPackageName() + ", className: " + service_info.get(i).service.getClassName());
-            Log.d("aaaaaaaaaaaa", "       PID/UID: " + service_info.get(i).pid + "/" + service_info.get(i).uid + "  process: " + service_info.get(i).process);
-        }
     }
 }

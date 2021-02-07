@@ -20,6 +20,7 @@ import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 
 public class WalkService extends Service implements SensorEventListener {
+    private static final String TAG = "WalkService";
     private SensorManager sensorManager;
     private Sensor stepDetectorSensor;
     private int count = 0, walkCount;
@@ -33,31 +34,26 @@ public class WalkService extends Service implements SensorEventListener {
         PendingIntent pendingIntent = PendingIntent.getActivity(WalkService.this, 0, clsIntent, 0);
 
         NotificationCompat.Builder clsBuilder;
-        if( Build.VERSION.SDK_INT >= 26 )
-        {
+        if( Build.VERSION.SDK_INT >= 26 ) {
             String CHANNEL_ID = "channel_id";
             NotificationChannel clsChannel = new NotificationChannel(CHANNEL_ID, "서비스 앱", NotificationManager.IMPORTANCE_DEFAULT);
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(clsChannel);
 
             clsBuilder = new NotificationCompat.Builder(this, CHANNEL_ID );
-        }
-        else
-        {
+        } else {
             clsBuilder = new NotificationCompat.Builder(this);
         }
 
-        // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
         clsBuilder.setSmallIcon(R.drawable.icon_school)
-                .setContentTitle("서비스 앱" ).setContentText("서비스 앱")
+                .setContentTitle("오늘의 점수").setContentText("Service is running...")
                 .setContentIntent(pendingIntent);
 
-        // foreground 서비스로 실행한다.
         startForeground(1, clsBuilder.build());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("운동 측정","시작");
+        Log.d(TAG + "운동 측정","시작");
         walkCount=intent.getIntExtra("walkCount",1);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -70,31 +66,29 @@ public class WalkService extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event){
         if(event.sensor.getType() == Sensor.TYPE_STEP_DETECTOR){
-            if(event.values[0]==1.0f){
+            if(event.values[0] == 1.0f){
                 count++;
-                Log.d("운동 측정","걸음 수 증가"+count);
+                Log.d(TAG + "운동 측정","걸음 수 증가"+count);
             }
-
-            if(count==walkCount) {
+            if(count == walkCount) {
                 stopSelf();
             }
-
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-
     }
 
     @Override
     public void onDestroy() {
+        //측정 종료 시간이 되면 종료
         sensorManager.unregisterListener(this);
 
         int walk_score = count/walkCount*100;
 
-        Log.d("측정 걸음수:", String.valueOf(count));
-        Log.d("운동 점수:", String.valueOf(walk_score));
+        Log.d(TAG + "측정 걸음수:", String.valueOf(count));
+        Log.d(TAG + "운동 점수:", String.valueOf(walk_score));
 
         /*
         점수 보내기
