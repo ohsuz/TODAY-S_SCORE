@@ -34,6 +34,7 @@ import java.util.ArrayList;
 
 public class PrivateFragment extends Fragment {
     private PrivateViewModel privateViewModel;
+    private RecyclerView privateListView;
     public static PrivateAdapter pAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -41,7 +42,7 @@ public class PrivateFragment extends Fragment {
         privateViewModel =
                 ViewModelProviders.of(this).get(PrivateViewModel.class);
         View root = inflater.inflate(R.layout.fragment_templates_private, container, false);
-        RecyclerView privateListView = (RecyclerView) root.findViewById(R.id.private_list);
+        privateListView = (RecyclerView) root.findViewById(R.id.private_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         privateListView.setLayoutManager(linearLayoutManager);
 

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -41,10 +42,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferences user = getSharedPreferences("user",MODE_PRIVATE);
         retrofit = RetrofitClient.getInstance();
         TemplateService templateService = retrofit.create(TemplateService.class);
         JsonObject body = new JsonObject();
-        body.addProperty("userID", "aaa");
+        body.addProperty("userID", user.getString("id","abc"));
 
         templateService.getPrivateName(body).enqueue(new Callback<Templates>() {
             @Override

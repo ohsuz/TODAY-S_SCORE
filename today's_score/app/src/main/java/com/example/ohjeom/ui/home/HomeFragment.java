@@ -3,6 +3,7 @@ package com.example.ohjeom.ui.home;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.service.controls.actions.FloatAction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.example.ohjeom.R;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Test;
 import com.example.ohjeom.services.StartService;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
@@ -56,7 +58,7 @@ public class HomeFragment extends Fragment {
         }
 
         //측정 해제 버튼
-        Button button = root.findViewById(R.id.button);
+        FloatingActionButton button = root.findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

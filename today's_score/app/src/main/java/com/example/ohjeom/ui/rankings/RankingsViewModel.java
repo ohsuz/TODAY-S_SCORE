@@ -10,7 +10,7 @@ public class RankingsViewModel extends ViewModel {
 
     public RankingsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is notifications fragment");
+        mText.setValue("Ranking");
     }
 
     public LiveData<String> getText() {

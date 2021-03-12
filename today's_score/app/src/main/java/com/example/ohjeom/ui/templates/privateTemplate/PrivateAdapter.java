@@ -2,6 +2,7 @@ package com.example.ohjeom.ui.templates.privateTemplate;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -31,7 +32,7 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
     private Template template = new Template();
     private String[] templateNames;
     private String[] isSelectedArr;
-
+    private SharedPreferences user;
     public PrivateAdapter(){
         templateNames = Templates.templateNames;
         isSelectedArr = Templates.isSelectedArr;
@@ -54,7 +55,9 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
                 public void onClick(View view) {
                     int pos = getAdapterPosition() ;
                     String name = Templates.templateNames[pos];
-                    getPrivateDetails(name);
+                    user = view.getContext().getSharedPreferences("user",Context.MODE_PRIVATE);
+                    String id = user.getString("id","abc");
+                    getPrivateDetails(name, id);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -71,11 +74,11 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
         }
     }
 
-    public void getPrivateDetails(String templateName) {
+    public void getPrivateDetails(String templateName, String id) {
         Retrofit retrofit = RetrofitClient.getInstance();
         TemplateService templateService = retrofit.create(TemplateService.class);
         JsonObject body = new JsonObject();
-        body.addProperty("userID", "aaa");
+        body.addProperty("userID", id);
         body.addProperty("templateName", templateName);
 
         templateService.getPrivateDetails(body).enqueue(new Callback<Template>() {

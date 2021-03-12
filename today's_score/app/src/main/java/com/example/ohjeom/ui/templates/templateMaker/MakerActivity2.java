@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
@@ -484,8 +485,9 @@ public class MakerActivity2 extends AppCompatActivity {
     }
 
     public void updateTemplateList() {
+        SharedPreferences user = getSharedPreferences("user",MODE_PRIVATE);
         JsonObject body = new JsonObject();
-        body.addProperty("userID", "aaa");
+        body.addProperty("userID", user.getString("id","abc"));
 
         templateService.getPrivateName(body).enqueue(new Callback<Templates>() {
             @Override

@@ -22,10 +22,6 @@
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <service
-            android:name=".services.WeatherService"
-            android:enabled="true"
-            android:exported="true"></service>
         <!-- Meta Data -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -33,13 +29,14 @@
 
         <!-- Activities -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"/>
         <activity android:name=".ui.templates.TemplateActivity" />
         <activity android:name=".ui.templates.templateMaker.MakerActivity1" />
         <activity android:name=".ui.templates.templateMaker.MakerActivity2" />
@@ -54,6 +51,7 @@
         <service android:name=".services.LocationService3" />
         <service android:name=".services.StartService" />
         <service android:name=".services.PaymentService" />
+        <service android:name=".services.WeatherService"/>
 
         <receiver
             android:name=".receivers.SmsReceiver"

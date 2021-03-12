@@ -5,36 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.templates.TemplatesFragment">
+    tools:context=".ui.home.HomeFragment">
 
     <TextView
         android:text="오늘의 점수"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.1"
+        android:layout_weight="1"
         android:textAppearance="@style/title"
         android:textAlignment="center"
         android:gravity="center"
         android:background="@color/colorPrimary"/>
 
-    <ListView
-        android:id="@+id/score_list"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="9"
-        android:padding="30dp"
-        android:dividerHeight="20dp"
-        android:divider="#00000000"/>
+        android:orientation="vertical"
+        android:background="@color/colorDarkBackground">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/custom_button_yellow"
-        android:fontFamily="@font/jua"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="측정 그만하기"/>
+        <ListView
+            android:id="@+id/score_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="30dp"
+            android:dividerHeight="20dp"
+            android:divider="#00000000" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:src="@drawable/icon_stop"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_margin="16dp"
+            tools:ignore="MissingConstraints" />
+
+    </LinearLayout>
 
 </LinearLayout>
