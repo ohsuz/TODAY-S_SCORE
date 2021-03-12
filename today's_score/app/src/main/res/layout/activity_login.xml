@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/jua"
+        android:text="오늘의 점수"
+        android:textSize="50sp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="101dp"
+        tools:layout_editor_absoluteY="150dp" />
+
+    <EditText
+        android:id="@+id/id_text"
+        android:layout_width="127dp"
+        android:layout_height="40dp"
+        android:text="아이디"
+        android:fontFamily="@font/jua"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="142dp"
+        tools:layout_editor_absoluteY="264dp" />
+
+    <EditText
+        android:id="@+id/password_text"
+        android:layout_width="127dp"
+        android:layout_height="40dp"
+        android:text="비밀번호"
+        android:fontFamily="@font/jua"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="142dp"
+        tools:layout_editor_absoluteY="328dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/register_button"
+            android:layout_width="73dp"
+            android:layout_height="36dp"
+            android:background="@color/colorPrimary"
+            android:fontFamily="@font/jua"
+            android:text="회원가입"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="126dp"
+            tools:layout_editor_absoluteY="392dp" />
+
+        <Button
+            android:id="@+id/login_button"
+            android:layout_width="73dp"
+            android:layout_height="36dp"
+            android:background="@color/colorPrimary"
+            android:fontFamily="@font/jua"
+            android:text="로그인"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="212dp"
+            tools:layout_editor_absoluteY="392dp" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBackground">
+        <View
+            android:id="@+id/view"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:background="@color/colorPrimary"
+            tools:ignore="MissingConstraints"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <ImageView
+            android:id="@+id/icon_school"
+            android:layout_width="209dp"
+            android:layout_height="210dp"
+            android:layout_marginBottom="50dp"
+            android:src="@drawable/icon_school"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
