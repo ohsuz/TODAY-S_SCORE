@@ -29,7 +29,7 @@ public class Template implements Parcelable {
     private String wakeResult;
 
     /* 결과들을 각 정보로 파싱 */
-    private String[] components; // 기상, 수면, 걸음수, 핸드폰, 장소
+    private String[] components; // 기상, 수면, 걸음수, 핸드폰, 장소, 소비
     private int walkHour, walkMin, walkCount;
     private int wakeupHour, wakeupMin;
     private int sleepHour, sleepMin;

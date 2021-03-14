@@ -19,6 +19,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
+import com.example.ohjeom.models.User;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 
 import java.util.Calendar;
 
@@ -29,7 +31,7 @@ public class SleepService extends Service implements SensorEventListener {
     private int phone = 0, light = 0;
     private Calendar phoneOnCal = null, phoneOffCal = null;
     private Calendar lightOnCal = null, lightOffCal = null;
-    private long phoneTime = 0,lightTime = 0;
+    private long phoneTime = 0, lightTime = 0;
     private PowerManager pm;
     private boolean run = true;
 
@@ -143,6 +145,13 @@ public class SleepService extends Service implements SensorEventListener {
         /*
         점수보내기 : sleepScore , 화면 On 총 시간 : phoneTime, 빛 감지 총 시간 : lightTime
          */
+        ScoreFunctions scoreFunctions = new ScoreFunctions();
+        scoreFunctions.addSleepScore(sleepScore, phoneTime, lightTime);
+
+        /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
+        String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
+        ScoreFunctions.getScores(userID, ScoreFunctions.getDate()); // 서버에서 오늘의 날짜에 해당하는 점수 정보를 얻어와서 score 변수에 저장됨
+        User.setIsInitialized(true);
         Log.d(TAG + "수면 측정","종료");
         super.onDestroy();
     }

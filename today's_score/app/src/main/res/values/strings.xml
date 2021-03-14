@@ -3,7 +3,7 @@
     <string name="title_statistics">통계</string>
     <string name="title_templates">템플릿</string>
     <string name="title_home">홈</string>
-    <string name="title_rankings">랭킹</string>
-    <string name="title_groups">그룹</string>
-    <string name="api_key">AIzaSyAWe4j0P5hNAFdyF8g6p28So50vZ2biFFU</string>
+    <string name="title_rankings">일기</string>
+    <string name="title_groups">친구</string>
+    <string name="api_key">AIzaSyBJTOgWomR0xK5UZEXFHUmjKeDnD9aZtdk</string>
 </resources>

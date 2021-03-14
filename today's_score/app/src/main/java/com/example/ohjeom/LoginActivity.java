@@ -17,7 +17,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         //자동 로그인
-        SharedPreferences user = getSharedPreferences("user",MODE_PRIVATE);
+        SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
         if(user.getBoolean("Login",false)){
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);

@@ -17,7 +17,7 @@
         android:gravity="center"
         android:background="@color/colorPrimary"/>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="9"
@@ -27,11 +27,11 @@
         <ListView
             android:id="@+id/score_list"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:padding="30dp"
             android:dividerHeight="20dp"
-            android:divider="#00000000" />
+            android:divider="#00000000"
+            tools:ignore="MissingConstraints" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/button"
@@ -43,6 +43,6 @@
             android:layout_margin="16dp"
             tools:ignore="MissingConstraints" />
 
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
