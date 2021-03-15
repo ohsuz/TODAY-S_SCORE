@@ -167,10 +167,4 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/test_diary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="이건 점수 목록이야"/>
-
 </LinearLayout>

@@ -45,6 +45,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
                         if(friends.get(pos).isUse()) {
                             Intent intent = new Intent(view.getContext(),FriendActivity.class);
                             intent.putExtra("position",pos);
+                            intent.putExtra("name",tvName.getText().toString());
                             view.getContext().startActivity(intent);
                         }
                     }

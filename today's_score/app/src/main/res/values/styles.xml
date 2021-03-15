@@ -26,10 +26,16 @@
         <item name="android:fontFamily">@font/jua</item>
     </style>
 
+    <!-- SpannedGridLayoutManager 설정 -->
     <declare-styleable name="SpannedGridLayoutManager">
         <attr name="android:orientation" />
         <attr name="spanCount" />
         <attr name="aspectRatio" format="string" />
     </declare-styleable>
+
+    <!-- Splash theme. -->
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
 
 </resources>

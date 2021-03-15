@@ -1,7 +1,10 @@
 package com.example.ohjeom.ui.home;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.service.controls.actions.FloatAction;
 import android.util.Log;
@@ -28,6 +31,7 @@ import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.ScoreFunctions;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.example.ohjeom.services.StartService;
+import com.example.ohjeom.ui.templates.privateTemplate.PrivateAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
@@ -83,17 +87,47 @@ public class HomeFragment extends Fragment {
         FloatingActionButton button = root.findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 String serviceName = "com.example.ohjeom.services.StartService";
                 String userID = getActivity().getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
 
                 if(isServiceRunning(serviceName)) {
-                    Intent intent = new Intent(getActivity(), StartService.class);
-                    getActivity().stopService(intent);
-                    stopTemplate(userID, User.getCurTemplate().getNameResult());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                    View view = LayoutInflater.from(getActivity())
+                            .inflate(R.layout.dialog_stop, null, false);
+                    builder.setView(view);
+
+                    final Button registerBtn = (Button) view.findViewById(R.id.register_button);
+                    final Button cancelBtn = (Button) view.findViewById(R.id.cancel_button);
+
+                    final AlertDialog dialog = builder.create();
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                    registerBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            Intent intent = new Intent(getActivity(), StartService.class);
+                            getActivity().stopService(intent);
+                            stopTemplate(userID, User.getCurTemplate().getNameResult());
+
+                            dialog.dismiss();
+                        }
+                    });
+
+                    cancelBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();
                 }
                 else
                     Toast.makeText(getActivity(),"현재 측정중이 아닙니다.",Toast.LENGTH_SHORT).show();
+
             }
         });
 

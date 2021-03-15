@@ -32,12 +32,8 @@ public class DiaryRecordFragment extends Fragment {
                 ViewModelProviders.of(this).get(DiaryRecordViewModel.class);
         View root = inflater.inflate(R.layout.fragment_statistics_diary, container, false);
 
-        txt = (TextView)root.findViewById(R.id.test_diary);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(SelectedDate.getSelectedDate());
-        txt.setText(calendar.get(Calendar.YEAR) + "년" +
-                (calendar.get(Calendar.MONTH) + 1) + "월" +
-                calendar.get(Calendar.DAY_OF_MONTH) + "일");
 
         return root;
     }
