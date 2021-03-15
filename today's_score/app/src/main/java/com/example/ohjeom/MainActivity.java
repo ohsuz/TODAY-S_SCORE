@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
-        String userID = user.getString("id", "aaa");
+        String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
 
         templateService.getPrivateNames(userID).enqueue(new Callback<Templates>() {
             @Override
@@ -78,39 +77,6 @@ public class MainActivity extends AppCompatActivity {
                         + ", exception: " + t);
             }
         });
-
-        /*
-        여기아래서부터 옮겨야 함
-         */
-        ScoreFunctions.getScores(userID, ScoreFunctions.getDate());
-        templateService.getSelectedTemplate(userID).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 404) {
-                    Storage.setIsSelected(false);
-                } else {
-                    Storage.setIsSelected(true);
-                    Log.d("@@@@@@@Test isSelected", String.valueOf(response.body()));
-                    /*
-                    String[] components = response.body().substring(1, componentsResult.length()-1).split(","); // 기상 수면 걸음수 핸드폰사용량 장소도착
-
-                    for (int i=0; i < components.length; i++) {
-                        components[i] = components[i].trim();
-                    }
-                     */
-                }
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("TemplateService", "Failed API call with call: " + call
-                        + ", exception: " + t);
-            }
-        });
-
-
-        /*
-
-         */
 
         // 가장 먼저 permission 체크
         if(!checkUsageStatsPermissions()){

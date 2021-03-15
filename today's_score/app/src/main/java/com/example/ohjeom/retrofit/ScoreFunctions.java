@@ -46,7 +46,6 @@ public class ScoreFunctions {
     }
 
     public static void getScores(String userID, String date) {
-        Log.d("@@@@@@@ ScoreFunctions", "I'm in getScores");
         scoreService.getScores(userID, date).enqueue(new Callback<Score>() {
             @Override
             public void onResponse(Call<Score> call, Response<Score> response) {

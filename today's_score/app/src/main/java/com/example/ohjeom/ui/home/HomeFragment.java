@@ -33,6 +33,7 @@ import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.ScoreFunctions;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.example.ohjeom.services.StartService;
+import com.example.ohjeom.ui.templates.TemplateActivity;
 import com.example.ohjeom.ui.templates.privateTemplate.PrivateAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -71,10 +72,17 @@ public class HomeFragment extends Fragment {
             // 설정된 템플릿이 있고 매겨진 점수도 있는 경우
             Log.d("@@@@@HomeAdapter", Storage.getScore().getTemplateName());
 
-            Score score =  Storage.getScore();
-            String[] components = score.getComponents();
-            for(int i=0; i<6; i++){
+            String[] components = Storage.getComponents();
+            for (int i=0; i<6; i++) {
                 if (components[i].equals("true")) {
+                    homeAdapter.addScore(Score.getComponentNames()[i], -1);
+                }
+            }
+
+            Score score =  Storage.getScore();
+            String[] scoredComponents = score.getComponents();
+            for(int i=0; i<6; i++){
+                if (scoredComponents[i].equals("true")) {
                     Log.d("@@@@@HomeAdapter", Score.getComponentNames()[i]);
                     homeAdapter.updateScore(Score.getComponentNames()[i], score.getScores()[i]);
                 }
@@ -111,6 +119,7 @@ public class HomeFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), StartService.class);
                             getActivity().stopService(intent);
                             stopTemplate(userID, User.getCurTemplate().getNameResult());
+                            TemplateActivity.updateTemplateList(userID);
 
                             dialog.dismiss();
                         }
@@ -122,11 +131,11 @@ public class HomeFragment extends Fragment {
                             dialog.dismiss();
                         }
                     });
-
                     dialog.show();
                 }
-                else
-                    Toast.makeText(getActivity(),"현재 측정중이 아닙니다.",Toast.LENGTH_SHORT).show();
+                else {
+                    Toast.makeText(getActivity(), "현재 측정중이 아닙니다.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

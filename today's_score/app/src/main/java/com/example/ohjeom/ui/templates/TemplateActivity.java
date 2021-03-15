@@ -329,7 +329,10 @@ public class TemplateActivity extends AppCompatActivity {
         });
     }
 
-    public void updateTemplateList(String userID) {
+    public static void updateTemplateList(String userID) {
+        Retrofit retrofit = RetrofitClient.getInstance();
+        TemplateService templateService = retrofit.create(TemplateService.class);
+
         templateService.getPrivateNames(userID).enqueue(new Callback<Templates>() {
             @Override
             public void onResponse(Call<Templates> call, Response<Templates> response) {

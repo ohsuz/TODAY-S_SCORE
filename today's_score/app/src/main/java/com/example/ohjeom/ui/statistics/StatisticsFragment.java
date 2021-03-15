@@ -26,11 +26,13 @@ import com.example.ohjeom.adapters.CalendarAdapter;
 import com.example.ohjeom.adapters.WeekAdapter;
 import com.example.ohjeom.models.DayInfo;
 import com.example.ohjeom.models.Diary;
+import com.example.ohjeom.models.Score;
 import com.example.ohjeom.models.SelectedDate;
 import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.retrofit.DiaryService;
 import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.ScoreFunctions;
+import com.example.ohjeom.retrofit.ScoreService;
 import com.google.android.material.tabs.TabLayout;
 
 import java.text.SimpleDateFormat;
@@ -149,7 +151,6 @@ public class StatisticsFragment extends Fragment implements AdapterView.OnItemCl
         // 이번달 의 캘린더 인스턴스를 생성한다.
         mThisMonthCalendar = Calendar.getInstance();
         getCalendar(mThisMonthCalendar.getTime());
-
     }
 
     public void setSelectedDate(Date date) {
@@ -266,6 +267,7 @@ public class StatisticsFragment extends Fragment implements AdapterView.OnItemCl
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String date = simpleDateFormat.format(selectedDate);
         getDiary(userID, date);
+        getScores(userID, date);
         mCalendarAdapter.notifyDataSetChanged();
         detailsFragment.changeDetailsFragment(selectedDate);
         diaryRecordFragment.changeDiaryRecordFragment(selectedDate);
@@ -309,6 +311,31 @@ public class StatisticsFragment extends Fragment implements AdapterView.OnItemCl
             @Override
             public void onFailure(Call<Diary> call, Throwable t) {
                 Log.d("DiaryService", "Failed API call with call: " + call
+                        + ", exception: " + t);
+            }
+        });
+    }
+
+    public static void getScores(String userID, String date) {
+        Retrofit retrofit = RetrofitClient.getInstance();
+        ScoreService scoreService = retrofit.create(ScoreService.class);
+
+        scoreService.getScores(userID, date).enqueue(new Callback<Score>() {
+            @Override
+            public void onResponse(Call<Score> call, Response<Score> response) {
+                if (response.code() == 200) {
+                    Score score = response.body();
+                    Storage.setCalendarScore(score);
+                    Storage.getCalendarScore().parseInfo();
+                    Log.d("@@@@@@@@", String.valueOf(Storage.getCalendarScore().getTemplateName()));
+                }
+                if (response.code() == 404) {
+                    Storage.setCalendarScore(null);
+                }
+            }
+            @Override
+            public void onFailure(Call<Score> call, Throwable t) {
+                Log.d("ScoreService", "Failed API call with call: " + call
                         + ", exception: " + t);
             }
         });

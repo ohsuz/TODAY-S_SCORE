@@ -59,7 +59,7 @@ public interface TemplateService {
 
     @FormUrlEncoded
     @POST("/api/template/getSelectedTemplate")
-    Call<ResponseBody> getSelectedTemplate (
+    Call<JsonObject> getSelectedTemplate (
             @Field("userID") String userID
     );
 }

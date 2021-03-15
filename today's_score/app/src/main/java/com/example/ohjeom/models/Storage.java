@@ -3,6 +3,7 @@ package com.example.ohjeom.models;
 public class Storage {
     private static Diary diary;
     private static Score score;
+    private static Score calendarScore;
     private static boolean isScored = false;
     private static boolean isSelected = false;
     private static String[] components = new String[] {"false", "false", "false", "false", "false", "false"};
@@ -45,5 +46,13 @@ public class Storage {
 
     public static void setComponents(String[] components) {
         Storage.components = components;
+    }
+
+    public static Score getCalendarScore() {
+        return calendarScore;
+    }
+
+    public static void setCalendarScore(Score calendarScore) {
+        Storage.calendarScore = calendarScore;
     }
 }
