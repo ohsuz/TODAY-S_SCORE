@@ -25,13 +25,13 @@
 
     <fragment
         android:id="@+id/navigation_rankings"
-        android:name="com.example.ohjeom.ui.rankings.DiaryFragment"
+        android:name="com.example.ohjeom.ui.diary.DiaryFragment"
         android:label="@string/title_diary"
         tools:layout="@layout/fragment_diary" />
 
     <fragment
         android:id="@+id/navigation_groups"
-        android:name="com.example.ohjeom.ui.groups.FriendFragment"
+        android:name="com.example.ohjeom.ui.friend.FriendFragment"
         android:label="@string/title_friend"
         tools:layout="@layout/fragment_friend" />
 </navigation>

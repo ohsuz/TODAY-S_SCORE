@@ -43,7 +43,7 @@
         <activity android:name=".ui.templates.PublicTemplateActivity" />
         <activity android:name=".ui.templates.templateMaker.MakerActivity1" />
         <activity android:name=".ui.templates.templateMaker.MakerActivity2" />
-        <activity android:name=".ui.groups.FriendActivity" />
+        <activity android:name=".ui.friend.FriendActivity" />
 
         <!-- Services -->
         <service android:name=".services.PhoneService" />
@@ -58,7 +58,7 @@
         <service android:name=".services.WeatherService"/>
 
         <receiver
-            android:name=".receivers.SmsReceiver"
+            android:name=".etc.SmsReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="1">

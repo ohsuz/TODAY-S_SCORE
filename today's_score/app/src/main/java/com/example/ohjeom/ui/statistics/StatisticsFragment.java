@@ -204,13 +204,17 @@ public class StatisticsFragment extends Fragment implements AdapterView.OnItemCl
             calendar.add(Calendar.DATE,+1);
         }
 
-        Integer[] score = {30,30,50,100,100,25,70,70,0,25};
+        Integer[] score = {50,75,100,50};
+        int j=0;
         for(int i=1; i <= thisMonthLastDay; i++)
         {
             day = new DayInfo();
             day.setDate(calendar.getTime());
             day.setInMonth(true);
-            day.setAverageScore(score[i%10]);
+            if(calendar.get(Calendar.MONTH) == 2 && 12 <= calendar.get(Calendar.DAY_OF_MONTH) && calendar.get(Calendar.DAY_OF_MONTH) <= 15) {
+                day.setAverageScore(score[j]);
+                j++;
+            }
             mDayList.add(day);
 
             calendar.add(Calendar.DATE,+1);

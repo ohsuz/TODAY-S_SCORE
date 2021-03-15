@@ -1,4 +1,4 @@
-package com.example.ohjeom.ui.rankings;
+package com.example.ohjeom.ui.diary;
 
 import android.app.AlertDialog;
 import android.graphics.Color;
@@ -25,18 +25,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 import com.example.ohjeom.retrofit.DiaryService;
 import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.ScoreFunctions;
-import com.example.ohjeom.retrofit.ScoreService;
-import com.google.gson.JsonObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
 

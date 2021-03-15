@@ -1,4 +1,4 @@
-package com.example.ohjeom.receivers;
+package com.example.ohjeom.etc;
 
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;

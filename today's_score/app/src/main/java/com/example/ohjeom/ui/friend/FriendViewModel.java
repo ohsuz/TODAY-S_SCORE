@@ -1,16 +1,16 @@
-package com.example.ohjeom.ui.rankings;
+package com.example.ohjeom.ui.friend;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class DiaryViewModel extends ViewModel {
+public class FriendViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public DiaryViewModel() {
+    public FriendViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("Diary");
+        mText.setValue("Friend");
     }
 
     public LiveData<String> getText() {

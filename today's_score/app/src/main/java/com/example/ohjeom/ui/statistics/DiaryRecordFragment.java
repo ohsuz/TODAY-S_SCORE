@@ -18,7 +18,7 @@ import com.example.ohjeom.R;
 import com.example.ohjeom.models.Diary;
 import com.example.ohjeom.models.SelectedDate;
 import com.example.ohjeom.models.Storage;
-import com.example.ohjeom.ui.rankings.DiaryFragment;
+import com.example.ohjeom.ui.diary.DiaryFragment;
 
 import java.util.Calendar;
 import java.util.Date;

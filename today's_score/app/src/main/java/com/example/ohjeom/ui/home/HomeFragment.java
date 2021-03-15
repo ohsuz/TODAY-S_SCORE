@@ -33,8 +33,7 @@ import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.ScoreFunctions;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.example.ohjeom.services.StartService;
-import com.example.ohjeom.ui.templates.TemplateActivity;
-import com.example.ohjeom.ui.templates.privateTemplate.PrivateAdapter;
+import com.example.ohjeom.ui.templates.PrivateTemplateActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
@@ -119,7 +118,7 @@ public class HomeFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), StartService.class);
                             getActivity().stopService(intent);
                             stopTemplate(userID, User.getCurTemplate().getNameResult());
-                            TemplateActivity.updateTemplateList(userID);
+                            PrivateTemplateActivity.updateTemplateList(userID);
 
                             dialog.dismiss();
                         }

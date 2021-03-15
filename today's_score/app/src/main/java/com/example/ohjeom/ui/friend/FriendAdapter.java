@@ -1,4 +1,4 @@
-package com.example.ohjeom.ui.groups;
+package com.example.ohjeom.ui.friend;
 
 import android.content.Context;
 import android.content.Intent;
