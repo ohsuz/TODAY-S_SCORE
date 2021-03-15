@@ -39,7 +39,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment {
     private HomeViewModel homeViewModel;
-    private String[] components = new String[]{};
     private String userID;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,33 +54,30 @@ public class HomeFragment extends Fragment {
         // 리스트뷰 참조 및 Adapter달기
         scores = root.findViewById(R.id.score_list);
 
-        if (Storage.getScore() != null) {
-            // 설정된 템플릿이 있는 경우
+        if (Storage.isIsSelected() == true && Storage.isIsScored() == false) {
+            // 설정된 템플릿은 있는데 아직 아무 점수도 안 매겨진 경우 -> 모두 '미채점'인 상태로 리스트에 띄움
+            String[] components = Storage.getComponents();
+            for (int i=0; i<6; i++) {
+                if (components[i].equals("true")) {
+                    homeAdapter.addScore(Score.getComponentNames()[i], -1);
+                }
+            }
+        }
+        if (Storage.isIsSelected() == true && Storage.isIsScored() == true) {
+            // 설정된 템플릿이 있고 매겨진 점수도 있는 경우
             Log.d("@@@@@HomeAdapter", Storage.getScore().getTemplateName());
-            scores.setAdapter(homeAdapter);
 
             Score score =  Storage.getScore();
-            components = score.getComponents();
+            String[] components = score.getComponents();
             for(int i=0; i<6; i++){
                 if (components[i].equals("true")) {
                     Log.d("@@@@@HomeAdapter", Score.getComponentNames()[i]);
-                    homeAdapter.addScore(Score.getComponentNames()[i], score.getScores()[i]);
+                    homeAdapter.updateScore(Score.getComponentNames()[i], score.getScores()[i]);
                 }
             }
-
-            /*
-            if (!User.isIsInitialized()) {
-                components = User.getComponents();
-                for (int i=0; i<6; i++) {
-                    if (components[i].equals("true")) {
-                        homeAdapter.addScore(Score.getComponentNames()[i], -1);
-                    }
-                }
-            }
-             */
-
-            homeAdapter.notifyDataSetChanged();
         }
+        scores.setAdapter(homeAdapter);
+        homeAdapter.notifyDataSetChanged();
 
         //측정 해제 버튼
         FloatingActionButton button = root.findViewById(R.id.button);
@@ -100,7 +96,6 @@ public class HomeFragment extends Fragment {
                     Toast.makeText(getActivity(),"현재 측정중이 아닙니다.",Toast.LENGTH_SHORT).show();
             }
         });
-
         return root;
     }
 

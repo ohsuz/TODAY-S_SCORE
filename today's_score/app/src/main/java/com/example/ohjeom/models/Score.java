@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 
-public class Score implements Parcelable {
+public class Score {
     JsonParser parser = new JsonParser();
     /* 받아온 결과 */
     private String userID;
@@ -36,87 +36,6 @@ public class Score implements Parcelable {
     private String[] components = new String[] {"false", "false", "false", "false", "false", "false"};
     private int[] scores = new int[] {0, 0, 0, 0, 0, 0};
     public static String[] componentNames = {"기상 검사", "수면 검사", "걸음수 검사", "핸드폰 사용량 검사", "장소 도착 검사","소비 검사"};
-
-
-    protected Score(Parcel in) {
-        userID = in.readString();
-        templateName = in.readString();
-        date = in.readString();
-        walkResult = in.readString();
-        wakeResult = in.readString();
-        sleepResult = in.readString();
-        phoneUsageResult = in.readString();
-        locationResult = in.readString();
-        paymentResult = in.readString();
-        avgScore = in.readInt();
-        walkScore = in.readInt();
-        walkGoal = in.readInt();
-        walkReal = in.readInt();
-        wakeScore = in.readInt();
-        wakeupTime = in.readString();
-        sleepScore = in.readInt();
-        phoneTime = in.readInt();
-        lightTime = in.readInt();
-        phoneUsageScore = in.readInt();
-        totalTime = in.readInt();
-        usageTime = in.readInt();
-        locationScore = in.readInt();
-        location = in.readString();
-        paymentScore = in.readInt();
-        paymentGoal = in.readInt();
-        paymentReal = in.readInt();
-        components = in.createStringArray();
-        scores = in.createIntArray();
-    }
-
-    public static final Creator<Score> CREATOR = new Creator<Score>() {
-        @Override
-        public Score createFromParcel(Parcel in) {
-            return new Score(in);
-        }
-
-        @Override
-        public Score[] newArray(int size) {
-            return new Score[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(userID);
-        parcel.writeString(templateName);
-        parcel.writeString(date);
-        parcel.writeString(walkResult);
-        parcel.writeString(wakeResult);
-        parcel.writeString(sleepResult);
-        parcel.writeString(phoneUsageResult);
-        parcel.writeString(locationResult);
-        parcel.writeString(paymentResult);
-        parcel.writeInt(avgScore);
-        parcel.writeInt(walkScore);
-        parcel.writeInt(walkGoal);
-        parcel.writeInt(walkReal);
-        parcel.writeInt(wakeScore);
-        parcel.writeString(wakeupTime);
-        parcel.writeInt(sleepScore);
-        parcel.writeInt(phoneTime);
-        parcel.writeInt(lightTime);
-        parcel.writeInt(phoneUsageScore);
-        parcel.writeInt(totalTime);
-        parcel.writeInt(usageTime);
-        parcel.writeInt(locationScore);
-        parcel.writeString(location);
-        parcel.writeInt(paymentScore);
-        parcel.writeInt(paymentGoal);
-        parcel.writeInt(paymentReal);
-        parcel.writeStringArray(components);
-        parcel.writeIntArray(scores);
-    }
 
 
     public void parseInfo() {
@@ -203,5 +122,197 @@ public class Score implements Parcelable {
 
     public int[] getScores() {
         return scores;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getWalkResult() {
+        return walkResult;
+    }
+
+    public void setWalkResult(String walkResult) {
+        this.walkResult = walkResult;
+    }
+
+    public String getWakeResult() {
+        return wakeResult;
+    }
+
+    public void setWakeResult(String wakeResult) {
+        this.wakeResult = wakeResult;
+    }
+
+    public String getSleepResult() {
+        return sleepResult;
+    }
+
+    public void setSleepResult(String sleepResult) {
+        this.sleepResult = sleepResult;
+    }
+
+    public String getPhoneUsageResult() {
+        return phoneUsageResult;
+    }
+
+    public void setPhoneUsageResult(String phoneUsageResult) {
+        this.phoneUsageResult = phoneUsageResult;
+    }
+
+    public String getLocationResult() {
+        return locationResult;
+    }
+
+    public void setLocationResult(String locationResult) {
+        this.locationResult = locationResult;
+    }
+
+    public String getPaymentResult() {
+        return paymentResult;
+    }
+
+    public void setPaymentResult(String paymentResult) {
+        this.paymentResult = paymentResult;
+    }
+
+    public int getAvgScore() {
+        return avgScore;
+    }
+
+    public void setAvgScore(int avgScore) {
+        this.avgScore = avgScore;
+    }
+
+    public int getWakeScore() {
+        return wakeScore;
+    }
+
+    public void setWakeScore(int wakeScore) {
+        this.wakeScore = wakeScore;
+    }
+
+    public String getWakeupTime() {
+        return wakeupTime;
+    }
+
+    public void setWakeupTime(String wakeupTime) {
+        this.wakeupTime = wakeupTime;
+    }
+
+    public int getSleepScore() {
+        return sleepScore;
+    }
+
+    public void setSleepScore(int sleepScore) {
+        this.sleepScore = sleepScore;
+    }
+
+    public int getPhoneTime() {
+        return phoneTime;
+    }
+
+    public void setPhoneTime(int phoneTime) {
+        this.phoneTime = phoneTime;
+    }
+
+    public int getLightTime() {
+        return lightTime;
+    }
+
+    public void setLightTime(int lightTime) {
+        this.lightTime = lightTime;
+    }
+
+    public int getPhoneUsageScore() {
+        return phoneUsageScore;
+    }
+
+    public void setPhoneUsageScore(int phoneUsageScore) {
+        this.phoneUsageScore = phoneUsageScore;
+    }
+
+    public int getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public int getUsageTime() {
+        return usageTime;
+    }
+
+    public void setUsageTime(int usageTime) {
+        this.usageTime = usageTime;
+    }
+
+    public int getLocationScore() {
+        return locationScore;
+    }
+
+    public void setLocationScore(int locationScore) {
+        this.locationScore = locationScore;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public int getPaymentScore() {
+        return paymentScore;
+    }
+
+    public void setPaymentScore(int paymentScore) {
+        this.paymentScore = paymentScore;
+    }
+
+    public int getPaymentGoal() {
+        return paymentGoal;
+    }
+
+    public void setPaymentGoal(int paymentGoal) {
+        this.paymentGoal = paymentGoal;
+    }
+
+    public int getPaymentReal() {
+        return paymentReal;
+    }
+
+    public void setPaymentReal(int paymentReal) {
+        this.paymentReal = paymentReal;
+    }
+
+    public void setComponents(String[] components) {
+        this.components = components;
+    }
+
+    public void setScores(int[] scores) {
+        this.scores = scores;
     }
 }

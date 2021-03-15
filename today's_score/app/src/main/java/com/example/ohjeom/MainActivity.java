@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.retrofit.RetrofitClient;
@@ -20,6 +21,9 @@ import com.example.ohjeom.retrofit.ScoreService;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -30,6 +34,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -74,7 +79,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        여기아래서부터 옮겨야 함
+         */
         ScoreFunctions.getScores(userID, ScoreFunctions.getDate());
+        templateService.getSelectedTemplate(userID).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 404) {
+                    Storage.setIsSelected(false);
+                } else {
+                    Storage.setIsSelected(true);
+                    Log.d("@@@@@@@Test isSelected", String.valueOf(response.body()));
+                    /*
+                    String[] components = response.body().substring(1, componentsResult.length()-1).split(","); // 기상 수면 걸음수 핸드폰사용량 장소도착
+
+                    for (int i=0; i < components.length; i++) {
+                        components[i] = components[i].trim();
+                    }
+                     */
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("TemplateService", "Failed API call with call: " + call
+                        + ", exception: " + t);
+            }
+        });
+
+
+        /*
+
+         */
 
         // 가장 먼저 permission 체크
         if(!checkUsageStatsPermissions()){

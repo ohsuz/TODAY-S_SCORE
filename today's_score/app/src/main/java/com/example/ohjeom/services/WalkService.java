@@ -86,7 +86,7 @@ public class WalkService extends Service implements SensorEventListener {
     public void onDestroy() {
         //측정 종료 시간이 되면 종료
         sensorManager.unregisterListener(this);
-        int walkScore = Math.round(count / walkCount * 100);
+        int walkScore = Math.round((count * 100)/ walkCount);
 
         Log.d(TAG + "측정 걸음수:", String.valueOf(count));
         Log.d(TAG + "운동 점수:", String.valueOf(walkScore));

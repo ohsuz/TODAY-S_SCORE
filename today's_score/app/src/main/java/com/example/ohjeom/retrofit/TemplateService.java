@@ -56,32 +56,11 @@ public interface TemplateService {
             @Field("userID") String userID,
             @Field("templateName") String templateName
     );
-    /*
-    @POST("/api/template/register")
-    Call<ResponseBody> registerTemplate (
-        @Body JsonObject body
-    );
 
-    @POST("/api/template/getPublicName")
-    Call<ResponseBody> getPublicName (
-            @Body JsonObject body // @Query("보낼거") 아마 보낼거없을듯??
+    @FormUrlEncoded
+    @POST("/api/template/getSelectedTemplate")
+    Call<ResponseBody> getSelectedTemplate (
+            @Field("userID") String userID
     );
-
-    @POST("/api/template/getPublicDetails")
-    Call<Template> getPublicDetails (
-            @Body JsonObject body // @Query("보낼거") String 어쩌구
-    );
-
-    @POST("/api/template/getName")
-    Call<ResponseBody> getPrivateName (
-            @Body JsonObject body // @Query("보낼거") String 어쩌구 아마 사용자 id를 보내야할듯하다
-    );
-
-    @POST("/api/template/getName")
-    Call<Template> getPrivateDetails (
-            @Body JsonObject body // @Query("보낼거") String 어쩌구 아마 템플릿 이름...?
-    );
-
-     */
 }
 
