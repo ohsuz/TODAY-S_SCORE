@@ -18,6 +18,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
+import com.example.ohjeom.models.User;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 
 public class WalkService extends Service implements SensorEventListener {
     private static final String TAG = "WalkService";
@@ -84,16 +86,20 @@ public class WalkService extends Service implements SensorEventListener {
     public void onDestroy() {
         //측정 종료 시간이 되면 종료
         sensorManager.unregisterListener(this);
-
-        int walk_score = count/walkCount*100;
+        int walkScore = Math.round(count / walkCount * 100);
 
         Log.d(TAG + "측정 걸음수:", String.valueOf(count));
-        Log.d(TAG + "운동 점수:", String.valueOf(walk_score));
+        Log.d(TAG + "운동 점수:", String.valueOf(walkScore));
 
-        /*
-        점수 보내기
-         */
-        Log.d("운동 측정","종료");
+        /* 서버에 점수 저장 */
+        ScoreFunctions scoreFunctions = new ScoreFunctions();
+        scoreFunctions.addWalkScore(walkScore, walkCount, count);
+
+        /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
+        String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
+        ScoreFunctions.getScores(userID, ScoreFunctions.getDate()); // 서버에서 오늘의 날짜에 해당하는 점수 정보를 얻어와서 score 변수에 저장됨
+        User.setIsInitialized(true);
+        Log.d(TAG + "운동 측정","종료");
         super.onDestroy();
     }
 

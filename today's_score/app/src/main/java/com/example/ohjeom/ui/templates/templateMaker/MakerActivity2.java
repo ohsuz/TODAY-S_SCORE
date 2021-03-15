@@ -485,16 +485,15 @@ public class MakerActivity2 extends AppCompatActivity {
     }
 
     public void updateTemplateList() {
-        SharedPreferences user = getSharedPreferences("user",MODE_PRIVATE);
-        JsonObject body = new JsonObject();
-        body.addProperty("userID", user.getString("id","abc"));
+        SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
+        String userID = user.getString("id", "aaa");
 
-        templateService.getPrivateName(body).enqueue(new Callback<Templates>() {
+        templateService.getPrivateNames(userID).enqueue(new Callback<Templates>() {
             @Override
             public void onResponse(Call<Templates> call, Response<Templates> response) {
                 if (response.code() == 404) {
                     try {
-                        Log.d("TemplateService", "res:" + response.errorBody().string());
+                        Log.d("TemplateService", "@@@@@@@ res:" + response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -510,7 +509,6 @@ public class MakerActivity2 extends AppCompatActivity {
                         + ", exception: " + t);
             }
         });
-
     }
 
     public JsonObject getBody() {

@@ -32,7 +32,7 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
     private Template template = new Template();
     private String[] templateNames;
     private String[] isSelectedArr;
-    private SharedPreferences user;
+
     public PrivateAdapter(){
         templateNames = Templates.templateNames;
         isSelectedArr = Templates.isSelectedArr;
@@ -54,10 +54,9 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
                 @Override
                 public void onClick(View view) {
                     int pos = getAdapterPosition() ;
-                    String name = Templates.templateNames[pos];
-                    user = view.getContext().getSharedPreferences("user",Context.MODE_PRIVATE);
-                    String id = user.getString("id","abc");
-                    getPrivateDetails(name, id);
+                    String templateName = Templates.templateNames[pos];
+                    String userID = view.getContext().getSharedPreferences("user", Context.MODE_PRIVATE).getString("id","aaa");
+                    getPrivateDetails(templateName, userID);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -71,17 +70,26 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
                     }, 1000); // 1초 딜레이
                 }
             });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int pos = getAdapterPosition() ;
+                    String templateName = Templates.templateNames[pos];
+                    String userID = view.getContext().getSharedPreferences("user", Context.MODE_PRIVATE).getString("id","aaa");
+
+                    PrivateFragment.deleteAndUpdateTemplate(view.getContext(), userID, templateName);
+                    return true;
+                }
+            });
         }
     }
 
-    public void getPrivateDetails(String templateName, String id) {
+    public void getPrivateDetails(String templateName, String userID) {
         Retrofit retrofit = RetrofitClient.getInstance();
         TemplateService templateService = retrofit.create(TemplateService.class);
-        JsonObject body = new JsonObject();
-        body.addProperty("userID", id);
-        body.addProperty("templateName", templateName);
 
-        templateService.getPrivateDetails(body).enqueue(new Callback<Template>() {
+        templateService.getPrivateDetails(userID, templateName).enqueue(new Callback<Template>() {
             @Override
             public void onResponse(Call<Template> call, Response<Template> response) {
                 template = response.body();

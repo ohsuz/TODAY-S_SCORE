@@ -18,6 +18,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
+import com.example.ohjeom.models.User;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 
 import java.util.Calendar;
 
@@ -92,13 +94,21 @@ public class WakeupService extends Service implements SensorEventListener {
         Calendar resultCal = Calendar.getInstance();
         long resultTime = resultCal.getTimeInMillis();
         int wakeupScore = ScoreCalculate(resultTime);
+        String wakeupTime = resultCal.get(Calendar.HOUR_OF_DAY)+"시 "+resultCal.get(Calendar.MINUTE)+"분";
 
         Log.d(TAG + "기상 점수:", String.valueOf(wakeupScore));
         Log.d(TAG + "기상 시간",resultCal.get(Calendar.HOUR_OF_DAY)+"시"+resultCal.get(Calendar.MINUTE)+"분");
 
         /*
-        점수 보내기 : wakeScore && 기상 시간도 보내려면? resultCal.get(Calendar.HOUR_OF_DAY), resultCal.get(Calendar.MINUTE)
+        점수 보내기 : wakeScore && 기상 시간
          */
+        ScoreFunctions scoreFunctions = new ScoreFunctions();
+        scoreFunctions.addWakeScore(wakeupScore, wakeupTime);
+
+        /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
+        String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
+        ScoreFunctions.getScores(userID, ScoreFunctions.getDate()); // 서버에서 오늘의 날짜에 해당하는 점수 정보를 얻어와서 score 변수에 저장됨
+        User.setIsInitialized(true);
         Log.d(TAG + "기상 측정","종료");
         super.onDestroy();
     }

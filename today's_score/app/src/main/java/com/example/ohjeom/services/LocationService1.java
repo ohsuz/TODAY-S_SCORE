@@ -25,6 +25,8 @@ import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Location;
+import com.example.ohjeom.models.User;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -36,21 +38,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LocationService1 extends Service {
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-    /*
     private static final String TAG = "locationService";
     private static final String ERROR_MSG = "왜안돼!!!!!!!!!!!";
-    private Location location;
-    final private Location real = new Location();
+    private Location location, real;
     Handler handler;
     private int tryNum = 0;
-
-    public LocationService1() {
-    }
+    private int locationScore = 0;
 
     @Override
     public void onCreate() {
@@ -72,9 +65,10 @@ public class LocationService1 extends Service {
 
         // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
         clsBuilder.setSmallIcon(R.drawable.icon_school)
-                .setContentTitle("서비스 앱").setContentText("서비스 앱")
+                .setContentTitle("오늘의 점수").setContentText("Service is running...")
                 .setContentIntent(pendingIntent);
 
+        // foreground 서비스로 실행한다.
         // foreground 서비스로 실행한다.
         startForeground(1, clsBuilder.build());
     }
@@ -92,6 +86,14 @@ public class LocationService1 extends Service {
 
     @Override
     public void onDestroy() {
+        /* 서버에 점수 저장 */
+        ScoreFunctions scoreFunctions = new ScoreFunctions();
+        scoreFunctions.addLocationScore(locationScore, location.getName());
+
+        /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
+        String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
+        ScoreFunctions.getScores(userID, ScoreFunctions.getDate()); // 서버에서 오늘의 날짜에 해당하는 점수 정보를 얻어와서 score 변수에 저장됨
+        User.setIsInitialized(true);
         Log.d("장소 측정", "종료");
         super.onDestroy();
     }
@@ -128,16 +130,13 @@ public class LocationService1 extends Service {
     }
 
     public void checkScore(Location location) {
-        int locationScore = getLocationScore(LocationService1.this, real, location, tryNum);
+        int score = getLocationScore(LocationService1.this, real, location, tryNum);
 
-        if (tryNum < 3 && locationScore == 0) {
-            Log.d(TAG, "점수: " + locationScore);
+        if (tryNum < 3 && score == 0) {
+            Log.d(TAG, "점수: " + score);
         } else {
-            Log.d(TAG, "완벽한 " + locationScore + "점");
-            // @@@@ 여기서 점수를 보내면 됨
-            //Looper.getMainLooper().quitSafely(); // Looper 종료
-            //handler.removeMessages(0);
-            Log.d(TAG, "측정 종료~");
+            locationScore = score;
+            Log.d(TAG + "측정 종료: ", "최종 " + score + "점");
         }
     }
 
@@ -220,5 +219,4 @@ public class LocationService1 extends Service {
         d = Math.sqrt(yd + xd);
         return Double.parseDouble(String.format("%.4f", d));
     }
-     */
 }

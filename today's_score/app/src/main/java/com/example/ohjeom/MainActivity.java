@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.retrofit.RetrofitClient;
+import com.example.ohjeom.retrofit.ScoreService;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.JsonObject;
@@ -36,25 +37,24 @@ import static com.example.ohjeom.ui.templates.privateTemplate.PrivateFragment.pA
 
 public class MainActivity extends AppCompatActivity {
     String[] templates = new String[]{};
-    private Retrofit retrofit;
+    private Retrofit retrofit = RetrofitClient.getInstance();
+    private TemplateService templateService = retrofit.create(TemplateService.class);
+    private ScoreService scoreService = retrofit.create(ScoreService.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SharedPreferences user = getSharedPreferences("user",MODE_PRIVATE);
-        retrofit = RetrofitClient.getInstance();
-        TemplateService templateService = retrofit.create(TemplateService.class);
-        JsonObject body = new JsonObject();
-        body.addProperty("userID", user.getString("id","abc"));
+        SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
+        String userID = user.getString("id", "aaa");
 
-        templateService.getPrivateName(body).enqueue(new Callback<Templates>() {
+        templateService.getPrivateNames(userID).enqueue(new Callback<Templates>() {
             @Override
             public void onResponse(Call<Templates> call, Response<Templates> response) {
                 if (response.code() == 404) {
                     try {
                         Toast.makeText(MainActivity.this, "개인 템플릿 이름 호출에 실패했습니다.", Toast.LENGTH_SHORT).show();
-                        Log.d("TemplateService", "res:" + response.errorBody().string());
+                        Log.d("TemplateService", "@@@@@@@@@ res:" + response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

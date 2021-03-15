@@ -3,7 +3,7 @@
     <string name="title_statistics">통계</string>
     <string name="title_templates">템플릿</string>
     <string name="title_home">홈</string>
-    <string name="title_diary">다이어리</string>
+    <string name="title_diary">일기</string>
     <string name="title_friend">친구</string>
     <string name="api_key">AIzaSyAWe4j0P5hNAFdyF8g6p28So50vZ2biFFU</string>
 </resources>

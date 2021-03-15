@@ -26,7 +26,9 @@ import androidx.core.app.NotificationCompat;
 import com.android.volley.BuildConfig;
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
+import com.example.ohjeom.models.User;
 import com.example.ohjeom.models.Weather;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,10 +50,8 @@ public class PhoneService extends Service {
     private Map<String,Long> appUsageTimesList = new HashMap<>();
 
     private class AppUsageInfo {
-        String appName, packageName;
+        String packageName;
         long timeInForeground;
-        long temp;
-        int launchCount;
 
         AppUsageInfo(String pName) {
             this.packageName=pName;
@@ -105,9 +105,9 @@ public class PhoneService extends Service {
     public void onDestroy() {
         run = false;
 
-        int Time = (int) ((stopTime - startTime)/(60*1000));
+        int time = (int) ((stopTime - startTime)/(60*1000));
         phoneUsageToday /= 60;
-        int phoneScore = ScoreCalculate(Time, phoneUsageToday);
+        int phoneScore = ScoreCalculate(time, phoneUsageToday);
 
         Log.d(TAG + "핸드폰 사용 점수", String.valueOf(phoneScore));
         Log.d(TAG + "총 사용시간", String.valueOf(phoneUsageToday));
@@ -116,12 +116,18 @@ public class PhoneService extends Service {
         while (iterator.hasNext()) {
             String appName = (String) iterator.next();
             Log.d(TAG + "앱별 사용시간", appName+","+appUsageTimesList.get(appName));
-
         }
 
         /*
         점수보내기 & appUsageTimes(앱별 사용시간), phoneTime(총 사용시간)
          */
+        ScoreFunctions scoreFunctions = new ScoreFunctions();
+        scoreFunctions.addPhoneUsageScore(phoneScore, time, phoneUsageToday);
+
+        /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
+        String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
+        ScoreFunctions.getScores(userID, ScoreFunctions.getDate()); // 서버에서 오늘의 날짜에 해당하는 점수 정보를 얻어와서 score 변수에 저장됨
+        User.setIsInitialized(true);
         Log.d(TAG + "앱 사용시간-","가져오기 종료");
         super.onDestroy();
     }

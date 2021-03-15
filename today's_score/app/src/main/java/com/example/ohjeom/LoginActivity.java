@@ -16,6 +16,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //자동 로그인
+        SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
+        if(user.getBoolean("Login",false)){
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         EditText idEditText = findViewById(R.id.id_text);
         EditText passwordEditText = findViewById(R.id.password_text);
         Button loginButton = findViewById(R.id.login_button);

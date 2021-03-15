@@ -15,6 +15,8 @@ import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 import com.example.ohjeom.models.AccountSummary;
 import com.example.ohjeom.models.Payment;
+import com.example.ohjeom.models.User;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 
 import java.util.ArrayList;
 
@@ -103,23 +105,34 @@ public class PaymentService extends Service {
     public void onDestroy() {
         Log.d(TAG,"종료");
 
-        /*
-        서버로 점수 보내기 및 총 사용량 & 사용내역 보내기 : score,accountSummary 보내면 됨
-         */
         int score = 0;
         accountSummary = new AccountSummary(total, payments);
 
-        Log.d("합계:", String.valueOf(total));
+        Log.d(TAG, String.valueOf(total));
+        Log.d(TAG, String.valueOf(score));
         for (Payment p : accountSummary.getDetails()) {
             Log.d(TAG + "사용내역 : ", p.getUsage() + p.getAmount() + "원");
         }
 
-        if (total < money)
+        if (total < money) {
             score = 100;
-        else
+        } else if ( total <= money * 1.5) {
+            score = 50;
+        } else {
             score = 0;
-        Log.d(TAG, String.valueOf(score));
+        }
 
+        /*
+        서버로 점수 보내기 및 총 사용량 & 사용내역 보내기 : score,accountSummary 보내면 됨
+         */
+        ScoreFunctions scoreFunctions = new ScoreFunctions();
+        scoreFunctions.addPaymentScore(score, money, total);
+
+        /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
+        String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
+        ScoreFunctions.getScores(userID, ScoreFunctions.getDate()); // 서버에서 오늘의 날짜에 해당하는 점수 정보를 얻어와서 score 변수에 저장됨
+        User.setIsInitialized(true);
+        Log.d(TAG + "소비 측정","종료");
         super.onDestroy();
     }
 

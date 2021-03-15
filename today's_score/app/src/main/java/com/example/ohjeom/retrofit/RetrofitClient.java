@@ -16,10 +16,4 @@ public class RetrofitClient {
         }
         return instance;
     }
-
-    /*
-    public TemplateService getTemplateService() {
-        return retrofit.create(TemplateService.class);
-    }
-     */
 }

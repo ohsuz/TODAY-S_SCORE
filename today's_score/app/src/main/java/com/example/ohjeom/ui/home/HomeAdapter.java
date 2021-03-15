@@ -14,12 +14,14 @@ import android.widget.TextView;
 
 import com.example.ohjeom.R;
 import com.example.ohjeom.models.ListViewItem;
-import com.example.ohjeom.models.Test;
+import com.example.ohjeom.models.Score;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 
 import java.util.ArrayList;
 
 public class HomeAdapter extends BaseAdapter {
-    private ArrayList<Test> tests = new ArrayList<Test>();
+    private ArrayList<Integer> scores = new ArrayList<Integer>();
+    private ArrayList<String> tests = new ArrayList<String>();
 
     public HomeAdapter(){
     }
@@ -28,31 +30,32 @@ public class HomeAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final Context context = parent.getContext();
 
-        // "listview_item" Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.item_test, parent, false);
         }
 
         TextView testName = (TextView) convertView.findViewById(R.id.test) ;
-        TextView score = (TextView) convertView.findViewById(R.id.score) ;
-        Test test = tests.get(position);
+        TextView scoreText = (TextView) convertView.findViewById(R.id.score) ;
 
-
-        testName.setText(test.getTestName());
-        score.setText(test.getScore());
+        testName.setText(tests.get(position));
+        if (scores.get(position) == -1) {
+            scoreText.setText("미채점");
+        } else {
+            scoreText.setText(scores.get(position)+" 점");
+        }
 
         return convertView;
     }
 
     @Override
     public int getCount() {
-        return tests.size();
+        return scores.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return tests.get(position);
+        return scores.get(position);
     }
 
     @Override
@@ -60,7 +63,15 @@ public class HomeAdapter extends BaseAdapter {
         return position;
     }
 
-    public void addTest(Test test) {
+    public void addScore(String test, int score) {
         tests.add(test);
+        scores.add(score);
+    }
+
+    public void updateScore(String test, int score) {
+        Log.d("@@@@@HomeAdapter1", tests.get(0));
+        Log.d("@@@@@HomeAdapter2", test);
+        int index = tests.indexOf(test);
+        scores.set(index, score);
     }
 }
