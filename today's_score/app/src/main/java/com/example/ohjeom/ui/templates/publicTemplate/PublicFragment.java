@@ -26,8 +26,8 @@ public class PublicFragment extends Fragment {
         add("저녁형 시간표");
         add("운동중심\n시간표");
         add("공부중심\n시간표");
-        add("예헤이\n모르겠다");
-        add("Festival 시간표");
+        add("소비중심\n시간표");
+        add("수면중심 시간표");
     }};
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -59,7 +59,7 @@ public class PublicFragment extends Fragment {
                 3 /* Three columns */,
                 1f /* We want our items to be 1:1 ratio */));
 
-        publicRecyclerView.addItemDecoration(new PublicTemplateDecoration(15,15));
+        publicRecyclerView.addItemDecoration(new PublicTemplateDecoration(0,0));
         publicRecyclerView.setAdapter(publicAdapter);
 
         return root;

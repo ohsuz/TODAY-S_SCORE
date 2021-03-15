@@ -52,9 +52,9 @@ public class FriendFragment extends Fragment {
 
         Integer[] image = {R.drawable.icon_user1,R.drawable.icon_user2,R.drawable.icon_user3,R.drawable.icon_user4,R.drawable.icon_user5
         ,R.drawable.icon_user6,R.drawable.icon_user7,R.drawable.icon_user8,R.drawable.icon_user9};
-        String[] name = {"동해물","과백두","산이마","르고닳","도록하","느님이","보우하","사우리","나라만"};
-        String[] intro = {"오늘도 화이팅!","잠시 쉬는중","제때 일어나자","목표 : 하루에 만보 걷기!","치킨먹고싶다","커피 사주세요",
-                "나는 한컴타자 말랑말랑 어쩌고 게임 고수다","Zzzzzzzzzzzzzzzzzzzzzz","백준 플래티넘 가즈아!!!!"};
+        String[] name = {"토깽이","몰랑이","프로도","예지","하늘","에비츄","대학이좋아","잔망루피","호빵맨"};
+        String[] intro = {"토깽이의 시간표","잠시 쉬는중","1","건강","잠시 쉬는중","잠시 쉬는중",
+                "잠시 쉬는중","Full 시간표","잠시 쉬는중"};
 
         for(int i=0;i<8;i++) {
             list.add(new Friend(image[i],name[i],intro[i],true));

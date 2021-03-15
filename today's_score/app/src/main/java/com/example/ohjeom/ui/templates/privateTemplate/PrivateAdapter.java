@@ -2,10 +2,8 @@ package com.example.ohjeom.ui.templates.privateTemplate;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +23,7 @@ import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.TemplateService;
-import com.example.ohjeom.ui.templates.TemplateActivity;
-import com.google.gson.JsonObject;
+import com.example.ohjeom.ui.templates.PrivateTemplateActivity;
 
 public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHolder> {
     private Template template = new Template();
@@ -61,7 +58,7 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
                         @Override
                         public void run() {
                             if (pos != RecyclerView.NO_POSITION) {
-                                Intent intent = new Intent(view.getContext(), TemplateActivity.class);
+                                Intent intent = new Intent(view.getContext(), PrivateTemplateActivity.class);
                                 Log.d("@@@@@@", "Private Adapter: " + template.getNameResult());
                                 intent.putExtra("template", template);
                                 view.getContext().startActivity(intent);

@@ -1,16 +1,12 @@
 package com.example.ohjeom.ui.templates;
 
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +21,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -39,11 +34,9 @@ import retrofit2.Retrofit;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
-import com.example.ohjeom.adapters.AppAdapter;
 import com.example.ohjeom.adapters.AppCheckAdapter;
 import com.example.ohjeom.adapters.LocationAdapter;
 import com.example.ohjeom.models.Location;
-import com.example.ohjeom.models.Score;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.models.User;
@@ -51,17 +44,13 @@ import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.ScoreFunctions;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.example.ohjeom.services.StartService;
-import com.example.ohjeom.ui.templates.privateTemplate.PrivateAdapter;
-import com.example.ohjeom.ui.templates.templateMaker.MakerActivity2;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-public class TemplateActivity extends AppCompatActivity {
+public class PrivateTemplateActivity extends AppCompatActivity {
     private int wakeupHour, wakeupMin;
     private int walkHour, walkMin, walkCount;
     private int sleepHour, sleepMin;
@@ -85,7 +74,7 @@ public class TemplateActivity extends AppCompatActivity {
     private Retrofit retrofit = RetrofitClient.getInstance();
     private TemplateService templateService = retrofit.create(TemplateService.class);
 
-    public TemplateActivity() {
+    public PrivateTemplateActivity() {
     }
 
     @Override
@@ -249,9 +238,9 @@ public class TemplateActivity extends AppCompatActivity {
     Start examination using this template
      */
     public void mOnClick(View v) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(TemplateActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(PrivateTemplateActivity.this);
 
-        View view = LayoutInflater.from(TemplateActivity.this)
+        View view = LayoutInflater.from(PrivateTemplateActivity.this)
                 .inflate(R.layout.dialog_template, null, false);
         builder.setView(view);
 
@@ -287,7 +276,7 @@ public class TemplateActivity extends AppCompatActivity {
                 ScoreFunctions.setUserID(userID);
                 ScoreFunctions.setTemplateName(privateTemplate.getNameResult());
 
-                Intent intentService = new Intent(TemplateActivity.this, StartService.class);
+                Intent intentService = new Intent(PrivateTemplateActivity.this, StartService.class);
                 intentService.putExtra("template", privateTemplate);
                 intentService.putExtra("month", startMonth);
                 intentService.putExtra("day", startDay);

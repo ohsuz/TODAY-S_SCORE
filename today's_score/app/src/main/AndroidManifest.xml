@@ -39,7 +39,8 @@
         <activity android:name=".StartActivity"/>
         <activity android:name=".RegisterActivity"/>
         <activity android:name=".MainActivity" android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".ui.templates.TemplateActivity" />
+        <activity android:name=".ui.templates.PrivateTemplateActivity" />
+        <activity android:name=".ui.templates.PublicTemplateActivity" />
         <activity android:name=".ui.templates.templateMaker.MakerActivity1" />
         <activity android:name=".ui.templates.templateMaker.MakerActivity2" />
         <activity android:name=".ui.groups.FriendActivity" />
