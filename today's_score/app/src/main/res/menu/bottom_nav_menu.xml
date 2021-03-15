@@ -18,12 +18,12 @@
 
     <item
         android:id="@+id/navigation_rankings"
-        android:icon="@android:drawable/btn_star"
+        android:icon="@android:drawable/ic_menu_today"
         android:title="@string/title_rankings" />
 
     <item
         android:id="@+id/navigation_groups"
-        android:icon="@android:drawable/ic_menu_myplaces"
+        android:icon="@android:drawable/ic_menu_share"
         android:title="@string/title_groups" />
 
 </menu>
