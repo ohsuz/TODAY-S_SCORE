@@ -34,7 +34,7 @@
     <!-- Layout 배경 꾸미기 끝 -->
 
     <TextView
-        android:id="@+id/temp_name"
+        android:id="@+id/friend_name"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:text="Friend"

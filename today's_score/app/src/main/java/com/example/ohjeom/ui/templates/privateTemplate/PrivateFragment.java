@@ -1,13 +1,17 @@
 package com.example.ohjeom.ui.templates.privateTemplate;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.ohjeom.MainActivity;
@@ -36,7 +40,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -109,9 +116,37 @@ public class PrivateFragment extends Fragment {
             String templateName = Templates.templateNames[position];
             String userID = getContext().getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
 
-            deleteAndUpdateTemplate(getContext(), userID, templateName);
-            pAdapter = new PrivateAdapter();
-            privateListView.setAdapter(pAdapter);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            View view = LayoutInflater.from(getActivity())
+                    .inflate(R.layout.dialog_delete, null, false);
+            builder.setView(view);
+
+            final Button registerBtn = (Button) view.findViewById(R.id.register_button);
+            final Button cancelBtn = (Button) view.findViewById(R.id.cancel_button);
+
+            final AlertDialog dialog = builder.create();
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            registerBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    deleteAndUpdateTemplate(getContext(), userID, templateName);
+                    pAdapter = new PrivateAdapter();
+                    privateListView.setAdapter(pAdapter);
+
+                    dialog.dismiss();
+                }
+            });
+
+            cancelBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
         }
     };
 

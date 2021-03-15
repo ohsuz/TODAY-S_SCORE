@@ -3,6 +3,7 @@ package com.example.ohjeom.ui.groups;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +16,9 @@ import java.util.ArrayList;
 public class FriendActivity extends AppCompatActivity {
 
     private int position;
+    private String name;
     private ArrayList<FriendScore> fs1 = new ArrayList<>();
+    private TextView friendName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,6 +27,7 @@ public class FriendActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         position = intent.getIntExtra("position",0);
+        name = intent.getStringExtra("name");
 
         if(position == 0) {
 
@@ -55,6 +59,9 @@ public class FriendActivity extends AppCompatActivity {
         FriendScoreAdapter friendScoreAdapter = new FriendScoreAdapter(fs1);
         ListView listview = (ListView) findViewById(R.id.friends_score);
         listview.setAdapter(friendScoreAdapter);
+
+        friendName = findViewById(R.id.friend_name);
+        friendName.setText(name);
 
     }
 }

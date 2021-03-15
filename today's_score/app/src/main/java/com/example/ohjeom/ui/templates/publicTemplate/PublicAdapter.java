@@ -50,14 +50,29 @@ public class PublicAdapter extends RecyclerView.Adapter<PublicAdapter.CustomView
 
         if(position == 0) {
             viewholder.textView.setTextSize(40);
+            viewholder.textView.setBackgroundResource(R.drawable.morning);
         }
 
         if(position == 1) {
             viewholder.textView.setTextSize(35);
+            viewholder.textView.setBackgroundResource(R.drawable.night);
+        }
+
+        if(position == 2) {
+            viewholder.textView.setBackgroundResource(R.drawable.running);
+        }
+
+        if(position == 3) {
+            viewholder.textView.setBackgroundResource(R.drawable.study);
+        }
+
+        if(position == 4) {
+            viewholder.textView.setBackgroundResource(R.drawable.money);
         }
 
         if(position == 5) {
             viewholder.textView.setTextSize(30);
+            viewholder.textView.setBackgroundResource(R.drawable.sleep);
         }
     }
 
