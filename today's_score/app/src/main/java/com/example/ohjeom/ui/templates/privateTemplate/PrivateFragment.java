@@ -23,10 +23,12 @@ import com.google.gson.JsonObject;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +43,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class PrivateFragment extends Fragment {
     private PrivateViewModel privateViewModel;
     private RecyclerView privateListView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     public static PrivateAdapter pAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -51,6 +54,7 @@ public class PrivateFragment extends Fragment {
         privateListView = (RecyclerView) root.findViewById(R.id.private_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         privateListView.setLayoutManager(linearLayoutManager);
+        swipeRefreshLayout = root.findViewById(R.id.refresh_layout);
 
         pAdapter = new PrivateAdapter();
         privateListView.setAdapter(pAdapter);
@@ -58,6 +62,15 @@ public class PrivateFragment extends Fragment {
         // 스와이프로 아이템 삭제를 구현하기 위한 설정
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(privateListView);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pAdapter = new PrivateAdapter();
+                privateListView.setAdapter(pAdapter);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         return root;
     }
@@ -97,6 +110,8 @@ public class PrivateFragment extends Fragment {
             String userID = getContext().getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
 
             deleteAndUpdateTemplate(getContext(), userID, templateName);
+            pAdapter = new PrivateAdapter();
+            privateListView.setAdapter(pAdapter);
         }
     };
 
@@ -136,5 +151,10 @@ public class PrivateFragment extends Fragment {
                         + ", exception: " + t);
             }
         });
+    }
+
+    public void refresh() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(this).commit();
     }
 }
