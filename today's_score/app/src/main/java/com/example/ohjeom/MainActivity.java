@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.retrofit.RetrofitClient;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 import com.example.ohjeom.retrofit.ScoreService;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -72,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
                         + ", exception: " + t);
             }
         });
+
+        ScoreFunctions.getScores(userID, ScoreFunctions.getDate());
 
         // 가장 먼저 permission 체크
         if(!checkUsageStatsPermissions()){

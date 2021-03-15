@@ -2,6 +2,7 @@ package com.example.ohjeom.ui.home;
 
 import android.app.ActivityManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.service.controls.actions.FloatAction;
 import android.util.Log;
@@ -22,6 +23,7 @@ import retrofit2.Retrofit;
 
 import com.example.ohjeom.R;
 import com.example.ohjeom.models.Score;
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.User;
 import com.example.ohjeom.retrofit.RetrofitClient;
@@ -36,28 +38,38 @@ import static android.content.Context.ACTIVITY_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment {
-
     private HomeViewModel homeViewModel;
     private String[] components = new String[]{};
+    private String userID;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+        userID = getContext().getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
 
         final ListView scores;
         HomeAdapter homeAdapter = new HomeAdapter();
 
         // 리스트뷰 참조 및 Adapter달기
-        scores = (ListView)root.findViewById(R.id.score_list);
+        scores = root.findViewById(R.id.score_list);
 
-
-        if (User.getCurTemplate() != null) {
+        if (Storage.getScore() != null) {
             // 설정된 템플릿이 있는 경우
-            Log.d("@@@@@HomeAdapter", User.getCurTemplate().getNameResult());
+            Log.d("@@@@@HomeAdapter", Storage.getScore().getTemplateName());
             scores.setAdapter(homeAdapter);
 
+            Score score =  Storage.getScore();
+            components = score.getComponents();
+            for(int i=0; i<6; i++){
+                if (components[i].equals("true")) {
+                    Log.d("@@@@@HomeAdapter", Score.getComponentNames()[i]);
+                    homeAdapter.addScore(Score.getComponentNames()[i], score.getScores()[i]);
+                }
+            }
+
+            /*
             if (!User.isIsInitialized()) {
                 components = User.getComponents();
                 for (int i=0; i<6; i++) {
@@ -66,16 +78,8 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }
-            else {
-                Score score =  ScoreFunctions.getScore();
-                components = score.getComponents();
-                for(int i=0; i<6; i++){
-                    if (components[i].equals("true")) {
-                        Log.d("@@@@@HomeAdapter", Score.getComponentNames()[i]);
-                        homeAdapter.updateScore(Score.getComponentNames()[i], score.getScores()[i]);
-                    }
-                }
-            }
+             */
+
             homeAdapter.notifyDataSetChanged();
         }
 

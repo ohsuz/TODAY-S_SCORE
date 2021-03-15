@@ -15,15 +15,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.ohjeom.R;
+import com.example.ohjeom.models.Diary;
 import com.example.ohjeom.models.SelectedDate;
+import com.example.ohjeom.models.Storage;
+import com.example.ohjeom.ui.rankings.DiaryFragment;
 
 import java.util.Calendar;
 import java.util.Date;
 
 public class DiaryRecordFragment extends Fragment {
-
     private DiaryRecordViewModel diaryRecordViewModel;
-    private TextView txt;
+    private Diary diary;
+    private TextView date, week, title, content, good, bad;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -31,13 +34,26 @@ public class DiaryRecordFragment extends Fragment {
         diaryRecordViewModel =
                 ViewModelProviders.of(this).get(DiaryRecordViewModel.class);
         View root = inflater.inflate(R.layout.fragment_statistics_diary, container, false);
-
-        txt = (TextView)root.findViewById(R.id.test_diary);
+        date = (TextView)root.findViewById(R.id.diary_date);
+        week = (TextView)root.findViewById(R.id.diary_week);
+        title = (TextView)root.findViewById(R.id.diary_title);
+        content = (TextView)root.findViewById(R.id.diary_text);
+        good = (TextView)root.findViewById(R.id.diary_best);
+        bad = (TextView)root.findViewById(R.id.diary_worst);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(SelectedDate.getSelectedDate());
-        txt.setText(calendar.get(Calendar.YEAR) + "년" +
-                (calendar.get(Calendar.MONTH) + 1) + "월" +
-                calendar.get(Calendar.DAY_OF_MONTH) + "일");
+
+        if (Storage.getDiary() != null) {
+            diary = Storage.getDiary();
+            date.setText(calendar.get(Calendar.YEAR) + "년" +
+                    (calendar.get(Calendar.MONTH) + 1) + "월" +
+                    calendar.get(Calendar.DAY_OF_MONTH) + "일");
+            week.setText(DiaryFragment.getWeek(calendar.get(Calendar.DAY_OF_WEEK)));
+            title.setText(diary.getTitle());
+            content.setText(diary.getContent());
+            good.setText(diary.getGood());
+            bad.setText(diary.getBad());
+        }
 
         return root;
     }
@@ -49,14 +65,24 @@ public class DiaryRecordFragment extends Fragment {
         // TODO: Use the ViewModel
     }
 
-    public void changeDiaryRecordFragment(Date date) {
-        if(getActivity() != null){
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
 
-            txt.setText(calendar.get(Calendar.YEAR) + "년" +
-                    (calendar.get(Calendar.MONTH) + 1) + "월" +
-                    calendar.get(Calendar.DAY_OF_MONTH) + "일");
+    public void changeDiaryRecordFragment(Date selectedDate) {
+                if(getActivity() != null){
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(selectedDate);
+
+                    if (Storage.getDiary() != null) {
+                        diary = Storage.getDiary();
+                        date.setText(calendar.get(Calendar.YEAR) + "년" +
+                                (calendar.get(Calendar.MONTH) + 1) + "월" +
+                                calendar.get(Calendar.DAY_OF_MONTH) + "일");
+                        week.setText(DiaryFragment.getWeek(calendar.get(Calendar.DAY_OF_WEEK)));
+                        title.setText(diary.getTitle());
+                        content.setText(diary.getContent());
+                        good.setText(diary.getGood());
+                        bad.setText(diary.getBad());
+                    }
         }
     }
+
 }

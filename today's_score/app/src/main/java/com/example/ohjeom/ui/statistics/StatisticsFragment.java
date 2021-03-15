@@ -16,18 +16,30 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 import com.example.ohjeom.R;
 import com.example.ohjeom.adapters.CalendarAdapter;
 import com.example.ohjeom.adapters.WeekAdapter;
 import com.example.ohjeom.models.DayInfo;
+import com.example.ohjeom.models.Diary;
 import com.example.ohjeom.models.SelectedDate;
+import com.example.ohjeom.models.Storage;
+import com.example.ohjeom.retrofit.DiaryService;
+import com.example.ohjeom.retrofit.RetrofitClient;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 import com.google.android.material.tabs.TabLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class StatisticsFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
     public static int SUNDAY        = 1;
@@ -44,14 +56,18 @@ public class StatisticsFragment extends Fragment implements AdapterView.OnItemCl
     Date selectedDate = new Date();
     final DetailsFragment detailsFragment = new DetailsFragment();
     final DiaryRecordFragment diaryRecordFragment = new DiaryRecordFragment();
-
     Calendar mThisMonthCalendar;
+
+    private Diary selectedDiary;
+    private String userID;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         statisticsViewModel =
                 ViewModelProviders.of(this).get(StatisticsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_statistics, container, false);
+        userID = getContext().getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
 
         /*
         Title 설정
@@ -117,6 +133,11 @@ public class StatisticsFragment extends Fragment implements AdapterView.OnItemCl
 
         SelectedDate.setSelectedDate(selectedDate);
         mDayList = new ArrayList<DayInfo>();
+
+        /*
+        우선 default 다이어리로 오늘의 다이어리를 받아옴
+         */
+        getDiary(userID, ScoreFunctions.getDate());
 
         return root;
     }
@@ -240,7 +261,11 @@ public class StatisticsFragment extends Fragment implements AdapterView.OnItemCl
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long arg3)
     {
-        setSelectedDate(((DayInfo)v.getTag()).getDate());
+        Date selectedDate = ((DayInfo)v.getTag()).getDate();
+        setSelectedDate(selectedDate);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = simpleDateFormat.format(selectedDate);
+        getDiary(userID, date);
         mCalendarAdapter.notifyDataSetChanged();
         detailsFragment.changeDetailsFragment(selectedDate);
         diaryRecordFragment.changeDiaryRecordFragment(selectedDate);
@@ -269,4 +294,23 @@ public class StatisticsFragment extends Fragment implements AdapterView.OnItemCl
         mGvCalendar.setAdapter(mCalendarAdapter);
     }
 
+    public void getDiary(String userID, String date) {
+        Retrofit retrofit = RetrofitClient.getInstance();
+        DiaryService diaryService = retrofit.create(DiaryService.class);
+
+        diaryService.getDiary(userID, date).enqueue(new Callback<Diary>() {
+            @Override
+            public void onResponse(Call<Diary> call, Response<Diary> response) {
+                Log.d("@@@@@@@@", String.valueOf(response.body()));
+                Diary diary = response.body();
+                Storage storage = new Storage();
+                storage.setDiary(diary);
+            }
+            @Override
+            public void onFailure(Call<Diary> call, Throwable t) {
+                Log.d("DiaryService", "Failed API call with call: " + call
+                        + ", exception: " + t);
+            }
+        });
+    }
 }
