@@ -124,6 +124,9 @@ public class WakeupService extends Service implements SensorEventListener {
         int score = 0;
         long score_time = resultTime/(60*1000)-wakeupTime/(60*1000);
 
+        Log.d(TAG, String.valueOf(resultTime/(60*1000)));
+        Log.d(TAG, String.valueOf(wakeupTime/(60*1000)));
+
         if(score_time<=10)
             score = 100;
         else if(score_time<=20)

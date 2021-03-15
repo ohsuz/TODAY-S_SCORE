@@ -16,7 +16,7 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-
+        
         SharedPreferences user = getSharedPreferences("user",MODE_PRIVATE);
         if(user.getBoolean("Login",false)){
             Intent intent = new Intent(StartActivity.this, MainActivity.class);

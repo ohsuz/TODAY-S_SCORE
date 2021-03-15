@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/icon_school">
@@ -21,18 +21,11 @@
             android:id="@+id/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
             android:fontFamily="@font/jua"
             android:text="오늘의 점수"
             android:textColor="@color/colorBrown"
             android:textSize="60sp"
             android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/icon_100"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/icon_100" />
 
     </LinearLayout>
 

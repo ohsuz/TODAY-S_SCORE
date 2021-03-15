@@ -76,7 +76,7 @@ public class LocationService1 extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(ERROR_MSG, "LocationService - OnStartCommand");
-        location = (Location) intent.getSerializableExtra("location");
+        location = (Location) intent.getParcelableExtra("location");
 
         LocationThread thread = new LocationThread();
         thread.start();

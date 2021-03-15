@@ -261,7 +261,6 @@ public class StartService extends Service {
 
         switch (template.getLocations().size()) {
             case 1:
-                locationIntent1.putExtra("location", template.getLocations().get(0));
                 locationSender1 = PendingIntent.getService(this, 0, locationIntent1, 0);
 
                 locationAM1 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);

@@ -286,10 +286,6 @@ public class PrivateTemplateActivity extends AppCompatActivity {
                 intentHome.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentHome);
 
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-
                 dialog.dismiss();
                 finish();
             }
