@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.ohjeom.models.Score;
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.models.Template;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -18,7 +19,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class ScoreFunctions {
-    private static Score score;
     private static String userID;
     private static String templateName;
     private static String date;
@@ -45,22 +45,20 @@ public class ScoreFunctions {
         ScoreFunctions.templateName = templateName;
     }
 
-    public static Score getScore() {
-        return score;
-    }
-
-    public static void setScore(Score score) {
-        ScoreFunctions.score = score;
-    }
-
     public static void getScores(String userID, String date) {
-        Log.d("@@@@@@@ ScoreFunctions", "I'm in getScores");
         scoreService.getScores(userID, date).enqueue(new Callback<Score>() {
             @Override
             public void onResponse(Call<Score> call, Response<Score> response) {
-                Log.d("@@@@@@@@", String.valueOf(response.body()));
-                score = response.body();
-                score.parseInfo();
+                if (response.code() == 200) {
+                    Storage.setIsScored(true);
+                    Score score = response.body();
+                    Storage.setScore(score);
+                    Storage.getScore().parseInfo();
+                    Log.d("@@@@@@@@", String.valueOf(Storage.getScore().getTemplateName()));
+                }
+                if (response.code() == 404) {
+                    Storage.setIsScored(false);
+                }
             }
             @Override
             public void onFailure(Call<Score> call, Throwable t) {

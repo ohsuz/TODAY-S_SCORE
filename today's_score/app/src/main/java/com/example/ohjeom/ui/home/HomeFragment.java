@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.service.controls.actions.FloatAction;
 import android.util.Log;
@@ -25,12 +26,14 @@ import retrofit2.Retrofit;
 
 import com.example.ohjeom.R;
 import com.example.ohjeom.models.Score;
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.User;
 import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.ScoreFunctions;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.example.ohjeom.services.StartService;
+import com.example.ohjeom.ui.templates.TemplateActivity;
 import com.example.ohjeom.ui.templates.privateTemplate.PrivateAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -40,48 +43,53 @@ import static android.content.Context.ACTIVITY_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment {
-
     private HomeViewModel homeViewModel;
-    private String[] components = new String[]{};
+    private String userID;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+        userID = getContext().getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
 
         final ListView scores;
         HomeAdapter homeAdapter = new HomeAdapter();
 
         // 리스트뷰 참조 및 Adapter달기
-        scores = (ListView)root.findViewById(R.id.score_list);
+        scores = root.findViewById(R.id.score_list);
 
-
-        if (User.getCurTemplate() != null) {
-            // 설정된 템플릿이 있는 경우
-            Log.d("@@@@@HomeAdapter", User.getCurTemplate().getNameResult());
-            scores.setAdapter(homeAdapter);
-
-            if (!User.isIsInitialized()) {
-                components = User.getComponents();
-                for (int i=0; i<6; i++) {
-                    if (components[i].equals("true")) {
-                        homeAdapter.addScore(Score.getComponentNames()[i], -1);
-                    }
+        if (Storage.isIsSelected() == true && Storage.isIsScored() == false) {
+            // 설정된 템플릿은 있는데 아직 아무 점수도 안 매겨진 경우 -> 모두 '미채점'인 상태로 리스트에 띄움
+            String[] components = Storage.getComponents();
+            for (int i=0; i<6; i++) {
+                if (components[i].equals("true")) {
+                    homeAdapter.addScore(Score.getComponentNames()[i], -1);
                 }
             }
-            else {
-                Score score =  ScoreFunctions.getScore();
-                components = score.getComponents();
-                for(int i=0; i<6; i++){
-                    if (components[i].equals("true")) {
-                        Log.d("@@@@@HomeAdapter", Score.getComponentNames()[i]);
-                        homeAdapter.updateScore(Score.getComponentNames()[i], score.getScores()[i]);
-                    }
-                }
-            }
-            homeAdapter.notifyDataSetChanged();
         }
+        if (Storage.isIsSelected() == true && Storage.isIsScored() == true) {
+            // 설정된 템플릿이 있고 매겨진 점수도 있는 경우
+            Log.d("@@@@@HomeAdapter", Storage.getScore().getTemplateName());
+
+            String[] components = Storage.getComponents();
+            for (int i=0; i<6; i++) {
+                if (components[i].equals("true")) {
+                    homeAdapter.addScore(Score.getComponentNames()[i], -1);
+                }
+            }
+
+            Score score =  Storage.getScore();
+            String[] scoredComponents = score.getComponents();
+            for(int i=0; i<6; i++){
+                if (scoredComponents[i].equals("true")) {
+                    Log.d("@@@@@HomeAdapter", Score.getComponentNames()[i]);
+                    homeAdapter.updateScore(Score.getComponentNames()[i], score.getScores()[i]);
+                }
+            }
+        }
+        scores.setAdapter(homeAdapter);
+        homeAdapter.notifyDataSetChanged();
 
         //측정 해제 버튼
         FloatingActionButton button = root.findViewById(R.id.button);
@@ -111,6 +119,7 @@ public class HomeFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), StartService.class);
                             getActivity().stopService(intent);
                             stopTemplate(userID, User.getCurTemplate().getNameResult());
+                            TemplateActivity.updateTemplateList(userID);
 
                             dialog.dismiss();
                         }
@@ -122,12 +131,11 @@ public class HomeFragment extends Fragment {
                             dialog.dismiss();
                         }
                     });
-
                     dialog.show();
                 }
-                else
-                    Toast.makeText(getActivity(),"현재 측정중이 아닙니다.",Toast.LENGTH_SHORT).show();
-
+                else {
+                    Toast.makeText(getActivity(), "현재 측정중이 아닙니다.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

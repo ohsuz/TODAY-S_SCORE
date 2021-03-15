@@ -2,6 +2,7 @@ package com.example.ohjeom;
 
 import android.Manifest;
 import android.app.AppOpsManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,13 +13,18 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.retrofit.RetrofitClient;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 import com.example.ohjeom.retrofit.ScoreService;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -29,6 +35,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
-        String userID = user.getString("id", "aaa");
+        String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
 
         templateService.getPrivateNames(userID).enqueue(new Callback<Templates>() {
             @Override

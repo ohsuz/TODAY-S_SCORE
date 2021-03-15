@@ -24,7 +24,9 @@ import com.example.ohjeom.R;
 import com.example.ohjeom.etc.PublicTemplateDecoration;
 import com.example.ohjeom.etc.SpannedGridLayoutManager;
 import com.example.ohjeom.models.Details;
+import com.example.ohjeom.models.Score;
 import com.example.ohjeom.models.SelectedDate;
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.ui.templates.publicTemplate.PublicAdapter;
 import com.example.ohjeom.ui.templates.publicTemplate.PublicViewModel;
 
@@ -36,7 +38,6 @@ import java.util.Date;
 import java.util.List;
 
 public class DetailsFragment extends Fragment {
-
     private DetailsViewModel detailsViewModel;
 
     @Override
@@ -51,19 +52,20 @@ public class DetailsFragment extends Fragment {
 
         ListView detailsList = (ListView) root.findViewById(R.id.details_score);
         ArrayList<Details> details = new ArrayList<Details>();
-        //날짜(SelectedDate.getSelectedDate(); = 자료형 : Date)를 보내서 점수 가져오는 부분 or 날짜 & 점수 한꺼번에 로그인화면에서 가져와서 거기서 찾는 방법 ..?
 
-        String[] components = {"기상 검사","수면 검사","걸음수 검사","핸드폰 사용량 검사","장소 도착 검사","소비 검사"};
-        Integer[] score = {100,100,80,70,60,30};
-
-        for(int i=0;i<3;i++) {
-            details.add(new Details(components[i],score[i]));
+        if (Storage.getCalendarScore() != null) {
+            Score score = Storage.getCalendarScore();
+            String[] components = score.getComponents();
+            for (int i = 0; i < 6; i++) {
+                if (components[i].equals("true")) {
+                    details.add(new Details(Score.getComponentNames()[i], score.getScores()[i]));
+                }
+            }
         }
 
         DetailsAdapter detailsAdapter = new DetailsAdapter(details);
-
         detailsList.setAdapter(detailsAdapter);
-
+        detailsAdapter.notifyDataSetChanged();
         setListViewHeightBasedOnItems(detailsAdapter, detailsList);
         return root;
     }
@@ -83,15 +85,11 @@ public class DetailsFragment extends Fragment {
     }
 
     public boolean setListViewHeightBasedOnItems(DetailsAdapter detailsAdapter, ListView listView) {
-
-        // Set list height.
             ViewGroup.LayoutParams params = listView.getLayoutParams();
             int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,75 * detailsAdapter.getCount() + 20 * (detailsAdapter.getCount()-1) + 60, getResources().getDisplayMetrics());
             params.height = height;
             listView.setLayoutParams(params);
             listView.requestLayout();
-
-            //setDynamicHeight(listView);
             return true;
     }
 }

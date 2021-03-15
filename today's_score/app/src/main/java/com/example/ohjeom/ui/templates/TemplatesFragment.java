@@ -18,7 +18,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 public class TemplatesFragment extends Fragment {
-
     private TemplatesViewModel templatesViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,

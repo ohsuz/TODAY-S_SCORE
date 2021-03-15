@@ -69,8 +69,6 @@ public class HomeAdapter extends BaseAdapter {
     }
 
     public void updateScore(String test, int score) {
-        Log.d("@@@@@HomeAdapter1", tests.get(0));
-        Log.d("@@@@@HomeAdapter2", test);
         int index = tests.indexOf(test);
         scores.set(index, score);
     }

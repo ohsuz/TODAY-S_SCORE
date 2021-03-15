@@ -285,6 +285,11 @@ public class PrivateTemplateActivity extends AppCompatActivity {
                 intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intentHome.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentHome);
+
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+
                 dialog.dismiss();
                 finish();
             }
@@ -318,7 +323,10 @@ public class PrivateTemplateActivity extends AppCompatActivity {
         });
     }
 
-    public void updateTemplateList(String userID) {
+    public static void updateTemplateList(String userID) {
+        Retrofit retrofit = RetrofitClient.getInstance();
+        TemplateService templateService = retrofit.create(TemplateService.class);
+
         templateService.getPrivateNames(userID).enqueue(new Callback<Templates>() {
             @Override
             public void onResponse(Call<Templates> call, Response<Templates> response) {

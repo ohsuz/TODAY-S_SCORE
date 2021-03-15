@@ -187,9 +187,4 @@ public class PrivateFragment extends Fragment {
             }
         });
     }
-
-    public void refresh() {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this).attach(this).commit();
-    }
 }

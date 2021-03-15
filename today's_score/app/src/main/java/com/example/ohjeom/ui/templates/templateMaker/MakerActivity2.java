@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -50,6 +51,7 @@ import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.TemplateService;
+import com.example.ohjeom.ui.templates.privateTemplate.PrivateFragment;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -71,7 +73,6 @@ public class MakerActivity2 extends AppCompatActivity {
     private static final String TAG = "MakerActivity2";
     private Retrofit retrofit;
     private TemplateService templateService;
-
 
     private Template privateTemplate;
     private String templateName;
@@ -170,7 +171,6 @@ public class MakerActivity2 extends AppCompatActivity {
             }
         }
 
-        // privateTemplate.setComponents(components); --------------------- 필요없는거 확실해지면 지우자
         currentTime = Calendar.getInstance();
 
         /*
