@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorDarkBackground"
+    tools:context=".ui.rankings.DiaryFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:id="@+id/text_diary"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="일기장"
+            android:textAppearance="@style/title"
+            android:textAlignment="center"
+            android:gravity="center"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/save_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/icon_pencil" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:background="@drawable/rounded">
+
+                <TextView
+                    android:id="@+id/diary_date"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="center"
+                    android:text="YYYY년 MN월 DD일"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:fontFamily="@font/jua"/>
+
+                <TextView
+                    android:id="@+id/diary_week"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:text="월요일"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:fontFamily="@font/jua"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:background="@drawable/rounded">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="13dp"
+                    android:layout_marginRight="13dp"
+                    android:gravity="center_vertical"
+                    android:text="제목:"
+                    android:textSize="25sp"
+                    android:fontFamily="@font/jua"/>
+
+                <EditText
+                    android:id="@+id/diary_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:background="@android:color/transparent"
+                    android:textSize="25sp"
+                    android:fontFamily="@font/jua"/>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/diary_text"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="8"
+                android:gravity="left"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded"
+                android:hint="내용을 입력해주세요."
+                android:textSize="20sp"
+                android:fontFamily="@font/jua"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/rounded">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:background="@drawable/half_rounded_blue"
+                        android:text="오늘 잘한 일"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/jua"/>
+
+                    <EditText
+                        android:id="@+id/diary_best"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:padding="5dp"
+                        android:gravity="top|left"
+                        android:hint="내용을 입력해주세요."
+                        android:textSize="18sp"
+                        android:fontFamily="@font/jua"
+                        android:background="@null"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="5dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/rounded">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:background="@drawable/half_rounded_red"
+                        android:text="오늘 못한 일"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/jua"/>
+
+                    <EditText
+                        android:id="@+id/diary_worst"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:padding="5dp"
+                        android:gravity="top|left"
+                        android:hint="내용을 입력해주세요."
+                        android:textSize="18sp"
+                        android:fontFamily="@font/jua"
+                        android:background="@null"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

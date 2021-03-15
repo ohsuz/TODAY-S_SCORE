@@ -32,6 +32,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Custom
             locationTime = (TextView) view.findViewById(R.id.locationTime);
         }
     }
+
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 

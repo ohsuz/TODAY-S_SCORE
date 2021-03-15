@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class RankingsViewModel extends ViewModel {
+public class DiaryViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public RankingsViewModel() {
+    public DiaryViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("Ranking");
+        mText.setValue("Diary");
     }
 
     public LiveData<String> getText() {

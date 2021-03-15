@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GroupsViewModel extends ViewModel {
+public class FriendViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public GroupsViewModel() {
+    public FriendViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("Group");
+        mText.setValue("Friend");
     }
 
     public LiveData<String> getText() {
