@@ -19,11 +19,11 @@
     <item
         android:id="@+id/navigation_rankings"
         android:icon="@android:drawable/ic_menu_today"
-        android:title="@string/title_rankings" />
+        android:title="@string/title_diary" />
 
     <item
         android:id="@+id/navigation_groups"
         android:icon="@android:drawable/ic_menu_share"
-        android:title="@string/title_groups" />
+        android:title="@string/title_friend" />
 
 </menu>

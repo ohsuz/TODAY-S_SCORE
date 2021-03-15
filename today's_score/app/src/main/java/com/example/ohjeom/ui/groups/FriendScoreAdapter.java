@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.example.ohjeom.R;
 import com.example.ohjeom.models.FriendScore;
-import com.example.ohjeom.models.Test;
 
 import java.util.ArrayList;
 
