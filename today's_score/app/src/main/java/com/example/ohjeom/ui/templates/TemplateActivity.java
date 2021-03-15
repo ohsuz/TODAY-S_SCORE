@@ -296,6 +296,11 @@ public class TemplateActivity extends AppCompatActivity {
                 intentHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intentHome.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intentHome);
+
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+
                 dialog.dismiss();
                 finish();
             }

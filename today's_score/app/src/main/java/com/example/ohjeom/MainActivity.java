@@ -2,6 +2,7 @@ package com.example.ohjeom;
 
 import android.Manifest;
 import android.app.AppOpsManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
