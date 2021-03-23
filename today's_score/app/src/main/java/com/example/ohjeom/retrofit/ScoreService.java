@@ -56,6 +56,7 @@ public interface ScoreService {
             @Field("userID") String userID,
             @Field("templateName") String templateName,
             @Field("date") String date,
+            @Field("opt") int opt,
             @Field("locationScore") JsonObject locationScore
     );
 

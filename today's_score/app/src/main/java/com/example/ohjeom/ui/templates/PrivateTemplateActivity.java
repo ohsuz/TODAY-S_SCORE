@@ -84,7 +84,6 @@ public class PrivateTemplateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_template);
 
-        Intent intent = getIntent();
         privateTemplate = Storage.getTemplate();
         user = getSharedPreferences("user", MODE_PRIVATE);
         userID = user.getString("id", "aaa");

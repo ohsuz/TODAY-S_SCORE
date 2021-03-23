@@ -20,6 +20,8 @@ import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Location;
+import com.example.ohjeom.models.Storage;
+import com.example.ohjeom.retrofit.ScoreFunctions;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,21 +32,13 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class LocationService2 extends Service {
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-    /*
-    private static final String TAG = "locationService";
+    private static final String TAG = "locationService2";
     private static final String ERROR_MSG = "왜안돼!!!!!!!!!!!";
     private Location location;
-    final private Location real = new Location();
+    private Location real = new Location("",0.0,0.0,0,0);
     Handler handler;
     private int tryNum = 0;
-
-    public LocationService2() {
-    }
+    private int locationScore = 0;
 
     @Override
     public void onCreate() {
@@ -66,17 +60,18 @@ public class LocationService2 extends Service {
 
         // QQQ: notification 에 보여줄 타이틀, 내용을 수정한다.
         clsBuilder.setSmallIcon(R.drawable.icon_school)
-                .setContentTitle("서비스 앱").setContentText("서비스 앱")
+                .setContentTitle("오늘의 점수").setContentText("Service is running...")
                 .setContentIntent(pendingIntent);
 
+        // foreground 서비스로 실행한다.
         // foreground 서비스로 실행한다.
         startForeground(1, clsBuilder.build());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(ERROR_MSG, "LocationService - OnStartCommand");
-        location = (Location) intent.getSerializableExtra("location");
+        Log.d(ERROR_MSG, "LocationService2 - OnStartCommand");
+        location = Storage.getTemplate().getLocations().get(1);
 
         LocationThread thread = new LocationThread();
         thread.start();
@@ -86,6 +81,13 @@ public class LocationService2 extends Service {
 
     @Override
     public void onDestroy() {
+        /* 서버에 점수 저장 */
+        ScoreFunctions scoreFunctions = new ScoreFunctions();
+        scoreFunctions.addLocationScore(locationScore, location.getName(), 2);
+
+        /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
+        String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
+        ScoreFunctions.getScores(userID, ScoreFunctions.getDate()); // 서버에서 오늘의 날짜에 해당하는 점수 정보를 얻어와서 score 변수에 저장됨
         Log.d("장소 측정", "종료");
         super.onDestroy();
     }
@@ -98,13 +100,13 @@ public class LocationService2 extends Service {
 
     private class LocationThread extends Thread {
         public void run() {
-            Log.d(TAG, "LocationThread - location: " + location);
+            Log.d(TAG, "LocationThread2 - location: " + location);
 
             Looper.prepare();
             handler = new Handler(Looper.getMainLooper()) {
                 @Override
                 public void handleMessage(@NonNull Message msg) {
-                    Log.d(TAG, "LocationThread - handler  - location: " + location.getName() + ", tryNum=" + tryNum);
+                    Log.d(TAG, "LocationThread2 - handler  - location: " + location.getName() + ", tryNum=" + tryNum);
                     checkScore(location);
                     tryNum++;
                     if (tryNum <= 3) {
@@ -122,16 +124,14 @@ public class LocationService2 extends Service {
     }
 
     public void checkScore(Location location) {
-        int locationScore = getLocationScore(LocationService2.this, real, location, tryNum);
+        int score = getLocationScore(LocationService2.this, real, location, tryNum);
 
-        if (tryNum < 3 && locationScore == 0) {
-            Log.d(TAG, "점수: " + locationScore);
+        if (tryNum < 3 && score == 0) {
+            Log.d(TAG, "점수: " + score);
         } else {
-            Log.d(TAG, "완벽한 " + locationScore + "점");
-            // @@@@ 여기서 점수를 보내면 됨
-            //Looper.getMainLooper().quitSafely(); // Looper 종료
-            //handler.removeMessages(0);
-            Log.d(TAG, "측정 종료~");
+            locationScore = score;
+            Log.d(TAG + "측정 종료: ", "최종 " + score + "점");
+            stopSelf();
         }
     }
 
@@ -214,5 +214,4 @@ public class LocationService2 extends Service {
         d = Math.sqrt(yd + xd);
         return Double.parseDouble(String.format("%.4f", d));
     }
-    */
 }
