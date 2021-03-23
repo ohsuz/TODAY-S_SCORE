@@ -121,8 +121,17 @@ public class WeatherService extends Service {
                     if (hour < startTime) {
                         continue;
                     }
-                    if (hour == stopTime)
-                        break;
+
+                    if (hour == stopTime) {
+                        if (startTime != stopTime)
+                            break;
+                    }
+
+                    if (hour > stopTime) {
+                        if (startTime == stopTime) {
+                            break;
+                        }
+                    }
 
                     String temp = String.valueOf((Double.parseDouble(String.valueOf(tmp.get("temp")))-273.15));
                     String clouds = tmp.get("clouds").toString();

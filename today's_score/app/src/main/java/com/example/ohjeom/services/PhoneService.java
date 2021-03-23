@@ -30,12 +30,15 @@ import com.example.ohjeom.models.User;
 import com.example.ohjeom.models.Weather;
 import com.example.ohjeom.retrofit.ScoreFunctions;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -195,7 +198,12 @@ public class PhoneService extends Service {
         }
 
         for (int i = 0; i < allEvents.size()-1; i++){
-            Log.d(TAG + "이벤트 발생",allEvents.get(i).getPackageName()+","+allEvents.get(i).getEventType());
+            long timestamp = allEvents.get(i).getTimeStamp();
+            Date date1 = new Date(timestamp);
+            SimpleDateFormat datef = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.getDefault());
+            String date22 = datef.format(date1);
+            Log.d(TAG + "이벤트 시작 시간", date22);
+            Log.d(TAG + "이벤트 발생 어디서 발생하는거냐",allEvents.get(i).getPackageName()+","+allEvents.get(i).getEventType());
             UsageEvents.Event E0=allEvents.get(i);
             UsageEvents.Event E1=allEvents.get(i+1);
 
