@@ -90,7 +90,7 @@ public class LocationService1 extends Service {
     public void onDestroy() {
         /* 서버에 점수 저장 */
         ScoreFunctions scoreFunctions = new ScoreFunctions();
-        scoreFunctions.addLocationScore(locationScore, location.getName());
+        scoreFunctions.addLocationScore(locationScore, location.getName(), 1);
 
         /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
         String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");

@@ -18,7 +18,8 @@ public class Score {
     private String wakeResult;
     private String sleepResult;
     private String phoneUsageResult;
-    private String locationResult;
+    private String locationResult1;
+    private String locationResult2;
     private String paymentResult;
     private int avgScore;
 
@@ -28,8 +29,8 @@ public class Score {
     private String wakeupTime;
     private int sleepScore, phoneTime, lightTime;
     private int phoneUsageScore, totalTime, usageTime;
-    private int locationScore;
-    private String location;
+    private int locationScore, locationScore1, locationScore2;
+    private String location1, location2;
     private int paymentScore, paymentGoal, paymentReal;
 
     /* 기타 */
@@ -71,12 +72,22 @@ public class Score {
             this.totalTime = phoneUsageObj.get("totalTime").getAsInt();
             this.usageTime = phoneUsageObj.get("usageTime").getAsInt();
         }
-        if (locationResult != null) {
+        if (locationResult1 != null) {
             this.components[4] = "true";
-            JsonObject locationObj = (JsonObject)parser.parse(this.locationResult);
-            this.scores[4] = locationObj.get("score").getAsInt();
-            this.locationScore = locationObj.get("score").getAsInt();
-            this.location = locationObj.get("location").getAsString();
+            JsonObject locationObj = (JsonObject)parser.parse(this.locationResult1);
+            this.locationScore1 = locationObj.get("score").getAsInt();
+            this.location1 = locationObj.get("location").getAsString();
+            int cnt = 1;
+            this.locationScore = locationScore1;
+            if (locationResult2 != null) {
+                JsonObject locationObj2 = (JsonObject)parser.parse(this.locationResult2);
+                this.locationScore2 = locationObj2.get("score").getAsInt();
+                this.location2 = locationObj2.get("location").getAsString();
+                this.locationScore += this.locationScore2;
+                cnt ++;
+            }
+            Log.d("0323 - Score", locationScore+", "+cnt);
+            this.scores[4]  = locationScore / cnt;
         }
         if (paymentResult != null) {
             this.components[5] = "true";
@@ -180,14 +191,6 @@ public class Score {
         this.phoneUsageResult = phoneUsageResult;
     }
 
-    public String getLocationResult() {
-        return locationResult;
-    }
-
-    public void setLocationResult(String locationResult) {
-        this.locationResult = locationResult;
-    }
-
     public String getPaymentResult() {
         return paymentResult;
     }
@@ -266,22 +269,6 @@ public class Score {
 
     public void setUsageTime(int usageTime) {
         this.usageTime = usageTime;
-    }
-
-    public int getLocationScore() {
-        return locationScore;
-    }
-
-    public void setLocationScore(int locationScore) {
-        this.locationScore = locationScore;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public int getPaymentScore() {

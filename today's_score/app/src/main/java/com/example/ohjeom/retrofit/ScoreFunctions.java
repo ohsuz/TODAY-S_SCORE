@@ -143,12 +143,12 @@ public class ScoreFunctions {
         });
     }
 
-    public void addLocationScore(int score, String location) {
+    public void addLocationScore(int score, String location, int opt) {
         JsonObject locationScore = new JsonObject();
         locationScore.addProperty("score", score);
         locationScore.addProperty("location", location);
 
-        scoreService.addLocationScore(userID, templateName, date, locationScore).enqueue(new Callback<ResponseBody>() {
+        scoreService.addLocationScore(userID, templateName, date, opt, locationScore).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d("@@@@@@", "Score Functions - addLocationScore: " + response.body().toString());

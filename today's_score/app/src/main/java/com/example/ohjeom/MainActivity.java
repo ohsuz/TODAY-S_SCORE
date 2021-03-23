@@ -43,7 +43,6 @@ import retrofit2.Retrofit;
 import static com.example.ohjeom.ui.templates.privateTemplate.PrivateFragment.pAdapter;
 
 public class MainActivity extends AppCompatActivity {
-    String[] templates = new String[]{};
     private Retrofit retrofit = RetrofitClient.getInstance();
     private TemplateService templateService = retrofit.create(TemplateService.class);
     private ScoreService scoreService = retrofit.create(ScoreService.class);

@@ -36,7 +36,6 @@ public class Template implements Parcelable {
     private ArrayList<Location> locations = new ArrayList<>();
     private String[] appNames;
     private int startHour, startMin, stopHour, stopMin;
-    public static String[] componentNames = {"기상 검사", "수면 검사", "걸음수 검사", "핸드폰 사용량 검사", "장소 도착 검사","소비 검사"};
 
     public Template() {
     }
