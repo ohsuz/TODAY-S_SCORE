@@ -37,6 +37,7 @@ import com.example.ohjeom.R;
 import com.example.ohjeom.adapters.AppCheckAdapter;
 import com.example.ohjeom.adapters.LocationAdapter;
 import com.example.ohjeom.models.Location;
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.models.User;
@@ -44,6 +45,7 @@ import com.example.ohjeom.retrofit.RetrofitClient;
 import com.example.ohjeom.retrofit.ScoreFunctions;
 import com.example.ohjeom.retrofit.TemplateService;
 import com.example.ohjeom.services.StartService;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,7 +85,7 @@ public class PrivateTemplateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_template);
 
         Intent intent = getIntent();
-        privateTemplate = intent.getParcelableExtra("template");
+        privateTemplate = Storage.getTemplate();
         user = getSharedPreferences("user", MODE_PRIVATE);
         userID = user.getString("id", "aaa");
 
@@ -275,6 +277,33 @@ public class PrivateTemplateActivity extends AppCompatActivity {
 
                 ScoreFunctions.setUserID(userID);
                 ScoreFunctions.setTemplateName(privateTemplate.getNameResult());
+
+                Retrofit retrofit = RetrofitClient.getInstance();
+                TemplateService templateService = retrofit.create(TemplateService.class);
+                templateService.getSelectedTemplate(userID).enqueue(new Callback<JsonObject>() {
+                    @Override
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        if (response.code() == 404) {
+                            Storage.setIsSelected(false);
+                        } else {
+                            Storage.setIsSelected(true);
+                            String result = response.body().get("components").getAsString();
+                            Log.d("@@@@@@@Test isSelected", result);
+                            String[] components = result.substring(1, result.length()-1).split(","); // 기상 수면 걸음수 핸드폰사용량 장소도착
+
+                            for (int i=0; i < components.length; i++) {
+                                components[i] = components[i].trim();
+                            }
+
+                            Storage.setComponents(components);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
+                        Log.d("TemplateService", "Failed API call with call: " + call
+                                + ", exception: " + t);
+                    }
+                });
 
                 Intent intentService = new Intent(PrivateTemplateActivity.this, StartService.class);
                 intentService.putExtra("template", privateTemplate);

@@ -1,6 +1,7 @@
 package com.example.ohjeom.models;
 
 public class Storage {
+    private static Template template;
     private static Diary diary;
     private static Score score;
     private static Score calendarScore;
@@ -55,4 +56,13 @@ public class Storage {
     public static void setCalendarScore(Score calendarScore) {
         Storage.calendarScore = calendarScore;
     }
+
+    public static Template getTemplate() {
+        return template;
+    }
+
+    public static void setTemplate(Template template) {
+        Storage.template = template;
+    }
+
 }

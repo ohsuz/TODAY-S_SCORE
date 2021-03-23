@@ -72,11 +72,11 @@ public class CalendarAdapter extends BaseAdapter {
             tvDay.setText(Integer.toString(calendar.get(Calendar.DATE)));
 
             if(day.isSameDay(selectedDate)) {
-                tvDay.setTextColor(Color.RED);
+                tvDay.setTextColor(0xFFFF4F19);
             }
             else {
                 if (day.isInMonth()) {
-                    tvDay.setTextColor(Color.BLACK);
+                    tvDay.setTextColor(0xFF5A5A5A);
                 } else {
                     tvDay.setTextColor(Color.GRAY);
                 }

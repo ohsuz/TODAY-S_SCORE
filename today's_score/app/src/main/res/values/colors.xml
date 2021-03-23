@@ -12,6 +12,7 @@
     <color name="colorTemplateBackground">#9EF3F3F3</color>
     <color name="test">#FFF2CC</color>
 
+    <color name="littleDark">#5A5A5A</color>
     <drawable name="focused">#88FF5500</drawable>
     <drawable name="selected">#88FF00FF</drawable>
 

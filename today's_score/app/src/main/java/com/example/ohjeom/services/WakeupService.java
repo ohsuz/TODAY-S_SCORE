@@ -108,7 +108,6 @@ public class WakeupService extends Service implements SensorEventListener {
         /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
         String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
         ScoreFunctions.getScores(userID, ScoreFunctions.getDate()); // 서버에서 오늘의 날짜에 해당하는 점수 정보를 얻어와서 score 변수에 저장됨
-        User.setIsInitialized(true);
         Log.d(TAG + "기상 측정","종료");
         super.onDestroy();
     }

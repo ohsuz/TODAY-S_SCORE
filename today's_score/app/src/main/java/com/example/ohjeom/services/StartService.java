@@ -16,6 +16,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Weather;
 
@@ -63,7 +64,7 @@ public class StartService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        template = (Template) intent.getParcelableExtra("template");
+        template = Storage.getTemplate();
         month = intent.getIntExtra("month", 0);
         day = intent.getIntExtra("day", 0);
         Log.d(TAG + "측정 시작", template.getNameResult());
@@ -156,7 +157,12 @@ public class StartService extends Service {
         wakeupSender = PendingIntent.getService(this, 0, wakeupIntent, 0);
 
         wakeupAM = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        /*
         wakeupAM.setRepeating(AlarmManager.RTC_WAKEUP, wakeupTime, AlarmManager.INTERVAL_DAY, wakeupSender);
+        */
+
+        wakeupAM.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,wakeupTime,wakeupSender);
 
         //타이머 설정
         long wakeupStoptime = wakeupTime + (60 * 60 * 1000);
@@ -195,8 +201,11 @@ public class StartService extends Service {
         PendingIntent sleepSender = PendingIntent.getService(this, 0, sleepIntent, 0);
 
         sleepAM = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        /*
         sleepAM.setRepeating(AlarmManager.RTC_WAKEUP, sleepCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sleepSender);
+        */
 
+        sleepAM.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,sleepCal.getTimeInMillis(),sleepSender);
         long sleepStopTime = wakeupTime;
         Date sleepStop = new Date(sleepStopTime);
         sleepTimer = new Timer();
@@ -232,8 +241,12 @@ public class StartService extends Service {
         walkSender = PendingIntent.getService(this, 0, walkIntent, 0);
 
         walkAM = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        
+        /*
         walkAM.setRepeating(AlarmManager.RTC_WAKEUP, walkstartCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, walkSender);
-
+        */
+        walkAM.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, walkstartCal.getTimeInMillis(), walkSender);
+        
         //날씨 서비스 설정
         Intent weatherIntent = new Intent(this, WeatherService.class);
         weatherIntent.putExtra("walkStartTime", walkstartCal.get(Calendar.HOUR_OF_DAY));
@@ -241,8 +254,12 @@ public class StartService extends Service {
         weatherSender = PendingIntent.getService(this, 0, weatherIntent, 0);
 
         weatherAM = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        
+        /*
         weatherAM.setRepeating(AlarmManager.RTC_WAKEUP, walkstartCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, weatherSender);
-
+         */
+        
+        weatherAM.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, walkstartCal.getTimeInMillis(), weatherSender);
         Date walkStop = new Date(walkCal.getTimeInMillis());
         walkTimer = new Timer();
         walkTimer.schedule(new WalkTimer(), walkStop, 1000 * 60 * 60 * 24);
@@ -264,7 +281,10 @@ public class StartService extends Service {
                 locationSender1 = PendingIntent.getService(this, 0, locationIntent1, 0);
 
                 locationAM1 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                /*
                 locationAM1.setRepeating(AlarmManager.RTC_WAKEUP, locationTime, AlarmManager.INTERVAL_DAY, locationSender1);
+                */
+                locationAM1.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, locationTime, locationSender1);
                 break;
             case 2:
                 locationIntent1.putExtra("location", template.getLocations().get(0));
@@ -326,7 +346,10 @@ public class StartService extends Service {
         phoneSender = PendingIntent.getService(this, 0, phoneIntent, 0);
 
         phoneAM = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        /*
         phoneAM.setRepeating(AlarmManager.RTC_WAKEUP, startTime, AlarmManager.INTERVAL_DAY, phoneSender);
+         */
+        phoneAM.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, startTime, phoneSender);
 
         phoneTimer = new Timer();
         phoneTimer.schedule(new PhoneTimer(), phoneStop, 1000 * 60 * 60 * 24);
@@ -355,8 +378,10 @@ public class StartService extends Service {
         paySender = PendingIntent.getService(this, 0, payIntent, 0);
 
         payAM = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        /*
         payAM.setRepeating(AlarmManager.RTC_WAKEUP, payTime, AlarmManager.INTERVAL_DAY, paySender);
-
+        */
+        payAM.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, payTime, paySender);
         payTimer = new Timer();
         payTimer.schedule(new PayTimer(), payStop, 1000 * 60 * 60 * 24);
     }

@@ -303,7 +303,6 @@ public class MakerActivity2 extends AppCompatActivity {
 
                 final AlertDialog dialog = builder.create();
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
                 Places.initialize(getApplicationContext(), getString(R.string.api_key));
                 //PlacesClient placesClient = Places.createClient(this);
                 AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -315,8 +314,8 @@ public class MakerActivity2 extends AppCompatActivity {
                     public void onPlaceSelected(@NotNull Place place) {
                         // TODO: Get info about the selected place.
                         locationName = place.getName();
-                        locationLng = Double.parseDouble(String.format("%.4f", place.getLatLng().latitude));
-                        locationLat = Double.parseDouble(String.format("%.4f", place.getLatLng().longitude));
+                        locationLng = Double.parseDouble(String.format("%.4f", place.getLatLng().longitude));
+                        locationLat = Double.parseDouble(String.format("%.4f", place.getLatLng().latitude));
                         Log.i(TAG, "목표 위치: " + locationName + " 위도: " + locationLng + " 경도: " + locationLat);
                     }
 

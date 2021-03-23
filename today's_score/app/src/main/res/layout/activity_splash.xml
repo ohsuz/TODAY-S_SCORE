@@ -37,7 +37,7 @@
             android:visibility="gone"
             android:fontFamily="@font/jua"
             android:text="오"
-            android:textSize="60sp" />
+            android:textSize="55sp" />
 
         <TextView
             android:id="@+id/two"
@@ -72,7 +72,7 @@
             android:visibility="gone"
             android:fontFamily="@font/jua"
             android:text="수"
-            android:textSize="60sp" />
+            android:textSize="55sp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

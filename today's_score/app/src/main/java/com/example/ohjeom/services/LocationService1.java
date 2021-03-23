@@ -25,6 +25,7 @@ import com.example.ohjeom.MainActivity;
 import com.example.ohjeom.R;
 import com.example.ohjeom.etc.GpsTracker;
 import com.example.ohjeom.models.Location;
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.models.User;
 import com.example.ohjeom.retrofit.ScoreFunctions;
 
@@ -40,7 +41,8 @@ import java.util.TimerTask;
 public class LocationService1 extends Service {
     private static final String TAG = "locationService";
     private static final String ERROR_MSG = "왜안돼!!!!!!!!!!!";
-    private Location location, real;
+    private Location location;
+    private Location real = new Location("",0.0,0.0,0,0);
     Handler handler;
     private int tryNum = 0;
     private int locationScore = 0;
@@ -76,7 +78,7 @@ public class LocationService1 extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(ERROR_MSG, "LocationService - OnStartCommand");
-        location = (Location) intent.getParcelableExtra("location");
+        location = Storage.getTemplate().getLocations().get(0);
 
         LocationThread thread = new LocationThread();
         thread.start();
@@ -93,7 +95,6 @@ public class LocationService1 extends Service {
         /* 업데이트된 점수 가져오기 to HomeAdapter 업데이트*/
         String userID = getSharedPreferences("user", MODE_PRIVATE).getString("id", "aaa");
         ScoreFunctions.getScores(userID, ScoreFunctions.getDate()); // 서버에서 오늘의 날짜에 해당하는 점수 정보를 얻어와서 score 변수에 저장됨
-        User.setIsInitialized(true);
         Log.d("장소 측정", "종료");
         super.onDestroy();
     }
@@ -137,6 +138,7 @@ public class LocationService1 extends Service {
         } else {
             locationScore = score;
             Log.d(TAG + "측정 종료: ", "최종 " + score + "점");
+            stopSelf();
         }
     }
 

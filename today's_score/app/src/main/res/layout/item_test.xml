@@ -15,10 +15,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginLeft="25dp"
+            android:layout_marginLeft="20dp"
             android:fontFamily="@font/jua"
             android:text="TEXT"
-            android:textSize="27sp" />
+            android:textSize="24sp" />
 
         <View
             android:layout_width="0dp"
@@ -29,11 +29,11 @@
             android:id="@+id/score"
             android:fontFamily="@font/jua"
             android:text="TEXT"
-            android:textSize="27sp"
+            android:textSize="23sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorRed"
-            android:layout_marginRight="25dp"
+            android:layout_marginRight="20dp"
             android:layout_gravity="right"/>
 
     </LinearLayout>

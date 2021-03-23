@@ -99,7 +99,7 @@
             <GridView
                 android:id="@+id/gv_calendar_activity_gv_calendar"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:drawSelectorOnTop="true"
@@ -136,7 +136,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="0~25점"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:fontFamily="@font/jua"/>
 
                 </LinearLayout>
@@ -161,7 +161,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="25~50점"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:fontFamily="@font/jua"/>
 
                 </LinearLayout>
@@ -186,7 +186,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="50~75점"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:fontFamily="@font/jua"/>
 
                 </LinearLayout>
@@ -211,7 +211,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="75~100점"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:fontFamily="@font/jua"/>
 
                 </LinearLayout>

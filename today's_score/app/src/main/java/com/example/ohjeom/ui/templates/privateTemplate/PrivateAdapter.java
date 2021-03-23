@@ -19,6 +19,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import com.example.ohjeom.R;
+import com.example.ohjeom.models.Storage;
 import com.example.ohjeom.models.Template;
 import com.example.ohjeom.models.Templates;
 import com.example.ohjeom.retrofit.RetrofitClient;
@@ -26,7 +27,6 @@ import com.example.ohjeom.retrofit.TemplateService;
 import com.example.ohjeom.ui.templates.PrivateTemplateActivity;
 
 public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHolder> {
-    private Template template = new Template();
     private String[] templateNames;
     private String[] isSelectedArr;
 
@@ -59,8 +59,6 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
                         public void run() {
                             if (pos != RecyclerView.NO_POSITION) {
                                 Intent intent = new Intent(view.getContext(), PrivateTemplateActivity.class);
-                                Log.d("@@@@@@", "Private Adapter: " + template.getNameResult());
-                                intent.putExtra("template", template);
                                 view.getContext().startActivity(intent);
                             }
                         }
@@ -89,9 +87,10 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.ViewHold
         templateService.getPrivateDetails(userID, templateName).enqueue(new Callback<Template>() {
             @Override
             public void onResponse(Call<Template> call, Response<Template> response) {
-                template = response.body();
+                Template template = response.body();
+                Storage.setTemplate(template);
                 Log.d("@@@@@@", "Private Adapter Function: " + template.getNameResult());
-                template.parseInfo();
+                Storage.getTemplate().parseInfo();
             }
             @Override
             public void onFailure(Call<Template> call, Throwable t) {
