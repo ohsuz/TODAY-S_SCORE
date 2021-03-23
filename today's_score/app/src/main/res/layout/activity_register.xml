@@ -12,9 +12,10 @@
         android:id="@+id/user_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/icon_school"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
@@ -41,9 +42,19 @@
                 android:layout_weight="2">
 
                 <EditText
+                    android:id="@+id/name_text"
+                    android:layout_width="120dp"
+                    android:layout_height="50dp"
+                    android:hint="닉네임"
+                    android:fontFamily="@font/jua"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="142dp"
+                    tools:layout_editor_absoluteY="328dp" />
+
+                <EditText
                     android:id="@+id/id_text"
                     android:layout_width="120dp"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:hint="아이디"
                     android:fontFamily="@font/jua"
                     tools:ignore="MissingConstraints"
@@ -53,7 +64,7 @@
                 <EditText
                     android:id="@+id/password_text"
                     android:layout_width="120dp"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:hint="비밀번호"
                     android:fontFamily="@font/jua"
                     tools:ignore="MissingConstraints"
@@ -70,7 +81,7 @@
                 android:background="@color/colorPrimary"
                 android:fontFamily="@font/jua"
                 android:text="확인"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
 
         </LinearLayout>
 

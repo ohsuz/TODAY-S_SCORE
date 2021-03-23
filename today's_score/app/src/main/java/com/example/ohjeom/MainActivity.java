@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public boolean checkUsageStatsPermissions(){
         try {
             PackageManager packageManager = getPackageManager();
@@ -128,7 +127,9 @@ public class MainActivity extends AppCompatActivity {
     private void checkSMSPermissions() {
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            /*
             Toast.makeText(this,"권한 있음",Toast.LENGTH_LONG).show();
+            */
         } else {
             Toast.makeText(this,"권한 없음",Toast.LENGTH_LONG).show();
 

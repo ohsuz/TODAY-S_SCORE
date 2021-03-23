@@ -44,10 +44,10 @@ public class FriendFragment extends Fragment {
         ArrayList<Friend> list = new ArrayList<>();
 
         Integer[] image = {R.drawable.icon_user1,R.drawable.icon_user2,R.drawable.icon_user3,R.drawable.icon_user4,R.drawable.icon_user5
-        ,R.drawable.icon_user6,R.drawable.icon_user7,R.drawable.icon_user8,R.drawable.icon_user9};
-        String[] name = {"토깽이","몰랑이","프로도","예지","하늘","에비츄","대학이좋아","잔망루피","호빵맨"};
+        ,R.drawable.icon_user6,R.drawable.icon_user7,R.drawable.icon_user8,R.drawable.icon_user9,R.drawable.icon_user10};
+        String[] name = {"토깽이","몰랑이","프로도","예지","하늘","에비츄","대학이좋아","잔망루피","호빵맨","눈송이"};
         String[] intro = {"토깽이의 시간표","잠시 쉬는중","1","건강","잠시 쉬는중","잠시 쉬는중",
-                "잠시 쉬는중","Full 시간표","잠시 쉬는중"};
+                "잠시 쉬는중","Full 시간표","잠시 쉬는중","잠시 쉬는 중","잠시 쉬는 중"};
 
         for(int i=0;i<8;i++) {
             list.add(new Friend(image[i],name[i],intro[i],true));
@@ -83,7 +83,10 @@ public class FriendFragment extends Fragment {
                 registerBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        list.add(new Friend(image[8],name[8],intro[8],false));
+                        list.add(new Friend(image[list.size()],name[list.size()],intro[list.size()],false));
+                        if(list.size() == 2 || list.size() == 5 || list.size() == 6 || list.size() == 7) {
+                            list.get(list.size()-1).setUse(true);
+                        }
                         adapter.notifyDataSetChanged();
                         dialog.dismiss();
                     }
