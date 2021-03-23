@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <LinearLayout
+        android:id="@+id/user_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/icon_school"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_photo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="30dp"
+            android:src="@drawable/user"
+            app:civ_border_color="#CCFFFFFF"
+            app:civ_border_width="2dp"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="2">
+
+                <EditText
+                    android:id="@+id/id_text"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:hint="아이디"
+                    android:fontFamily="@font/jua"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="142dp"
+                    tools:layout_editor_absoluteY="264dp" />
+
+                <EditText
+                    android:id="@+id/password_text"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:hint="비밀번호"
+                    android:fontFamily="@font/jua"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="142dp"
+                    tools:layout_editor_absoluteY="328dp" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/register_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:fontFamily="@font/jua"
+                android:text="확인"
+                android:textSize="20sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@color/colorDarkBackground"/>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        android:id="@+id/icon_school"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginBottom="150dp"
+        android:src="@drawable/icon_school"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
