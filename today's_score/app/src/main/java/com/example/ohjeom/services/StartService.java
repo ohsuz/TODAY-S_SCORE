@@ -266,11 +266,17 @@ public class StartService extends Service {
     }
 
     public void startLocationExamination() {
-        Calendar locationCal = Calendar.getInstance();
-        locationCal.set(Calendar.MONTH, month);
-        locationCal.set(Calendar.DAY_OF_MONTH, day);
+        Calendar locationCal1 = Calendar.getInstance();
+        locationCal1.set(Calendar.MONTH, month);
+        locationCal1.set(Calendar.DAY_OF_MONTH, day);
+        locationCal1.set(Calendar.HOUR_OF_DAY,template.getLocations().get(0).getLocationHour());
+        locationCal1.set(Calendar.MINUTE,template.getLocations().get(0).getLocationMin());
 
-        long locationTime = locationCal.getTimeInMillis();
+        Calendar locationCal2 = Calendar.getInstance();
+        locationCal2.set(Calendar.MONTH, month);
+        locationCal2.set(Calendar.DAY_OF_MONTH, day);
+
+        long locationTime1 = locationCal1.getTimeInMillis();
 
         Intent locationIntent1 = new Intent(this, LocationService1.class);
         Intent locationIntent2 = new Intent(this, LocationService2.class);
@@ -284,9 +290,14 @@ public class StartService extends Service {
                 /*
                 locationAM1.setRepeating(AlarmManager.RTC_WAKEUP, locationTime, AlarmManager.INTERVAL_DAY, locationSender1);
                 */
-                locationAM1.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, locationTime, locationSender1);
+                locationAM1.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, locationTime1, locationSender1);
                 break;
             case 2:
+                locationCal2.set(Calendar.HOUR_OF_DAY,template.getLocations().get(1).getLocationHour());
+                locationCal2.set(Calendar.MINUTE,template.getLocations().get(1).getLocationMin());
+
+                long locationTime2 = locationCal2.getTimeInMillis();
+
                 locationIntent1.putExtra("location", template.getLocations().get(0));
                 locationIntent2.putExtra("location", template.getLocations().get(1));
 
@@ -294,11 +305,23 @@ public class StartService extends Service {
                 locationSender2 = PendingIntent.getService(this, 0, locationIntent2, 0);
 
                 locationAM1 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                locationAM1.setRepeating(AlarmManager.RTC_WAKEUP, locationTime, AlarmManager.INTERVAL_DAY, locationSender1);
+                /*
+                locationAM1.setRepeating(AlarmManager.RTC_WAKEUP, locationTime1, AlarmManager.INTERVAL_DAY, locationSender1);
+                 */
+                locationAM1.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, locationTime1, locationSender1);
                 locationAM2 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                locationAM2.setRepeating(AlarmManager.RTC_WAKEUP, locationTime, AlarmManager.INTERVAL_DAY, locationSender2);
+                /*
+                locationAM2.setRepeating(AlarmManager.RTC_WAKEUP, locationTime2, AlarmManager.INTERVAL_DAY, locationSender2);
+                 */
+                locationAM2.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, locationTime2, locationSender2);
+
                 break;
             case 3:
+                locationCal2.set(Calendar.HOUR_OF_DAY,template.getLocations().get(1).getLocationHour());
+                locationCal2.set(Calendar.MINUTE,template.getLocations().get(1).getLocationMin());
+
+                long locationTime3 = locationCal2.getTimeInMillis();
+
                 locationIntent1.putExtra("location", template.getLocations().get(0));
                 locationIntent2.putExtra("location", template.getLocations().get(1));
                 locationIntent3.putExtra("location", template.getLocations().get(2));
@@ -308,11 +331,11 @@ public class StartService extends Service {
                 locationSender3 = PendingIntent.getService(this, 0, locationIntent3, 0);
 
                 locationAM1 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                locationAM1.setRepeating(AlarmManager.RTC_WAKEUP, locationTime, AlarmManager.INTERVAL_DAY, locationSender1);
+                locationAM1.setRepeating(AlarmManager.RTC_WAKEUP, locationTime1, AlarmManager.INTERVAL_DAY, locationSender1);
                 locationAM2 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                locationAM2.setRepeating(AlarmManager.RTC_WAKEUP, locationTime, AlarmManager.INTERVAL_DAY, locationSender2);
+                locationAM2.setRepeating(AlarmManager.RTC_WAKEUP, locationTime3, AlarmManager.INTERVAL_DAY, locationSender2);
                 locationAM3 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                locationAM3.setRepeating(AlarmManager.RTC_WAKEUP, locationTime, AlarmManager.INTERVAL_DAY, locationSender3);
+                locationAM3.setRepeating(AlarmManager.RTC_WAKEUP, locationTime3, AlarmManager.INTERVAL_DAY, locationSender3);
                 break;
             default:
                 Log.d(TAG, "SWITCH DEFAULT");

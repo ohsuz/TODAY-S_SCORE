@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*
         // 가장 먼저 permission 체크
         if(!checkUsageStatsPermissions()){
             Intent usageAccessIntent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             else{
                 Toast.makeText(getApplicationContext(),"please give access", Toast.LENGTH_SHORT).show();
             }
-        }
+        }*/
 
         checkSMSPermissions();
 

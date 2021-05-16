@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/custom_button">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp">
+
+        <ImageButton
+            android:id="@+id/gv_calendar_activity_b_last"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:maxHeight="30dp"
+            android:maxWidth="30dp"
+            android:gravity="center"
+            android:padding="0dp"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"/>
+
+        <TextView
+            android:text="4월 4일 ~ 4월 10일"
+            android:textSize="30sp"
+            android:id="@+id/calendar_month"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/colorBrown"
+            android:textStyle="bold"
+            android:fontFamily="@font/jua"/>
+
+        <ImageButton
+            android:id="@+id/gv_calendar_activity_b_next"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:maxHeight="30dp"
+            android:maxWidth="30dp"
+            android:gravity="center"
+            android:padding="0dp"
+            android:src="@drawable/ic_baseline_arrow_forward_ios_24"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"/>
+
+    </LinearLayout>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/line_chart"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <Button
+            android:id="@+id/btn1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="평균"
+            android:fontFamily="@font/jua"
+            android:background="@drawable/toggle_button"/>
+
+        <Button
+            android:id="@+id/btn2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="기상"
+            android:fontFamily="@font/jua"
+            android:background="@drawable/toggle_button"/>
+
+        <Button
+            android:id="@+id/btn3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="수면"
+            android:fontFamily="@font/jua"
+            android:background="@drawable/toggle_button"/>
+
+        <Button
+            android:id="@+id/btn4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="걸음 수"
+            android:fontFamily="@font/jua"
+            android:background="@drawable/toggle_button"/>
+
+        <Button
+            android:id="@+id/btn5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="앱"
+            android:fontFamily="@font/jua"
+            android:background="@drawable/toggle_button"/>
+
+        <Button
+            android:id="@+id/btn6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="장소"
+            android:fontFamily="@font/jua"
+            android:background="@drawable/toggle_button"/>
+
+        <Button
+            android:id="@+id/btn7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="소비"
+            android:fontFamily="@font/jua"
+            android:background="@drawable/toggle_button"/>
+
+    </LinearLayout>
+
+</LinearLayout>

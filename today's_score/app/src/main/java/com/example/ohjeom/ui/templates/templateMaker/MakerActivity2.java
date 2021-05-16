@@ -3,15 +3,19 @@ package com.example.ohjeom.ui.templates.templateMaker;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -390,6 +394,18 @@ public class MakerActivity2 extends AppCompatActivity {
                 View view = LayoutInflater.from(MakerActivity2.this)
                         .inflate(R.layout.dialog_app, null, false);
                 builder.setView(view);
+
+                if(!checkUsageStatsPermissions()){
+                    Intent usageAccessIntent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                    usageAccessIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(usageAccessIntent);
+                    if(checkUsageStatsPermissions()){
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(),"please give access", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
                 final Button button = (Button) view.findViewById(R.id.button);
                 final PackageManager pm = getPackageManager();
                 Intent applistIntent = new Intent(Intent.ACTION_MAIN);
@@ -606,5 +622,19 @@ public class MakerActivity2 extends AppCompatActivity {
             }
         });
         builder.create().show();
+    }
+
+    public boolean checkUsageStatsPermissions(){
+        try {
+            PackageManager packageManager = getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+
+            int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+            return (mode == AppOpsManager.MODE_ALLOWED);
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 }

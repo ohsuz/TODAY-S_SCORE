@@ -53,12 +53,18 @@
         android:layout_weight="1"
         android:layout_marginLeft="20dp">
 
-        <ImageView
+        <CheckBox
             android:id="@+id/use_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginRight="25dp"
+            android:layout_gravity="right"
             android:gravity="center"
-            android:background="@drawable/ic_baseline_star_2"/>
+            android:background="@drawable/custom_checkbox"
+            android:button="@null"
+            android:clickable="false"
+            android:focusable="false" />
+
 
     </LinearLayout>
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ohjeom.R;
@@ -27,6 +28,15 @@ import java.util.ArrayList;
 public class FriendFragment extends Fragment {
 
     private FriendViewModel friendViewModel;
+    private Integer[] image = {R.drawable.icon_user1,R.drawable.icon_user2,R.drawable.icon_user3,R.drawable.icon_user4,R.drawable.icon_user5
+            ,R.drawable.icon_user6,R.drawable.icon_user7,R.drawable.icon_user8,R.drawable.icon_user9,R.drawable.icon_user10};
+    private String[] name = {"토깽이","몰랑이","프로도","예지","하늘","에비츄","대학이좋아","잔망루피","호빵맨","눈송이"};
+    private String[] intro = {"토깽이의 시간표","잠시 쉬는중","1","건강","잠시 쉬는중","잠시 쉬는중",
+            "잠시 쉬는중","Full 시간표","잠시 쉬는중","잠시 쉬는 중","잠시 쉬는 중"};
+    public static boolean[] check = {false,false,false,false,false,false,false,false,false,false};
+    private ArrayList<Friend> list = new ArrayList<>();
+    private FriendAdapter adapter = new FriendAdapter(list);
+    private RecyclerView recyclerView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,14 +51,6 @@ public class FriendFragment extends Fragment {
             }
         });
 
-        ArrayList<Friend> list = new ArrayList<>();
-
-        Integer[] image = {R.drawable.icon_user1,R.drawable.icon_user2,R.drawable.icon_user3,R.drawable.icon_user4,R.drawable.icon_user5
-        ,R.drawable.icon_user6,R.drawable.icon_user7,R.drawable.icon_user8,R.drawable.icon_user9,R.drawable.icon_user10};
-        String[] name = {"토깽이","몰랑이","프로도","예지","하늘","에비츄","대학이좋아","잔망루피","호빵맨","눈송이"};
-        String[] intro = {"토깽이의 시간표","잠시 쉬는중","1","건강","잠시 쉬는중","잠시 쉬는중",
-                "잠시 쉬는중","Full 시간표","잠시 쉬는중","잠시 쉬는 중","잠시 쉬는 중"};
-
         for(int i=0;i<8;i++) {
             list.add(new Friend(image[i],name[i],intro[i],true));
         }
@@ -58,10 +60,9 @@ public class FriendFragment extends Fragment {
         list.get(5).setUse(false);
         list.get(6).setUse(false);
 
-        RecyclerView recyclerView = root.findViewById(R.id.friend_list);
+        recyclerView = root.findViewById(R.id.friend_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        FriendAdapter adapter = new FriendAdapter(list);
         recyclerView.setAdapter(adapter);
 
         FloatingActionButton button = root.findViewById(R.id.friend_button);
@@ -100,6 +101,22 @@ public class FriendFragment extends Fragment {
                 });
 
                 dialog.show();
+            }
+        });
+
+        ImageView heartBtn = root.findViewById(R.id.heart_button);
+        heartBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.clear();
+                list = new ArrayList<>();
+                for(int i=0;i<8;i++) {
+                    if(check[i]) {
+                        list.add(new Friend(image[i], name[i], intro[i], true));
+                    }
+                }
+                adapter = new FriendAdapter(list);
+                recyclerView.setAdapter(adapter);
             }
         });
 
