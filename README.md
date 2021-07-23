@@ -1,7 +1,9 @@
-## 💯 Today's Score ✏️
-> Life pattern planning and validation application based on Android.
+## 💯  Today's Score  💯 
 
-## Contents
+> Through various functions held by Android, such as sensors, app usage history, and messages, we implemented **a life pattern planning and verification application** that regularly improves the lifestyle patterns of modern people who live irregularly due to covid-19. The application automatically measures six daily activities, including wake-up, sleep, and walking, in the background according to the user's set schedule to produce an itemized activity score for the user.   
+
+---
+### ✏️ Contents
   * [Login](#-login)
   * [Main](#-main)
   * [Templates](#-templates)
@@ -9,7 +11,6 @@
      * [How To Start Template](#-how-to-start-template)
   * [What's More?](#-what-is-more)
      * Diary, Calendar, Friends ... 
-
 ---
 
 ### 📝 Login
@@ -29,16 +30,16 @@
 
 
 ### 📝 Templates
-> There are two types of templates : Public Template, Private Template.  
-> Public template is made by administrators for special concepts (ex. Become morning people, Focus on walking, etc.) and opened to every users.  
-> Private template is made by you and only you can access it. More details are written below.
+> There are two types of templates: Public Template, Private Template.  
+> Public template is made by administrators for specific uses (ex. Become morning people, Focus on walking, etc.) and open to every user.  
+> Private template is made by you, and only you can access it. More details are written below.  
 <div>
  <img width="22%" src="https://user-images.githubusercontent.com/59340911/126830053-d94eb7c7-f078-4817-b7e6-14bff310fff4.png">
  <img width="22%" src="https://user-images.githubusercontent.com/59340911/126830057-530ab9c5-1f09-44e1-9047-75a1debfbc76.png">
 </div><br>
 
 ### 📝 How To Make Personal Template
-**① Write template name and choose options you want to score.**  
+**① Write a template name and choose options you want to score.**  
 <div>
  <img width="22%" src="https://user-images.githubusercontent.com/59340911/126830388-5f6b51c9-093e-451c-81c2-89415f865089.png">
  <img width="22%" src="https://user-images.githubusercontent.com/59340911/126830379-70b8b3b1-e9ca-4ba7-82de-fb4f475baf65.png">
@@ -69,6 +70,8 @@
 
 
 ### 📝 What Is More
+> We provide a variety of additional functions that allow users to analyze and motivate their life patterns so that they can live a regular life, such as the function to visualize and itemized scores at a glance, write diaries of the day, and share calculated scores with friends.
+
 **① Diary**
 <div>
  <img width="22%" src="https://user-images.githubusercontent.com/59340911/126831641-bf2fc752-e613-44b2-ba07-3975e1b4b813.png">
@@ -99,6 +102,8 @@
 ---
 
 ### :memo: Collaborators
+```⭐Best Teammates EVER⭐```
+
 :pencil2: [Suzie Oh](https://github.com/ohsuz)
 > Android UI/UX Designer, Android Sub-Developer, Server Developer
 
